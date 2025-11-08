@@ -1,10 +1,7 @@
 import "@/styles/globals.css"
-
-import { HeroUIProvider } from "@heroui/react"
-import { AuthProvider } from "@/contexts/AuthContext"
+import { Providers } from "@/components/Layout/Providers"
 import { Header } from "@/components/Layout/Header"
 import { Footer } from "@/components/Layout/Footer"
-import { Toaster } from "@/components/ui/sonner"
 
 export const metadata = {
   title: "SimplePanel",
@@ -13,17 +10,16 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <HeroUIProvider>
-      <html lang="es">
-        <body className="min-h-screen bg-zinc-950 text-zinc-100">
-          <AuthProvider>
+    <html lang="es" className="h-full">
+      <body className="h-full flex flex-col bg-zinc-950 text-zinc-100">
+        <Providers>
+          <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="p-4 md:p-6">{children}</main>
-            <Toaster />
+            <main className="flex-1 p-4 md:p-6">{children}</main>
             <Footer />
-          </AuthProvider>
-        </body>
-      </html>
-    </HeroUIProvider>
+          </div>
+        </Providers>
+      </body>
+    </html>
   );
 }

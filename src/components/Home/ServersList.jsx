@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
+import { addToast } from "@heroui/react"
 
 const getMapImageUrl = (mapName) => {
   return `https://cdn.jsdelivr.net/gh/wiruwiru/MapsImagesCDN-CS/avif/${mapName}.avif`
@@ -76,9 +77,11 @@ export function ServersList() {
     try {
       await navigator.clipboard.writeText(`connect ${address}`)
       setCopiedId(serverId)
+      addToast({title: "Comando de conexión copiado al portapapeles", color: "success", variant: "solid"})
       setTimeout(() => setCopiedId(null), 2000)
     } catch (error) {
       console.error("Error copying to clipboard:", error)
+      addToast({title: "Comando de conexión copiado al portapapeles", color: "danger", variant: "solid"})
     }
   }
 
