@@ -3,13 +3,13 @@ import { ServersList } from "@/components/Home/ServersList"
 import { RecentBans } from "@/components/Home/RecentBans"
 import { RecentMutes } from "@/components/Home/RecentMutes"
 
+export const metadata = {
+  title: "Inicio | SimplePanel"
+}
+
 export default function Home() {
   return (
-    <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
-      <div>
-        <h2 className="text-zinc-100 mb-1">Panel de Control</h2>
-        <p className="text-zinc-400 text-sm md:text-base">Bienvenido al panel administrativo de Counter Strike</p>
-      </div>
+    <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto mt-6">
 
       <SanctionsStats />
       <ServersList />

@@ -4,8 +4,10 @@ import { Header } from "@/components/Layout/Header"
 import { Footer } from "@/components/Layout/Footer"
 
 export const metadata = {
-  title: "SimplePanel",
-  description: "Panel administrativo para servidores de Counter Strike",
+  title: {
+    default: "SimplePanel"
+  },
+  description: "Gestiona facilmente sanciones en tus servidores de Counter Strike 2",
 }
 
 export default function RootLayout({ children }) {
