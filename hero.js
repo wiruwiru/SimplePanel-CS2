@@ -1,2 +1,2 @@
-import { heroui } from "@heroui/react";
-export default heroui();
+const { heroui } = require("@heroui/react");
+module.exports = heroui();
