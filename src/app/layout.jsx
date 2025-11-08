@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className="h-full">
+    <html lang="es" className="h-full bg-zinc-950 text-zinc-100">
       <body className="h-full flex flex-col bg-zinc-950 text-zinc-100">
         <Providers>
           <div className="flex flex-col min-h-screen">
