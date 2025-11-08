@@ -5,23 +5,20 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
 
-    // Verificar que la respuesta es válida
     const mode = searchParams.get("openid.mode")
     if (mode !== "id_res") {
-      return createErrorResponse("invalid_response", request.url)
+      return createErrorResponse("cancelled", request.url)
     }
 
-    // Extraer el Steam ID de la claimed_id
     const claimedId = searchParams.get("openid.claimed_id")
     const steamIdMatch = claimedId?.match(/\/id\/(\d+)/)
 
     if (!steamIdMatch) {
-      return createErrorResponse("no_steam_id", request.url)
+      return createErrorResponse("failed", request.url)
     }
 
     const steamId64 = steamIdMatch[1]
 
-    // Validar la respuesta con Steam
     const validationParams = new URLSearchParams()
     searchParams.forEach((value, key) => {
       validationParams.append(key, value)
@@ -39,7 +36,7 @@ export async function GET(request) {
     const validationText = await validationResponse.text()
 
     if (!validationText.includes("is_valid:true")) {
-      return createErrorResponse("validation_failed", request.url)
+      return createErrorResponse("failed", request.url)
     }
 
     await db.execute(
@@ -77,7 +74,7 @@ export async function GET(request) {
                 window.location.href = '/';
               }
             } catch (e) {
-              console.error('[v0] Error in auth callback:', e);
+              console.error('Error in auth callback:', e);
               window.location.href = '/';
             }
           </script>
@@ -97,11 +94,11 @@ export async function GET(request) {
     })
   } catch (error) {
     console.error("Error in Steam return:", error)
-    return createErrorResponse("server_error", request.url)
+    return createErrorResponse("failed", request.url)
   }
 }
 
-function createErrorResponse(errorCode, requestUrl) {
+function createErrorResponse(errorReason, requestUrl) {
   const html = `
     <!DOCTYPE html>
     <html>
@@ -116,10 +113,10 @@ function createErrorResponse(errorCode, requestUrl) {
                 window.close();
               }, 500);
             } else {
-              window.location.href = '/?error=${errorCode}';
+              window.location.href = '/auth/error?reason=${errorReason}';
             }
           } catch (e) {
-            window.location.href = '/?error=${errorCode}';
+            window.location.href = '/auth/error?reason=${errorReason}';
           }
         </script>
       </head>

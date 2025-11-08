@@ -1,26 +1,25 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/AuthContext"
 import { useEffect } from "react"
+import { useAuth } from "@/contexts/AuthContext"
+import { UnauthorizedAccess } from "@/components/Auth/UnauthorizedAccess"
+import { AdminUnauthorized } from "@/components/Auth/AdminUnauthorized"
 
 export default function withAuth(Component, requiredFlag = null) {
   return function AuthenticatedComponent(props) {
-    const { user, loading, hasFlag, flags } = useAuth()
-    const router = useRouter()
+    const { user, loading, hasFlag } = useAuth()
 
     useEffect(() => {
       if (!loading) {
         if (!user) {
-          router.replace("/")
           return
         }
 
         if (requiredFlag && !hasFlag(requiredFlag)) {
-          router.replace("/")
+          return
         }
       }
-    }, [user, loading, hasFlag, router])
+    }, [user, loading, hasFlag])
 
     if (loading) {
       return (
@@ -30,8 +29,12 @@ export default function withAuth(Component, requiredFlag = null) {
       )
     }
 
-    if (!user || (requiredFlag && !hasFlag(requiredFlag))) {
-      return null
+    if (!user) {
+      return <UnauthorizedAccess />
+    }
+
+    if (requiredFlag && !hasFlag(requiredFlag)) {
+      return <AdminUnauthorized />
     }
 
     return <Component {...props} />

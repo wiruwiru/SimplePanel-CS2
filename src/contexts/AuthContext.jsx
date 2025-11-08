@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 
 const AuthContext = createContext(undefined)
 
@@ -9,6 +10,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const [flags, setFlags] = useState([])
+  const router = useRouter()
 
   const checkSession = useCallback(async () => {
     try {
@@ -46,7 +48,10 @@ export function AuthProvider({ children }) {
         checkSession()
       } else if (event.data === "auth_error") {
         console.error("Error en la autenticación")
-        alert("Error al iniciar sesión con Steam. Por favor, intenta de nuevo.")
+        router.push("/auth/error?reason=failed")
+      } else if (event.data === "auth_cancelled") {
+        console.log("Autenticación cancelada")
+        router.push("/auth/error?reason=cancelled")
       }
     }
 
@@ -55,7 +60,7 @@ export function AuthProvider({ children }) {
     return () => {
       window.removeEventListener("message", handleAuthMessage)
     }
-  }, [checkSession])
+  }, [checkSession, router])
 
   const login = useCallback(() => {
     const width = 600
@@ -66,7 +71,29 @@ export function AuthProvider({ children }) {
     const authWindow = window.open("/api/auth/steam", "Steam Login", `width=${width},height=${height},left=${left},top=${top}`)
     if (!authWindow) {
       alert("No se pudo abrir la ventana de autenticación. Por favor, permite los popups para este sitio.")
+      return
     }
+
+    const checkWindowClosed = setInterval(() => {
+      if (authWindow.closed) {
+        clearInterval(checkWindowClosed)
+        setTimeout(() => {
+          fetch("/api/auth/session", {
+            credentials: "include",
+            cache: "no-store",
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (!data.user) {
+                window.postMessage("auth_cancelled", window.location.origin)
+              }
+            })
+            .catch(() => {
+              window.postMessage("auth_cancelled", window.location.origin)
+            })
+        }, 500)
+      }
+    }, 500)
   }, [])
 
   const logout = useCallback(async () => {
