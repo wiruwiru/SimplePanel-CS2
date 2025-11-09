@@ -69,10 +69,12 @@ export function RecentBans() {
             {recentBans.map((ban) => (
               <div key={ban.id} className="p-3 md:p-4 bg-zinc-800 rounded-lg border border-zinc-700">
                 <div className="flex items-start gap-3 mb-2">
-                  <Avatar className="size-10 shrink-0">
-                    <AvatarImage src={getAvatarUrl(ban.steamId)} alt={ban.player} />
-                    <AvatarFallback>{ban.player.substring(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
+                  <a href={`https://steamcommunity.com/profiles/${ban.steamId}`} target="_blank" rel="noopener noreferrer" >
+                    <Avatar className="size-10 shrink-0">
+                      <AvatarImage src={getAvatarUrl(ban.steamId)} alt={ban.player} />
+                      <AvatarFallback>{ban.player.substring(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </a>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <Badge variant="destructive" className="bg-red-600 text-xs">Baneo</Badge>

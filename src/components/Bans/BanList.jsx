@@ -179,10 +179,12 @@ export function BanList() {
                       <tr key={ban.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
-                            <Avatar className="size-8">
-                              <AvatarImage src={getAvatarUrl(ban.steamId)} alt={ban.player} />
-                              <AvatarFallback>{ban.player.substring(0, 2).toUpperCase()}</AvatarFallback>
-                            </Avatar>
+                            <a href={`https://steamcommunity.com/profiles/${ban.steamId}`} target="_blank" rel="noopener noreferrer" >
+                              <Avatar className="size-8">
+                                <AvatarImage src={getAvatarUrl(ban.steamId)} alt={ban.player} />
+                                <AvatarFallback>{ban.player.substring(0, 2).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                            </a>
                             <span className="text-zinc-100">{getDisplayName(ban)}</span>
                           </div>
                         </td>

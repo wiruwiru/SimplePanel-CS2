@@ -69,10 +69,12 @@ export function RecentMutes() {
             {recentMutes.map((mute) => (
               <div key={mute.id} className="p-3 md:p-4 bg-zinc-800 rounded-lg border border-zinc-700">
                 <div className="flex items-start gap-3 mb-2">
-                  <Avatar className="size-10 shrink-0">
-                    <AvatarImage src={getAvatarUrl(mute.steamId)} alt={mute.player} />
-                    <AvatarFallback>{mute.player.substring(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
+                  <a href={`https://steamcommunity.com/profiles/${mute.steamId}`} target="_blank" rel="noopener noreferrer" >
+                    <Avatar className="size-10 shrink-0">
+                      <AvatarImage src={getAvatarUrl(mute.steamId)} alt={mute.player} />
+                      <AvatarFallback>{mute.player.substring(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </a>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <Badge variant="secondary" className="bg-yellow-600 text-xs">Muteo</Badge>
