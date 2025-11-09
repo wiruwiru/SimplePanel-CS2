@@ -94,7 +94,7 @@ export function ServersList() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <Spinner className="size-8 text-orange-500" />
+            <Spinner className="size-8 text-[#FFB800]" />
           </div>
         </CardContent>
       </Card>
@@ -106,7 +106,7 @@ export function ServersList() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-zinc-100 text-lg md:text-xl">
-            <Server className="size-5 text-orange-500" />Servidores
+            <Server className="size-5 text-[#FFB800]" />Servidores
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -120,7 +120,7 @@ export function ServersList() {
     <Card className="bg-zinc-900 border-zinc-800">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-zinc-100 text-lg md:text-xl">
-          <Server className="size-5 text-orange-500" />Servidores
+          <Server className="size-5 text-[#FFB800]" />Servidores
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -152,7 +152,7 @@ export function ServersList() {
                 <AccordionContent className="pb-3 md:pb-4 pt-2">
                   {isLoadingDetails ? (
                     <div className="flex items-center justify-center py-8">
-                      <Spinner className="size-6 text-orange-500" />
+                      <Spinner className="size-6 text-[#FFB800]" />
                       <span className="ml-3 text-zinc-400">Obteniendo detalles del servidor...</span>
                     </div>
                   ) : details?.offline ? (
@@ -184,7 +184,7 @@ export function ServersList() {
 
                           <div className="flex flex-col sm:flex-row gap-2">
                             <Button onClick={() => handleCopyIP(server.id, server.address)} className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white border border-zinc-700 transition-colors" ><ClipboardCopy className="size-4" />{copiedId === server.id ? "¡Copiado!" : "Copiar IP"}</Button>
-                            <Button onClick={() => handleConnect(server.address)} className="flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white transition-colors" >
+                            <Button onClick={() => handleConnect(server.address)} className="flex items-center justify-center gap-2 bg-[#FFB800] hover:bg-[#ce9300] text-white transition-colors" >
                               <GamepadIcon className="size-4" />Conectar</Button>
                           </div>
                         </div>

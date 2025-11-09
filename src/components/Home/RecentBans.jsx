@@ -60,7 +60,7 @@ export function RecentBans() {
       <CardContent className="flex-1 flex flex-col">
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <Spinner className="size-6 text-orange-500" />
+            <Spinner className="size-6 text-[#FFB800]" />
           </div>
         ) : recentBans.length === 0 ? (
           <div className="text-center py-8 text-zinc-400">No se han encontrado baneos recientes</div>

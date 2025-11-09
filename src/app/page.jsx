@@ -4,7 +4,7 @@ import { RecentBans } from "@/components/Home/RecentBans"
 import { RecentMutes } from "@/components/Home/RecentMutes"
 
 export const metadata = {
-  title: "Inicio | SimplePanel"
+  title: "Inicio | CrisisGamer"
 }
 
 export default function Home() {

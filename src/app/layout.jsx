@@ -5,7 +5,7 @@ import { Footer } from "@/components/Layout/Footer"
 
 export const metadata = {
   title: {
-    default: "SimplePanel"
+    default: "CrisisGamer"
   },
   description: "Gestiona facilmente sanciones en tus servidores de Counter Strike 2",
 }

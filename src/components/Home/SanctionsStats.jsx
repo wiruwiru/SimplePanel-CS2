@@ -33,14 +33,14 @@ export function SanctionsStats() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent>
             <div className="flex items-center justify-center py-6">
-              <Spinner className="size-6 text-orange-500" />
+              <Spinner className="size-6 text-[#FFB800]" />
             </div>
           </CardContent>
         </Card>
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent>
             <div className="flex items-center justify-center py-6">
-              <Spinner className="size-6 text-orange-500" />
+              <Spinner className="size-6 text-[#FFB800]" />
             </div>
           </CardContent>
         </Card>

@@ -88,7 +88,7 @@ export function MuteList() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent>
             <div className="flex items-center justify-center py-12">
-              <Spinner className="size-8 text-orange-500" />
+              <Spinner className="size-8 text-[#FFB800]" />
             </div>
           </CardContent>
         </Card>
@@ -107,7 +107,7 @@ export function MuteList() {
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-zinc-100">
             <div className="flex items-center gap-2">
-              <VolumeX className="size-5 text-orange-500" />
+              <VolumeX className="size-5 text-[#FFB800]" />
               <span className="text-lg md:text-xl">Muteos ({total})</span>
             </div>
             <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ export function MuteList() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Spinner className="size-6 text-orange-500" />
+              <Spinner className="size-6 text-[#FFB800]" />
             </div>
           ) : mutes.length === 0 ? (
             <div className="text-center py-8 text-zinc-400">No se han encontraron muteos</div>
@@ -229,7 +229,7 @@ export function MuteList() {
                     }
 
                     return (
-                      <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => handlePageChange(pageNum)} className={currentPage === pageNum ? "bg-orange-600 hover:bg-orange-700" : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"} >
+                      <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => handlePageChange(pageNum)} className={currentPage === pageNum ? "bg-[#FFB800] hover:bg-[#ce9300]" : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"} >
                         {pageNum}
                       </Button>
                     )

@@ -1,7 +1,7 @@
 import { BanList } from "@/components/Bans/BanList"
 
 export const metadata = {
-  title: "Bans | SimplePanel"
+  title: "Bans | CrisisGamer"
 }
 
 export default function BansPage() {

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { Shield, LogOut, User, Menu, X } from "lucide-react"
@@ -55,13 +56,13 @@ export function Header() {
       <div className="px-4 md:px-6 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <Shield className="size-6 md:size-8 text-orange-500" />
-            <h1 className="text-zinc-100 text-lg md:text-xl">SimplePanel</h1>
+            <Image src="/assets/logo.png" width={64} height={64} alt="CrisisGamer-logo" />
+            <h1 className="text-zinc-100 text-lg md:text-xl">CrisisGamer</h1>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
-              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`px-4 py-2 rounded-lg transition-colors ${pathname === item.id ? "bg-orange-600 text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} >{item.label}</button>
+              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`px-4 py-2 rounded-lg transition-colors ${pathname === item.id ? "bg-[#FFB800] text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} >{item.label}</button>
             ))}
           </nav>
 
@@ -102,7 +103,7 @@ export function Header() {
                 </DropdownMenu>
               </div>
             ) : (
-              <Button variant="default" onClick={handleLogin} className="bg-orange-600 hover:bg-orange-700 text-white hidden md:flex" >
+              <Button variant="default" onClick={handleLogin} className="bg-[#FFB800] hover:bg-[#ce9300] text-white hidden md:flex" >
                 <User className="size-4 mr-2" />Iniciar sesión
               </Button>
             )}
@@ -116,7 +117,7 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-2 space-y-2">
             {navItems.map((item) => (
-              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`w-full px-4 py-3 rounded-lg transition-colors text-left ${pathname === item.id ? "bg-orange-600 text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} >{item.label}</button>
+              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`w-full px-4 py-3 rounded-lg transition-colors text-left ${pathname === item.id ? "bg-[#FFB800] text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} >{item.label}</button>
             ))}
             <div className="pt-2 border-t border-zinc-800">
               {loading ? (
@@ -137,7 +138,7 @@ export function Header() {
                   </Button>
                 </>
               ) : (
-                <Button variant="default" onClick={() => {handleLogin(), setMobileMenuOpen(false)}} className="w-full bg-orange-600 hover:bg-orange-700 text-white" >
+                <Button variant="default" onClick={() => {handleLogin(), setMobileMenuOpen(false)}} className="w-full bg-[#FFB800] hover:bg-[#ce9300] text-white" >
                   <User className="size-4 mr-2" />Iniciar sesión
                 </Button>
               )}
