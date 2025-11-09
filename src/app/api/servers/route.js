@@ -3,7 +3,17 @@ import { db } from "@/lib/database"
 
 export async function GET() {
   try {
-    const dbServers = await db.query(`SELECT id, hostname, address FROM sa_servers ORDER BY id ASC`)
+    const dbServers = await db.query(`
+      SELECT 
+        s.id, 
+        s.hostname, 
+        s.address 
+      FROM sa_servers s
+      LEFT JOIN sp_visibility_settings v ON s.id = v.server_id
+      WHERE COALESCE(v.is_visible, 1) = 1
+      ORDER BY s.id ASC
+    `)
+    
     if (!dbServers || dbServers.length === 0) {
       return NextResponse.json([])
     }
