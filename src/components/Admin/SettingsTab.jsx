@@ -26,7 +26,6 @@ export function SettingsTab() {
           <div className="text-center py-8 text-zinc-400">
             <Settings className="size-12 mx-auto mb-4 text-zinc-600" />
             <p>No tienes permisos para modificar la configuración.</p>
-            <p className="text-sm mt-2">Se requiere el flag @web/root o @css/root</p>
           </div>
         </CardContent>
       </Card>
