@@ -65,7 +65,7 @@ export function ServersList() {
 
   const handleAccordionChange = (value) => {
     if (value) {
-      const serverId = parseInt(value.replace("server-", ""))
+      const serverId = Number.parseInt(value.replace("server-", ""))
       const server = servers.find((s) => s.id === serverId)
       if (server && !detailedInfo[serverId] && !loadingDetails[serverId]) {
         fetchServerDetails(serverId, server.address)
@@ -136,9 +136,9 @@ export function ServersList() {
                   <div className="flex items-center justify-between w-full pr-2 md:pr-4">
                     <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
                       <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full shrink-0 ${isOnline ? "bg-green-500" : "bg-red-500"}`} />
-                      <div className="text-left min-w-0 flex-1">
+                      <div className="text-left min-w-0 flex-1 max-w-[200px] xs:max-w-[280px] sm:max-w-[420px] md:max-w-[600px] lg:max-w-none">
                         <div className="text-zinc-100 text-sm md:text-base truncate">{server.name}</div>
-                        <div className="text-zinc-400 text-xs md:text-sm">{server.map}</div>
+                        <div className="text-zinc-400 text-xs md:text-sm truncate">{server.map}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-4 shrink-0">
@@ -202,13 +202,15 @@ export function ServersList() {
                               const time = player.time
 
                               return (
-                                <div key={idx} className="flex items-center gap-3 p-2 bg-zinc-800 rounded-lg hover:bg-zinc-700/50 transition-colors">
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-zinc-100 text-sm truncate">{player.name}</p>
-                                    <div className="flex gap-3 text-xs text-zinc-400">
-                                      {score !== undefined && <span>Puntos: {score}</span>}
-                                      {time !== undefined && (<span>Tiempo conectado: {Math.floor(time / 60)}m</span>)}
-                                    </div>
+                                <div key={idx} className="flex items-center justify-between gap-3 p-3 bg-zinc-800 rounded-lg hover:bg-zinc-700/50 transition-colors" >
+                                  <p className="text-zinc-100 text-sm truncate flex-1 min-w-0">{player.name}</p>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                    {score !== undefined && (
+                                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-blue-600 text-white">{score} pts</span>
+                                    )}
+                                    {time !== undefined && (
+                                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-600 text-white">{Math.floor(time / 60)}m</span>
+                                    )}
                                   </div>
                                 </div>
                               )
