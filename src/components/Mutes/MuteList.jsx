@@ -175,7 +175,7 @@ export function MuteList() {
             <div className="flex items-center gap-3">
               <div className="relative flex-1 sm:flex-initial">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-                <Input placeholder="Buscar por nombre o SteamID..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-zinc-800 border-zinc-700 text-zinc-100 w-full sm:w-64" />
+                <Input placeholder="Buscar por nombre o SteamID64..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-zinc-800 border-zinc-700 text-zinc-100 w-full sm:w-64" />
               </div>
             </div>
           </CardTitle>

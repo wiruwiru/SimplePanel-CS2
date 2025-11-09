@@ -8,7 +8,7 @@ import { BansTab } from "@/components/Admin/BansTab"
 import { MutesTab } from "@/components/Admin/MutesTab"
 import { AdminsTab } from "@/components/Admin/AdminsTab"
 import { ServersTab } from "@/components/Admin/ServersTab"
-import { SettingsTab } from "@/components/Admin/SettingsTab"
+import { PlayerSearchTab } from "@/components/Admin/PlayerSearchTab"
 
 const Tabs = ({ defaultValue, children }) => {
   const [activeTab, setActiveTab] = useState(defaultValue);
@@ -61,9 +61,9 @@ function AdminPage() {
         <TabsList>
           <TabsTrigger value="bans">Baneos</TabsTrigger>
           <TabsTrigger value="mutes">Muteos</TabsTrigger>
+          <TabsTrigger value="playersearch">Buscar jugadores</TabsTrigger>
           <TabsTrigger value="admins">Administradores</TabsTrigger>
           <TabsTrigger value="servers">Servidores</TabsTrigger>
-          <TabsTrigger value="settings">Configuración</TabsTrigger>
         </TabsList>
 
         <TabsContent value="bans">
@@ -74,16 +74,16 @@ function AdminPage() {
           <MutesTab />
         </TabsContent>
 
+        <TabsContent value="playersearch">
+          <PlayerSearchTab />
+        </TabsContent>
+
         <TabsContent value="admins">
           <AdminsTab />
         </TabsContent>
 
         <TabsContent value="servers">
           <ServersTab />
-        </TabsContent>
-
-        <TabsContent value="settings">
-          <SettingsTab />
         </TabsContent>
       </Tabs>
     </div>

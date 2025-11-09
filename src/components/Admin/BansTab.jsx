@@ -308,7 +308,7 @@ export function BansTab() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="steamId" className="text-zinc-300">SteamID</Label>
+              <Label htmlFor="steamId" className="text-zinc-300">SteamID64</Label>
               <Input id="steamId" placeholder="76561199074660131" value={formData.steamId} onChange={(e) => setFormData({ ...formData, steamId: e.target.value })} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
             </div>
             <div className="space-y-2">

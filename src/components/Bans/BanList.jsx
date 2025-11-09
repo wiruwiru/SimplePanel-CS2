@@ -134,7 +134,7 @@ export function BanList() {
             <div className="flex items-center gap-3">
               <div className="relative flex-1 sm:flex-initial">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-                <Input placeholder="Buscar por nombre o SteamID..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-zinc-800 border-zinc-700 text-zinc-100 w-full sm:w-64" />
+                <Input placeholder="Buscar por nombre o SteamID64..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-zinc-800 border-zinc-700 text-zinc-100 w-full sm:w-64" />
               </div>
             </div>
           </CardTitle>
@@ -185,7 +185,7 @@ export function BanList() {
                   <thead>
                     <tr className="border-b border-zinc-800">
                       <th className="text-left py-3 px-4 text-zinc-400">Jugador</th>
-                      {/* <th className="text-left py-3 px-4 text-zinc-400">SteamID</th> */}
+                      {/* <th className="text-left py-3 px-4 text-zinc-400">SteamID64</th> */}
                       <th className="text-left py-3 px-4 text-zinc-400">Razón</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Admin</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Duración</th>

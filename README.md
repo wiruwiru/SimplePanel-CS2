@@ -15,3 +15,5 @@
 * `@web/mute.edit` - Editar un muteo
 * `@web/mute.unmute` - Desbanear un muteo
 * `@web/mute.remove` - Remover un muteo
+
+* `@web/search.players` - Posibilidad de buscar jugadores (mediante los logs de conexiones)
