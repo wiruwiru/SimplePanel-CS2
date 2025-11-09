@@ -6,3 +6,12 @@ CREATE TABLE IF NOT EXISTS `sp_users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `steam_id` (`steam_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `sp_visibility_settings` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `server_id` bigint(20) unsigned NOT NULL,
+  `is_visible` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

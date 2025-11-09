@@ -1,63 +1,93 @@
 "use client"
 
+import { useState } from 'react';
+import { Shield } from "lucide-react"
 import withAuth from "@/hooks/withAuth"
 import { useAuth } from "@/contexts/AuthContext"
-import { Shield, Flag, User } from "lucide-react"
+import { BansTab } from "@/components/Admin/BansTab"
+import { MutesTab } from "@/components/Admin/MutesTab"
+import { AdminsTab } from "@/components/Admin/AdminsTab"
+import { ServersTab } from "@/components/Admin/ServersTab"
+import { SettingsTab } from "@/components/Admin/SettingsTab"
+
+const Tabs = ({ defaultValue, children }) => {
+  const [activeTab, setActiveTab] = useState(defaultValue);
+  
+  return (
+    <div className="w-full">
+      {children.map((child, index) => {
+        if (child.type.name === 'TabsList') {
+          return <child.type {...child.props} activeTab={activeTab} setActiveTab={setActiveTab} key={`tabs-list-${index}`} />;
+        }
+        if (child.type.name === 'TabsContent' && child.props.value === activeTab) {
+          return <div key={`tabs-content-${index}`}>{child}</div>;
+        }
+        return null;
+      })}
+    </div>
+  );
+};
+
+const TabsList = ({ children, activeTab, setActiveTab }) => (
+  <div className="grid w-full grid-cols-2 md:grid-cols-5 bg-zinc-900 border border-zinc-800 rounded-lg p-1 mb-6">
+    {children.map((child, index) => (
+      <child.type {...child.props} activeTab={activeTab} setActiveTab={setActiveTab} key={`trigger-${index}`} />
+    ))}
+  </div>
+);
+
+const TabsTrigger = ({ value, children, activeTab, setActiveTab }) => (
+  <button onClick={() => setActiveTab(value)} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === value ? 'bg-[#FFB800] text-white' : 'text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800'}`}>{children}</button>
+);
+
+const TabsContent = ({ value, children }) => (
+  <div>{children}</div>
+);
 
 function AdminPage() {
   const { user, flags } = useAuth()
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-
-        <div className="bg-zinc-900 border-zinc-800 rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <User className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-white">Información del visitante</h2>
-              <p className="text-sm text-gray-400">Detalles de tu cuenta</p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-400">Nombre:</span>
-              <span className="text-white">{user?.displayName || "N/A"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-400">Steam ID:</span>
-              <span className="text-white font-mono text-sm">{user?.steamId || "N/A"}</span>
-            </div>
-          </div>
+    <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-center gap-3">
+        <Shield className="size-8 text-[#FFB800]" />
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-100 mb-1">Panel de administración</h2>
+          <p className="text-zinc-400 text-sm md:text-base">Añade nuevas sanciones, modifica las existentes o simplemente busca información de un jugador sancionado.</p>
         </div>
-
-        <div className="bg-zinc-900 border-zinc-800 rounded-lg shadow-md p-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Flag className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-white">Flags de Permisos</h2>
-              <p className="text-sm text-gray-400">Flags asignados a tu cuenta</p>
-            </div>
-          </div>
-
-          {flags.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {flags.map((flag, index) => (
-                <span key={index} className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700 border border-blue-200">{flag}</span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 italic">No tienes flags asignados</p>
-          )}
-        </div>
-
       </div>
+
+      <Tabs defaultValue="bans">
+        <TabsList>
+          <TabsTrigger value="bans">Baneos</TabsTrigger>
+          <TabsTrigger value="mutes">Muteos</TabsTrigger>
+          <TabsTrigger value="admins">Administradores</TabsTrigger>
+          <TabsTrigger value="servers">Servidores</TabsTrigger>
+          <TabsTrigger value="settings">Configuración</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="bans">
+          <BansTab />
+        </TabsContent>
+
+        <TabsContent value="mutes">
+          <MutesTab />
+        </TabsContent>
+
+        <TabsContent value="admins">
+          <AdminsTab />
+        </TabsContent>
+
+        <TabsContent value="servers">
+          <ServersTab />
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <SettingsTab />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
 
-export default withAuth(AdminPage, "@web/root")
+export default withAuth(AdminPage, "@web/access")
