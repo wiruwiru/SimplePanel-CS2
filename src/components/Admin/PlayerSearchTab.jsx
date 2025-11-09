@@ -167,12 +167,11 @@ export function PlayerSearchTab() {
                     <div className="mt-3">
                       <Button size="sm" variant="outline" onClick={() => togglePlayerExpand(player.steamId)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
                         <Network className="size-3 mr-1" />
-                        {expandedPlayer === player.steamId ? "Ocultar" : "Ver"} historial de IPs
+                        {expandedPlayer === player.steamId ? "Ocultar" : "Ver"} su dirección IP
                       </Button>
 
                       {expandedPlayer === player.steamId && (
                         <div className="mt-3 space-y-2">
-                          <p className="text-xs text-zinc-500 font-medium">IPs RECIENTES:</p>
                           <div className="space-y-1">
                             {player.recentIps.map((record, idx) => (
                               <div key={idx} className="bg-zinc-900 rounded p-2 flex justify-between items-center text-sm" >
