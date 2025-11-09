@@ -113,7 +113,7 @@ export function PlayerSearchTab() {
             <UserSearch className="size-5 text-[#FFB800]" />
             <div>
               <CardTitle className="text-zinc-100">Búsqueda de jugadores</CardTitle>
-              <p className="text-zinc-400 text-sm mt-1">Busca las conexiones de los jugadores por su nombre, SteamID64 o IP</p>
+              <p className="text-zinc-400 text-sm mt-1">Busca jugadores por su nombre, SteamID64 o IP</p>
             </div>
           </div>
         </CardHeader>

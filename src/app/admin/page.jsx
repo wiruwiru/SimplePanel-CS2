@@ -53,7 +53,7 @@ function AdminPage() {
         <Shield className="size-8 text-[#FFB800]" />
         <div>
           <h2 className="text-2xl font-bold text-zinc-100 mb-1">Panel de administración</h2>
-          <p className="text-zinc-400 text-sm md:text-base">Añade nuevas sanciones, modifica las existentes o simplemente busca información de un jugador sancionado.</p>
+          <p className="text-zinc-400 text-sm md:text-base">Añade nuevas sanciones, modifica las existentes o simplemente busca información de un jugador.</p>
         </div>
       </div>
 
