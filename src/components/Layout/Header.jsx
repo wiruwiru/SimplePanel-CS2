@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/AuthContext"
 import { Shield, LogOut, User, Menu, X } from "lucide-react"
@@ -53,10 +54,10 @@ export function Header() {
     <header className="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
       <div className="px-4 md:px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <Shield className="size-6 md:size-8 text-orange-500" />
             <h1 className="text-zinc-100 text-lg md:text-xl">SimplePanel</h1>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
