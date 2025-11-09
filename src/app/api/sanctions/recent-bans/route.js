@@ -14,7 +14,6 @@ export async function GET() {
         created,
         status
       FROM sa_bans
-      WHERE status = 'ACTIVE'
       ORDER BY created DESC
       LIMIT 5
     `)
@@ -33,7 +32,7 @@ export async function GET() {
         hour: '2-digit',
         minute: '2-digit'
       }),
-      status: 'active'
+      status: ban.status || 'ACTIVE'
     }))
 
     return NextResponse.json(formattedBans)

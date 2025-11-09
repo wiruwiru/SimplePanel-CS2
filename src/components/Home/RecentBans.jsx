@@ -3,9 +3,30 @@
 import { useState, useEffect } from "react"
 import { Ban } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
-import { Badge } from "@/components/UI/badge"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+
+const getStatusConfig = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'ACTIVE':
+      return { label: 'Activo', className: 'bg-red-600 text-white' };
+    case 'EXPIRED':
+      return { label: 'Expirado', className: 'bg-green-600 text-white' };
+    case 'UNBANNED':
+      return { label: 'Desbaneado', className: 'bg-blue-600 text-white' };
+    default:
+      return { label: 'Desconocido', className: 'bg-zinc-700 text-white' };
+  }
+};
+
+const StatusBadge = ({ status }) => {
+  const config = getStatusConfig(status);
+  return (
+    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${config.className}`}>
+      {config.label}
+    </span>
+  );
+};
 
 export function RecentBans() {
   const [recentBans, setRecentBans] = useState([])
@@ -76,11 +97,11 @@ export function RecentBans() {
                     </Avatar>
                   </a>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <Badge variant="destructive" className="bg-red-600 text-xs">Baneo</Badge>
-                      <span className="text-zinc-100 text-sm md:text-base break-all">{getDisplayName(ban)}</span>
-                    </div>
-                    <div className="text-zinc-500 text-xs md:text-sm mb-1 break-all">{ban.steamId}</div>
+                    <div className="text-zinc-100 text-sm md:text-base break-all mb-1">{getDisplayName(ban)}</div>
+                    <div className="text-zinc-500 text-xs md:text-sm break-all">{ban.steamId}</div>
+                  </div>
+                  <div className="shrink-0">
+                    <StatusBadge status={ban.status} />
                   </div>
                 </div>
                 <div className="text-zinc-400 text-xs md:text-sm space-y-1">

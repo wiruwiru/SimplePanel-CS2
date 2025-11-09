@@ -1,11 +1,73 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { VolumeX } from "lucide-react"
+import { VolumeX, MessageSquareOff, Mic, Volume2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
-import { Badge } from "@/components/UI/badge"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+
+const getStatusConfig = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'ACTIVE':
+      return { label: 'Activo', className: 'bg-red-600 text-white' };
+    case 'EXPIRED':
+      return { label: 'Expirado', className: 'bg-green-600 text-white' };
+    case 'UNMUTED':
+      return { label: 'Desmuteado', className: 'bg-blue-600 text-white' };
+    default:
+      return { label: 'Desconocido', className: 'bg-zinc-700 text-white' };
+  }
+};
+
+const getMuteTypeConfig = (type) => {
+  switch (type?.toUpperCase()) {
+    case 'GAG':
+      return {
+        label: 'Gag',
+        icon: MessageSquareOff,
+        className: 'bg-orange-600 text-white'
+      };
+    case 'MUTE':
+      return {
+        label: 'Mute',
+        icon: Mic,
+        className: 'bg-purple-600 text-white'
+      };
+    case 'SILENCE':
+      return {
+        label: 'Silence',
+        icon: Volume2,
+        className: 'bg-pink-600 text-white'
+      };
+    default:
+      return {
+        label: 'Desconocido',
+        icon: VolumeX,
+        className: 'bg-zinc-700 text-white'
+      };
+  }
+};
+
+const StatusBadge = ({ status }) => {
+  const config = getStatusConfig(status);
+  return (
+    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${config.className}`}>
+      {config.label}
+    </span>
+  );
+};
+
+const MuteTypeBadge = ({ type }) => {
+  const config = getMuteTypeConfig(type);
+  const Icon = config.icon;
+  
+  return (
+    <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 ${config.className}`}>
+      <Icon className="size-3" />
+      {config.label}
+    </span>
+  );
+};
 
 export function RecentMutes() {
   const [recentMutes, setRecentMutes] = useState([])
@@ -76,11 +138,12 @@ export function RecentMutes() {
                     </Avatar>
                   </a>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <Badge variant="secondary" className="bg-yellow-600 text-xs">Muteo</Badge>
-                      <span className="text-zinc-100 text-sm md:text-base break-all">{getDisplayName(mute)}</span>
-                    </div>
-                    <div className="text-zinc-500 text-xs md:text-sm mb-1 break-all">{mute.steamId}</div>
+                    <div className="text-zinc-100 text-sm md:text-base break-all mb-1">{getDisplayName(mute)}</div>
+                    <div className="text-zinc-500 text-xs md:text-sm break-all">{mute.steamId}</div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <MuteTypeBadge type={mute.type} />
+                    <StatusBadge status={mute.status} />
                   </div>
                 </div>
                 <div className="text-zinc-400 text-xs md:text-sm space-y-1">

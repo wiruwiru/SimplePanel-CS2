@@ -12,7 +12,8 @@ export async function GET() {
         reason,
         duration,
         created,
-        status
+        status,
+        type
       FROM sa_mutes
       ORDER BY created DESC
       LIMIT 5
@@ -32,7 +33,8 @@ export async function GET() {
         hour: '2-digit',
         minute: '2-digit'
       }),
-      status: 'active'
+      status: mute.status || 'ACTIVE',
+      type: mute.type || 'GAG'
     }))
 
     return NextResponse.json(formattedMutes)

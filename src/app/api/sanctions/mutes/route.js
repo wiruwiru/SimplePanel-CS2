@@ -58,8 +58,8 @@ export async function GET(request) {
         hour: '2-digit',
         minute: '2-digit'
       }),
-      status: mute.status === 'ACTIVE' ? 'active' : 'expired',
-      type: mute.type
+      status: mute.status || 'ACTIVE',
+      type: mute.type || 'GAG'
     }))
 
     return NextResponse.json({

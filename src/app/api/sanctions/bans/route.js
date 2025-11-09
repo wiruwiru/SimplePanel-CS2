@@ -57,7 +57,7 @@ export async function GET(request) {
         hour: '2-digit',
         minute: '2-digit'
       }),
-      status: ban.status === 'ACTIVE' ? 'active' : 'expired'
+      status: ban.status || 'ACTIVE'
     }))
 
     return NextResponse.json({

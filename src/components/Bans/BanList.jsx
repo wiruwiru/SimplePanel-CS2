@@ -4,12 +4,33 @@ import { useState, useEffect, useCallback } from "react"
 import { Ban, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { Input } from "@/components/UI/input"
-import { Badge } from "@/components/UI/badge"
 import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 
 const ITEMS_PER_PAGE = 15
+
+const getStatusConfig = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'ACTIVE':
+      return { label: 'Activo', className: 'bg-red-600 text-white' };
+    case 'EXPIRED':
+      return { label: 'Expirado', className: 'bg-green-600 text-white' };
+    case 'UNBANNED':
+      return { label: 'Desbaneado', className: 'bg-blue-600 text-white' };
+    default:
+      return { label: 'Desconocido', className: 'bg-zinc-700 text-white' };
+  }
+};
+
+const StatusBadge = ({ status }) => {
+  const config = getStatusConfig(status);
+  return (
+    <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.className}`}>
+      {config.label}
+    </span>
+  );
+};
 
 export function BanList() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -141,9 +162,7 @@ export function BanList() {
                           <div className="text-zinc-500 text-sm break-all">{ban.steamId}</div>
                         </div>
                       </div>
-                      <Badge variant={ban.status === "active" ? "destructive" : "secondary"} className={`${ban.status === "active" ? "bg-red-600" : "bg-zinc-700"}`} >
-                        {ban.status === "active" ? "Activo" : "Expirado"}
-                      </Badge>
+                      <StatusBadge status={ban.status} />
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="text-zinc-400">
@@ -194,9 +213,7 @@ export function BanList() {
                         <td className="py-3 px-4 text-zinc-300">{ban.duration}</td>
                         <td className="py-3 px-4 text-zinc-400 text-sm">{ban.date}</td>
                         <td className="py-3 px-4">
-                          <Badge variant={ban.status === "active" ? "destructive" : "secondary"} className={ban.status === "active" ? "bg-red-600" : "bg-zinc-700"} >
-                            {ban.status === "active" ? "Activo" : "Expirado"}
-                          </Badge>
+                          <StatusBadge status={ban.status} />
                         </td>
                       </tr>
                     ))}

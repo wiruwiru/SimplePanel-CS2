@@ -1,15 +1,77 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { VolumeX, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { VolumeX, Search, ChevronLeft, ChevronRight, MessageSquareOff, Mic, Volume2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { Input } from "@/components/UI/input"
-import { Badge } from "@/components/UI/badge"
 import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 
 const ITEMS_PER_PAGE = 15
+
+const getStatusConfig = (status) => {
+  switch (status?.toUpperCase()) {
+    case 'ACTIVE':
+      return { label: 'Activo', className: 'bg-red-600 text-white' };
+    case 'EXPIRED':
+      return { label: 'Expirado', className: 'bg-green-600 text-white' };
+    case 'UNMUTED':
+      return { label: 'Desmuteado', className: 'bg-blue-600 text-white' };
+    default:
+      return { label: 'Desconocido', className: 'bg-zinc-700 text-white' };
+  }
+};
+
+const getMuteTypeConfig = (type) => {
+  switch (type?.toUpperCase()) {
+    case 'GAG':
+      return {
+        label: 'Gag',
+        icon: MessageSquareOff,
+        className: 'bg-orange-600 text-white'
+      };
+    case 'MUTE':
+      return {
+        label: 'Mute',
+        icon: Mic,
+        className: 'bg-purple-600 text-white'
+      };
+    case 'SILENCE':
+      return {
+        label: 'Silence',
+        icon: Volume2,
+        className: 'bg-pink-600 text-white'
+      };
+    default:
+      return {
+        label: 'Desconocido',
+        icon: VolumeX,
+        className: 'bg-zinc-700 text-white'
+      };
+  }
+};
+
+const StatusBadge = ({ status }) => {
+  const config = getStatusConfig(status);
+  return (
+    <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.className}`}>
+      {config.label}
+    </span>
+  );
+};
+
+const MuteTypeBadge = ({ type }) => {
+  const config = getMuteTypeConfig(type);
+  const Icon = config.icon;
+  
+  return (
+    <span className={`px-1 py-1 rounded-full text-xs font-medium flex justify-center gap-1.5 ${config.className}`}>
+      <Icon className="size-3" />
+      {config.label}
+    </span>
+  );
+};
 
 export function MuteList() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -141,9 +203,10 @@ export function MuteList() {
                           <div className="text-zinc-500 text-sm break-all">{mute.steamId}</div>
                         </div>
                       </div>
-                      <Badge variant={mute.status === "active" ? "default" : "secondary"} className={`${mute.status === "active" ? "bg-yellow-600" : "bg-zinc-700"}`} >
-                        {mute.status === "active" ? "Activo" : "Expirado"}
-                      </Badge>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <MuteTypeBadge type={mute.type} />
+                        <StatusBadge status={mute.status} />
+                      </div>
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="text-zinc-400">
@@ -166,11 +229,11 @@ export function MuteList() {
                   <thead>
                     <tr className="border-b border-zinc-800">
                       <th className="text-left py-3 px-4 text-zinc-400">Jugador</th>
-                      {/* <th className="text-left py-3 px-4 text-zinc-400">SteamID</th> */}
                       <th className="text-left py-3 px-4 text-zinc-400">Razón</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Admin</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Duración</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Fecha</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">Tipo</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Estado</th>
                     </tr>
                   </thead>
@@ -188,15 +251,15 @@ export function MuteList() {
                             <span className="text-zinc-100">{getDisplayName(mute)}</span>
                           </div>
                         </td>
-                        {/* <td className="py-3 px-4 text-zinc-400 font-mono text-sm">{mute.steamId}</td> */}
                         <td className="py-3 px-4 text-zinc-300">{mute.reason}</td>
                         <td className="py-3 px-4 text-zinc-400">{mute.admin}</td>
                         <td className="py-3 px-4 text-zinc-300">{mute.duration}</td>
                         <td className="py-3 px-4 text-zinc-400 text-sm">{mute.date}</td>
                         <td className="py-3 px-4">
-                          <Badge variant={mute.status === "active" ? "default" : "secondary"} className={mute.status === "active" ? "bg-yellow-600" : "bg-zinc-700"} >
-                            {mute.status === "active" ? "Activo" : "Expirado"}
-                          </Badge>
+                          <MuteTypeBadge type={mute.type} />
+                        </td>
+                        <td className="py-3 px-4">
+                          <StatusBadge status={mute.status} />
                         </td>
                       </tr>
                     ))}
