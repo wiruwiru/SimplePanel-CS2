@@ -20,7 +20,7 @@ export async function GET(request) {
       throw new Error("Steam API key not configured")
     }
 
-    const steamApiUrl = `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${steamApiKey}&limit=9999&filter=\\gamedir\\csgo`
+    const steamApiUrl = `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${steamApiKey}&limit=9999&filter=\\gamedir\\csgo\\region\\2`
     const steamResponse = await fetch(steamApiUrl, {
       next: { revalidate: 0 }
     })

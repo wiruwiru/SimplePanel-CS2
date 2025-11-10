@@ -19,7 +19,7 @@ export async function GET() {
     }
 
     const steamApiKey = process.env.STEAM_API_KEY
-    const steamApiUrl = `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${steamApiKey}&limit=9999&filter=\\gamedir\\csgo`
+    const steamApiUrl = `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${steamApiKey}&limit=9999&filter=\\gamedir\\csgo\\region\\2`;
 
     let steamServers = []
     try {
