@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, Children, cloneElement, isValidElement } from 'react';
 import { Shield } from "lucide-react"
 import withAuth from "@/hooks/withAuth"
 import { useAuth } from "@/contexts/AuthContext"
@@ -15,12 +15,15 @@ const Tabs = ({ defaultValue, children }) => {
   
   return (
     <div className="w-full">
-      {children.map((child, index) => {
-        if (child.type.name === 'TabsList') {
-          return <child.type {...child.props} activeTab={activeTab} setActiveTab={setActiveTab} key={`tabs-list-${index}`} />;
+      {Children.map(children, (child) => {
+        if (!isValidElement(child)) return null;
+        
+        if (child.type === TabsList) {
+          return cloneElement(child, { activeTab, setActiveTab });
         }
-        if (child.type.name === 'TabsContent' && child.props.value === activeTab) {
-          return <div key={`tabs-content-${index}`}>{child}</div>;
+        
+        if (child.type === TabsContent && child.props.value === activeTab) {
+          return child;
         }
         return null;
       })}
@@ -30,9 +33,10 @@ const Tabs = ({ defaultValue, children }) => {
 
 const TabsList = ({ children, activeTab, setActiveTab }) => (
   <div className="grid w-full grid-cols-2 md:grid-cols-5 bg-zinc-900 border border-zinc-800 rounded-lg p-1 mb-6">
-    {children.map((child, index) => (
-      <child.type {...child.props} activeTab={activeTab} setActiveTab={setActiveTab} key={`trigger-${index}`} />
-    ))}
+    {Children.map(children, (child) => {
+      if (!isValidElement(child)) return null;
+      return cloneElement(child, { activeTab, setActiveTab });
+    })}
   </div>
 );
 
