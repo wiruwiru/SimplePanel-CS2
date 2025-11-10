@@ -1,0 +1,154 @@
+"use client"
+
+import { useState } from 'react';
+import { addToast } from "@heroui/react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { Button } from "@/components/UI/button"
+import { Input } from "@/components/UI/input"
+import { Label } from "@/components/UI/label"
+
+const Select = ({ value, onChange, children, className = '' }) => (
+  <select value={value} onChange={onChange} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full ${className}`}>{children}</select>
+);
+
+const Checkbox = ({ checked, onChange, id, label }) => (
+  <div className="flex items-center space-x-2">
+    <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 text-[#FFB800] bg-zinc-800 border-zinc-700 rounded focus:ring-[#FFB800] focus:ring-2 cursor-pointer" />
+    {label && <label htmlFor={id} className="text-sm text-zinc-300 cursor-pointer">{label}</label>}
+  </div>
+);
+
+const getInitialFormData = (editingAdmin) => {
+  if (editingAdmin) {
+    return {
+      steamId: editingAdmin.steamId,
+      name: editingAdmin.name,
+      permissionGroup: editingAdmin.groupId,
+      serverGroup: editingAdmin.servers.length > 0 ? 'custom' : 'all',
+      customFlags: editingAdmin.flags,
+      immunity: editingAdmin.immunity
+    }
+  }
+  return {
+    steamId: '',
+    name: '',
+    permissionGroup: null,
+    serverGroup: 'all',
+    customFlags: [],
+    immunity: 0
+  }
+}
+
+export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, permissionGroups, serverGroups, onSuccess }) {
+  const [formData, setFormData] = useState(() => getInitialFormData(editingAdmin))
+  const handleOpenChange = (isOpen) => {
+    if (isOpen) {
+      setFormData(getInitialFormData(editingAdmin))
+    }
+    onOpenChange(isOpen)
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    try {
+      const method = editingAdmin ? 'PATCH' : 'POST'
+      const response = await fetch('/api/admin/admins', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          steamId: formData.steamId,
+          name: formData.name,
+          groupId: formData.permissionGroup,
+          serverGroupId: formData.serverGroup,
+          flags: formData.customFlags,
+          immunity: formData.immunity
+        })
+      })
+
+      if (response.ok) {
+        addToast({ 
+          title: editingAdmin ? 'Administrador actualizado' : 'Administrador creado', 
+          color: 'success', 
+          variant: 'solid' 
+        })
+        onSuccess()
+      } else {
+        const error = await response.json()
+        addToast({ title: error.error || 'Error', color: 'danger', variant: 'solid' })
+      }
+    } catch (error) {
+      console.error('Error saving admin:', error)
+      addToast({ title: 'Error al guardar administrador', color: 'danger', variant: 'solid' })
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-zinc-100">{editingAdmin ? 'Editar Administrador' : 'Nuevo Administrador'}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="steamId" className="text-zinc-300">SteamID64</Label>
+              <Input id="steamId" placeholder="76561199074660131" value={formData.steamId} onChange={(e) => setFormData({...formData, steamId: e.target.value})} className="bg-zinc-800 border-zinc-700 text-zinc-100" required disabled={!!editingAdmin} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-zinc-300">Nombre</Label>
+              <Input id="name" placeholder="Nombre del admin" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="permGroup" className="text-zinc-300">Grupo de Permisos</Label>
+              <Select id="permGroup" value={formData.permissionGroup || ''} onChange={(e) => setFormData({...formData, permissionGroup: e.target.value ? parseInt(e.target.value) : null})} >
+                <option value="">Ninguno</option>
+                {permissionGroups.map(g => (
+                  <option key={g.id} value={g.id}>{g.name}</option>
+                ))}
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="serverGroup" className="text-zinc-300">Grupo de Servidores</Label>
+              <Select id="serverGroup" value={formData.serverGroup} onChange={(e) => setFormData({...formData, serverGroup: e.target.value})} >
+                <option value="all">Todos los Servidores</option>
+                {serverGroups.map(g => (
+                  <option key={g.id} value={g.id}>{g.name}</option>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="immunity" className="text-zinc-300">Inmunidad</Label>
+            <Input id="immunity" type="number" min="0" max="100" value={formData.immunity} onChange={(e) => setFormData({...formData, immunity: parseInt(e.target.value) || 0})} className="bg-zinc-800 border-zinc-700 text-zinc-100" />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-zinc-300">Flags adicionales</Label>
+            <div className="bg-zinc-800 p-4 rounded-lg border border-zinc-700 max-h-48 overflow-y-auto space-y-2">
+              {permissions.map(perm => (
+                <Checkbox key={perm.flag} id={perm.flag} label={`${perm.flag} - ${perm.description}`} checked={formData.customFlags.includes(perm.flag)}
+                  onChange={(checked) => {
+                    if (checked) {
+                      setFormData({...formData, customFlags: [...formData.customFlags, perm.flag]})
+                    } else {
+                      setFormData({...formData, customFlags: formData.customFlags.filter(f => f !== perm.flag)})
+                    }
+                  }} />
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100">Cancelar</Button>
+            <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">{editingAdmin ? 'Actualizar' : 'Crear'}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
