@@ -155,7 +155,7 @@ export function PlayerSearchTab() {
                               <span className="text-zinc-300">{player.lastConnection}</span>
                             </span>
                             <span>
-                              <span className="text-zinc-500">Total conexiones:</span>{" "}
+                              <span className="text-zinc-500">Conexiones:</span>{" "}
                               <span className="text-zinc-300">{player.totalConnections}</span>
                             </span>
                           </div>
