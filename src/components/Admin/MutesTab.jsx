@@ -137,7 +137,7 @@ export function MutesTab() {
   const fetchMutes = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/admin/mutes?page=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(debouncedSearch)}`, { cache: "no-store" })
+      const response = await fetch(`/api/admin/sanctions/mutes?page=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(debouncedSearch)}`, { cache: "no-store" })
       if (response.ok) {
         const data = await response.json()
         setMutes(data.mutes)

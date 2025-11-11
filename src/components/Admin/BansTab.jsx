@@ -94,7 +94,7 @@ export function BansTab() {
   const fetchBans = useCallback(async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/admin/bans?page=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(debouncedSearch)}`, { cache: "no-store" })
+      const response = await fetch(`/api/admin/sanctions/bans?page=${currentPage}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(debouncedSearch)}`, { cache: "no-store" })
       if (response.ok) {
         const data = await response.json()
         setBans(data.bans)
