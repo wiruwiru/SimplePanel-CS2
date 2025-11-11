@@ -9,6 +9,7 @@ import { MutesTab } from "@/components/Admin/MutesTab"
 import { AdminsTab } from "@/components/Admin/AdminsTab"
 import { ServersTab } from "@/components/Admin/ServersTab"
 import { PlayerSearchTab } from "@/components/Admin/PlayerSearchTab"
+import { ChatLogsTab } from "@/components/Admin/ChatLogsTab"
 
 const Tabs = ({ defaultValue, children }) => {
   const [activeTab, setActiveTab] = useState(defaultValue);
@@ -32,7 +33,7 @@ const Tabs = ({ defaultValue, children }) => {
 };
 
 const TabsList = ({ children, activeTab, setActiveTab }) => (
-  <div className="grid w-full grid-cols-2 md:grid-cols-5 bg-zinc-900 border border-zinc-800 rounded-lg p-1 mb-6">
+  <div className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 bg-zinc-900 border border-zinc-800 rounded-lg p-1 mb-6">
     {Children.map(children, (child) => {
       if (!isValidElement(child)) return null;
       return cloneElement(child, { activeTab, setActiveTab });
@@ -66,6 +67,7 @@ function AdminPage() {
           <TabsTrigger value="bans">Baneos</TabsTrigger>
           <TabsTrigger value="mutes">Muteos</TabsTrigger>
           <TabsTrigger value="playersearch">Buscar jugadores</TabsTrigger>
+          <TabsTrigger value="chatlogs">ChatLogs</TabsTrigger>
           <TabsTrigger value="admins">Administradores</TabsTrigger>
           <TabsTrigger value="servers">Servidores</TabsTrigger>
         </TabsList>
@@ -80,6 +82,10 @@ function AdminPage() {
 
         <TabsContent value="playersearch">
           <PlayerSearchTab />
+        </TabsContent>
+
+        <TabsContent value="chatlogs">
+          <ChatLogsTab />
         </TabsContent>
 
         <TabsContent value="admins">
