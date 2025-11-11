@@ -50,6 +50,7 @@ export async function GET(request) {
       admin: ban.admin_name || "Consola",
       reason: ban.reason || "Sin razón especificada",
       duration: ban.duration === 0 ? "Permanente" : `${ban.duration} minutos`,
+      durationMinutes: ban.duration || 0,
       date: new Date(ban.created).toLocaleString('es-AR', {
         year: 'numeric',
         month: '2-digit',
@@ -57,6 +58,8 @@ export async function GET(request) {
         hour: '2-digit',
         minute: '2-digit'
       }),
+      created: ban.created ? new Date(ban.created).getTime() : null,
+      ends: ban.ends ? new Date(ban.ends).getTime() : null,
       status: ban.status || 'ACTIVE'
     }))
 

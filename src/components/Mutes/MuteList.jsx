@@ -7,6 +7,7 @@ import { Input } from "@/components/UI/input"
 import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/UI/hover-card"
 
 const ITEMS_PER_PAGE = 15
 
@@ -140,6 +141,79 @@ export function MuteList() {
     return profiles[mute.steamId]?.displayName || mute.player
   }
 
+  const getProgressValue = (mute) => {
+    if (mute.durationMinutes === 0) {
+      return 100
+    }
+    
+    if (mute.status === 'EXPIRED' || mute.status === 'UNMUTED') {
+      return 100
+    }
+
+    if (!mute.created || !mute.ends) {
+      return 0
+    }
+
+    const now = Date.now()
+    const elapsed = now - mute.created
+    const total = mute.ends - mute.created
+
+    if (total <= 0) return 100
+    if (elapsed >= total) return 100
+
+    return Math.min(100, Math.max(0, (elapsed / total) * 100))
+  }
+
+  const getProgressColor = (mute) => {
+    if (mute.durationMinutes === 0) {
+      return 'bg-red-600'
+    }
+    
+    if (mute.status === 'EXPIRED' || mute.status === 'UNMUTED') {
+      return 'bg-green-600'
+    }
+
+    const progress = getProgressValue(mute)
+    if (progress < 50) {
+      return 'bg-orange-500'
+    } else if (progress < 80) {
+      return 'bg-yellow-500'
+    } else {
+      return 'bg-orange-600'
+    }
+  }
+
+  const getRemainingMinutes = (mute) => {
+    if (mute.durationMinutes === 0) {
+      return "Permanente"
+    }
+    
+    if (mute.status === 'EXPIRED' || mute.status === 'UNMUTED') {
+      return "Finalizada"
+    }
+
+    if (!mute.ends) {
+      return "Desconocido"
+    }
+
+    const now = Date.now()
+    const remaining = mute.ends - now
+    if (remaining <= 0) {
+      return "Finalizada"
+    }
+
+    const minutes = Math.floor(remaining / (1000 * 60))
+    const hours = Math.floor(minutes / 60)
+    const days = Math.floor(hours / 24)
+    if (days > 0) {
+      return `${days} día${days > 1 ? 's' : ''} y ${hours % 24} hora${(hours % 24) !== 1 ? 's' : ''}`
+    } else if (hours > 0) {
+      return `${hours} hora${hours > 1 ? 's' : ''} y ${minutes % 60} minuto${(minutes % 60) !== 1 ? 's' : ''}`
+    } else {
+      return `${minutes} minuto${minutes !== 1 ? 's' : ''}`
+    }
+  }
+
   if (loading && mutes.length === 0) {
     return (
       <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
@@ -220,6 +294,23 @@ export function MuteList() {
                       </div>
                       <div className="text-zinc-500 text-xs">{mute.date}</div>
                     </div>
+                    <div className="pt-2">
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <div className="cursor-help">
+                            <div className="relative h-2 w-full overflow-hidden rounded-full bg-zinc-700">
+                              <div className="h-full rounded-full transition-all" style={{width: `${getProgressValue(mute)}%`, backgroundColor: getProgressColor(mute) === 'bg-red-600' ? '#dc2626' : getProgressColor(mute) === 'bg-green-600' ? '#16a34a' : getProgressColor(mute) === 'bg-orange-500' ? '#f97316' : getProgressColor(mute) === 'bg-yellow-500' ? '#eab308' : getProgressColor(mute) === 'bg-orange-600' ? '#ea580c' : '#71717a'}} />
+                            </div>
+                          </div>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-auto p-3 bg-zinc-800 border-zinc-700 text-zinc-100">
+                          <div className="text-sm">
+                            <div className="font-medium mb-1">Tiempo restante</div>
+                            <div className="text-zinc-400">{getRemainingMinutes(mute)}</div>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -232,7 +323,8 @@ export function MuteList() {
                       <th className="text-left py-3 px-4 text-zinc-400">Razón</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Admin</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Duración</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Fecha</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">Progreso</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">Fecha de emisión</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Tipo</th>
                       <th className="text-left py-3 px-4 text-zinc-400">Estado</th>
                     </tr>
@@ -254,6 +346,23 @@ export function MuteList() {
                         <td className="py-3 px-4 text-zinc-300">{mute.reason}</td>
                         <td className="py-3 px-4 text-zinc-400">{mute.admin}</td>
                         <td className="py-3 px-4 text-zinc-300">{mute.duration}</td>
+                        <td className="py-3 px-4">
+                          <HoverCard>
+                            <HoverCardTrigger asChild>
+                              <div className="w-24 cursor-help">
+                                <div className="relative h-2 w-full overflow-hidden rounded-full bg-zinc-700">
+                                  <div className="h-full rounded-full transition-all" style={{width: `${getProgressValue(mute)}%`, backgroundColor: getProgressColor(mute) === 'bg-red-600' ? '#dc2626' : getProgressColor(mute) === 'bg-green-600' ? '#16a34a' : getProgressColor(mute) === 'bg-orange-500' ? '#f97316' : getProgressColor(mute) === 'bg-yellow-500' ? '#eab308' : getProgressColor(mute) === 'bg-orange-600' ? '#ea580c' : '#71717a'}} />
+                                </div>
+                              </div>
+                            </HoverCardTrigger>
+                            <HoverCardContent className="w-auto p-3 bg-zinc-800 border-zinc-700 text-zinc-100">
+                              <div className="text-sm">
+                                <div className="font-medium mb-1">Tiempo restante</div>
+                                <div className="text-zinc-400">{getRemainingMinutes(mute)}</div>
+                              </div>
+                            </HoverCardContent>
+                          </HoverCard>
+                        </td>
                         <td className="py-3 px-4 text-zinc-400 text-sm">{mute.date}</td>
                         <td className="py-3 px-4">
                           <MuteTypeBadge type={mute.type} />

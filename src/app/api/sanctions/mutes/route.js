@@ -51,6 +51,7 @@ export async function GET(request) {
       admin: mute.admin_name || "Consola",
       reason: mute.reason || "Sin razón especificada",
       duration: mute.duration === 0 ? "Permanente" : `${mute.duration} minutos`,
+      durationMinutes: mute.duration || 0,
       date: new Date(mute.created).toLocaleString('es-AR', {
         year: 'numeric',
         month: '2-digit',
@@ -58,6 +59,8 @@ export async function GET(request) {
         hour: '2-digit',
         minute: '2-digit'
       }),
+      created: mute.created ? new Date(mute.created).getTime() : null,
+      ends: mute.ends ? new Date(mute.ends).getTime() : null,
       status: mute.status || 'ACTIVE',
       type: mute.type || 'GAG'
     }))

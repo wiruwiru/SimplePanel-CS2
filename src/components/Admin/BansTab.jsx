@@ -270,7 +270,7 @@ export function BansTab() {
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-400">
                             <span><span className="text-zinc-500">Duración:</span> <span className="text-zinc-300">{ban.duration}</span></span>
                             {ban.ip && ban.ip !== '0' && (
-                              <span><span className="text-zinc-500">IP:</span> <span className="font-mono text-xs">{ban.ip}</span></span>
+                              <span><span className="text-zinc-500">IP:</span> <span className="text-zinc-300 font-mono text-xs">{ban.ip}</span></span>
                             )}
                           </div>
                           <div className="flex gap-4 mt-1 text-xs text-zinc-500">
