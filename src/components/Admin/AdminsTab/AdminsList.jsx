@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { addToast } from "@heroui/react"
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Shield } from 'lucide-react';
 import { Button } from "@/components/UI/button"
 import { AdminDialog } from "@/components/Admin/AdminsTab/UI/AdminDialog"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
@@ -73,7 +73,13 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <CardTitle className="text-zinc-100">Administradores</CardTitle>
+            <div className="flex items-center gap-2">
+              <Shield className="size-5 text-[#FFB800]" />
+              <div>
+                <CardTitle className="text-zinc-100">Administradores</CardTitle>
+                <p className="text-zinc-400 text-sm mt-1">Gestiona administradores, grupos de permisos y flags personalizados</p>
+              </div>
+            </div>
             <Button onClick={handleNew} className="bg-[#FFB800] hover:bg-[#ce9300]">
               <Plus className="size-4 mr-2" />
               Nuevo Admin

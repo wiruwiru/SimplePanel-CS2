@@ -217,10 +217,13 @@ export function BansTab() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="flex items-center gap-2 text-zinc-100">
+            <div className="flex items-center gap-2">
               <Ban className="size-5 text-[#FFB800]" />
-              Gestión de Baneos
-            </CardTitle>
+              <div>
+                <CardTitle className="text-zinc-100">Gestión de Baneos</CardTitle>
+                <p className="text-zinc-400 text-sm mt-1">Gestiona los baneos de los jugadores en los servidores</p>
+              </div>
+            </div>
             {canAdd && (
               <Button onClick={() => setDialogOpen(true)} className="bg-[#FFB800] hover:bg-[#ce9300]">
                 <Plus className="size-4 mr-2" />
