@@ -8,6 +8,7 @@ import { Button } from "@/components/UI/button"
 import { Input } from "@/components/UI/input"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+import { SanctionsHistory } from "@/components/Admin/PlayerSearchTab/SanctionsHistory"
 
 const ITEMS_PER_PAGE = 20
 
@@ -25,6 +26,7 @@ export function PlayerSearchTab() {
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState({})
   const [expandedPlayer, setExpandedPlayer] = useState(null)
+  const [selectedPlayer, setSelectedPlayer] = useState(null)
 
   const canView = hasFlag("@web/search.players")
 
@@ -92,6 +94,22 @@ export function PlayerSearchTab() {
     setExpandedPlayer(expandedPlayer === steamId ? null : steamId)
   }
 
+  const handlePlayerClick = (player) => {
+    if (selectedPlayer?.steamId === player.steamId) {
+      setSelectedPlayer(null)
+    } else {
+      setSelectedPlayer({
+        steamId: player.steamId,
+        name: getDisplayName(player),
+        avatarUrl: getAvatarUrl(player.steamId)
+      })
+    }
+  }
+
+  const handleCloseHistory = () => {
+    setSelectedPlayer(null)
+  }
+
   if (!canView) {
     return (
       <Card className="bg-zinc-900 border-zinc-800">
@@ -107,6 +125,9 @@ export function PlayerSearchTab() {
 
   return (
     <>
+      {selectedPlayer && (
+        <SanctionsHistory steamId={selectedPlayer.steamId} playerName={selectedPlayer.name} avatarUrl={selectedPlayer.avatarUrl} onClose={handleCloseHistory} />
+      )}
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -135,10 +156,10 @@ export function PlayerSearchTab() {
             <>
               <div className="space-y-2">
                 {players.map((player) => (
-                  <div key={player.steamId} className="bg-zinc-800 rounded-lg border border-zinc-700 p-4">
+                  <div key={player.steamId} className={`bg-zinc-800 rounded-lg border border-zinc-700 p-4 cursor-pointer transition-all hover:bg-zinc-700 hover:border-zinc-600 ${selectedPlayer?.steamId === player.steamId ? 'ring-2 ring-[#FFB800] border-[#FFB800]' : ''}`} onClick={() => handlePlayerClick(player)} >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-start gap-3 flex-1">
-                        <a href={`https://steamcommunity.com/profiles/${player.steamId}`} target="_blank" rel="noopener noreferrer" >
+                        <a href={`https://steamcommunity.com/profiles/${player.steamId}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} >
                           <Avatar className="size-10 shrink-0">
                             <AvatarImage src={getAvatarUrl(player.steamId) || "/placeholder.svg"} alt={player.name} />
                             <AvatarFallback>{player.name.substring(0, 2).toUpperCase()}</AvatarFallback>
@@ -164,7 +185,7 @@ export function PlayerSearchTab() {
                       <Badge className="bg-blue-600 text-white">{player.totalConnections} {player.totalConnections === 1 ? "registro" : "registros"}</Badge>
                     </div>
 
-                    <div className="mt-3">
+                    <div className="mt-3" onClick={(e) => e.stopPropagation()}>
                       <Button size="sm" variant="outline" onClick={() => togglePlayerExpand(player.steamId)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
                         <Network className="size-3 mr-1" />
                         {expandedPlayer === player.steamId ? "Ocultar" : "Ver"} su dirección IP
