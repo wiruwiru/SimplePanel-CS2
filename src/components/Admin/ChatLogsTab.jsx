@@ -70,7 +70,7 @@ export function ChatLogsTab() {
   const [servers, setServers] = useState([])
   const [showFilters, setShowFilters] = useState(false)
 
-  const canView = hasFlag("@web/chatlogs")
+  const canView = hasFlag("@web/chatlogs.view")
 
   useEffect(() => {
     const timer = setTimeout(() => {

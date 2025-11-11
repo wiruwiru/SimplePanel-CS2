@@ -95,4 +95,5 @@ INSERT INTO `sp_permissions` (`flag`, `description`, `is_custom`) VALUES
 ('@web/group.edit', 'Web-only: Permission to edit a group.', 0),
 ('@web/group.delete', 'Web-only: Permission to delete a group.', 0),
 ('@web/search.players', 'Web-only: Permission to search players and IPs.', 0)
+('@web/chatlogs.view', 'Web-only: Permission to view chatlogs.', 0)
 ON DUPLICATE KEY UPDATE `description` = VALUES(`description`);

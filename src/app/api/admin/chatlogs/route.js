@@ -22,7 +22,7 @@ export async function GET(request) {
       authorized,
       error: authError,
       status: authStatus,
-    } = await verifyAdminAccess({ headers: { cookie: `session=${sessionToken.value}` } }, "@web/chatlogs")
+    } = await verifyAdminAccess({ headers: { cookie: `session=${sessionToken.value}` } }, "@web/chatlogs.view")
     if (!authorized) {
       return NextResponse.json({ error: authError }, { status: authStatus })
     }
