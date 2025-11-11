@@ -119,7 +119,7 @@ export async function PATCH(request) {
         values.push(ip)
       }
       if (rconPassword) {
-        updates.push('rcon = ?')
+        updates.push('rcon_password = ?')
         values.push(rconPassword)
       }
       

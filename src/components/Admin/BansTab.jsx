@@ -2,9 +2,10 @@
 
 import { addToast } from "@heroui/react"
 import { useAuth } from "@/contexts/AuthContext"
-import { hasPermission, getPermissionLevel } from "@/lib/permission-utils"
+import { hasPermission } from "@/lib/permission-utils"
 import { useState, useEffect, useCallback } from 'react';
 import { Ban, Plus, Pencil, Trash2, ShieldOff, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { createBan, updateBan, deleteBan, unbanBan } from "@/services/sanctions/bans"
 import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
 import { Button } from "@/components/UI/button"
@@ -140,13 +141,24 @@ export function BansTab() {
     return profiles[ban.steamId]?.displayName || ban.player
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Crear/Editar ban:', formData);
-    setDialogOpen(false);
-    setEditingBan(null);
-    setFormData({ steamId: '', ip: '', reason: '', duration: '0' });
-    fetchBans();
+    try {
+      if (editingBan) {
+        await updateBan(editingBan.id, formData);
+        addToast({ title: 'Baneo actualizado correctamente', color: 'success', variant: 'solid' });
+      } else {
+        await createBan(formData);
+        addToast({ title: 'Baneo creado correctamente', color: 'success', variant: 'solid' });
+      }
+      setDialogOpen(false);
+      setEditingBan(null);
+      setFormData({ steamId: '', ip: '', reason: '', duration: '0' });
+      fetchBans();
+    } catch (error) {
+      console.error('Error saving ban:', error);
+      addToast({ title: error.message || 'Error al guardar baneo', color: 'danger', variant: 'solid' });
+    }
   };
 
   const handleEdit = (ban) => {
@@ -169,11 +181,12 @@ export function BansTab() {
   const handleUnbanConfirm = async () => {
     const ban = unbanAlert.ban;
     try {
+      await unbanBan(ban.id);
       addToast({ title: 'Usuario desbaneado correctamente', color: 'success', variant: 'solid' });
       fetchBans();
     } catch (error) {
       console.error('Error unbanning:', error);
-      addToast({ title: 'Error al desbanear usuario', color: 'danger', variant: 'solid' });
+      addToast({ title: error.message || 'Error al desbanear usuario', color: 'danger', variant: 'solid' });
     } finally {
       setUnbanAlert({ open: false, ban: null });
     }
@@ -187,11 +200,12 @@ export function BansTab() {
   const handleDeleteConfirm = async () => {
     const ban = deleteAlert.ban;
     try {
+      await deleteBan(ban.id);
       addToast({ title: 'Baneo eliminado correctamente', color: 'success', variant: 'solid' });
       fetchBans();
     } catch (error) {
       console.error('Error deleting ban:', error);
-      addToast({ title: 'Error al eliminar baneo', color: 'danger', variant: 'solid' });
+      addToast({ title: error.message || 'Error al eliminar baneo', color: 'danger', variant: 'solid' });
     } finally {
       setDeleteAlert({ open: false, ban: null });
     }

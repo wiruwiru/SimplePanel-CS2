@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useState, useEffect, useCallback } from 'react';
 import { hasPermission } from "@/lib/permission-utils"
 import { VolumeX, Plus, Pencil, Trash2, Volume2, Search, MessageSquareOff, Mic, ChevronLeft, ChevronRight } from 'lucide-react';
+import { createMute, updateMute, deleteMute, unmuteMute } from "@/services/sanctions/mutes"
 import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
 import { Button } from "@/components/UI/button"
@@ -183,12 +184,18 @@ export function MutesTab() {
     return profiles[mute.steamId]?.displayName || mute.player
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Crear muteo:', formData);
-    setDialogOpen(false);
-    setFormData({ steamId: '', reason: '', duration: '60', type: 'MUTE' });
-    fetchMutes();
+    try {
+      await createMute(formData);
+      addToast({ title: 'Muteo creado correctamente', color: 'success', variant: 'solid' });
+      setDialogOpen(false);
+      setFormData({ steamId: '', reason: '', duration: '60', type: 'MUTE' });
+      fetchMutes();
+    } catch (error) {
+      console.error('Error creating mute:', error);
+      addToast({ title: error.message || 'Error al crear muteo', color: 'danger', variant: 'solid' });
+    }
   };
 
   const handleUnmuteClick = (mute) => {
@@ -199,11 +206,12 @@ export function MutesTab() {
   const handleUnmuteConfirm = async () => {
     const mute = unmuteAlert.mute;
     try {
+      await unmuteMute(mute.id);
       addToast({ title: 'Usuario desmuteado correctamente', color: 'success', variant: 'solid' });
       fetchMutes();
     } catch (error) {
       console.error('Error unmuting:', error);
-      addToast({ title: 'Error al desmutear usuario', color: 'danger', variant: 'solid' });
+      addToast({ title: error.message || 'Error al desmutear usuario', color: 'danger', variant: 'solid' });
     } finally {
       setUnmuteAlert({ open: false, mute: null });
     }
@@ -217,11 +225,12 @@ export function MutesTab() {
   const handleDeleteConfirm = async () => {
     const mute = deleteAlert.mute;
     try {
+      await deleteMute(mute.id);
       addToast({ title: 'Muteo eliminado correctamente', color: 'success', variant: 'solid' });
       fetchMutes();
     } catch (error) {
       console.error('Error deleting mute:', error);
-      addToast({ title: 'Error al eliminar muteo', color: 'danger', variant: 'solid' });
+      addToast({ title: error.message || 'Error al eliminar muteo', color: 'danger', variant: 'solid' });
     } finally {
       setDeleteAlert({ open: false, mute: null });
     }

@@ -37,6 +37,9 @@
 ### Player Search
 * `@web/search.players` - Buscar jugadores (mediante los logs de conexiones)
 
+### Chatlogs
+* `@web/chatlogs.view` - Ver los mensajes enviados por los jugadores
+
 ## Permission Hierarchy
 Los permisos siguen una jerarquía donde:
 - `@web/root` otorga acceso a todas las funcionalidades
