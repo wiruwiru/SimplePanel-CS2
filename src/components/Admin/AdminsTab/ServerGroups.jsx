@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { addToast } from "@heroui/react"
 import { Plus, Server, Pencil, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { Button } from "@/components/UI/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { ServerGroupDialog } from "@/components/Admin/AdminsTab/UI/ServerGroupDialog"
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 
 export function ServerGroups({ groups, allServers, onRefresh }) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingGroup, setEditingGroup] = useState(null)
+  const [deleteAlert, setDeleteAlert] = useState({ open: false, group: null })
 
   const handleNew = () => {
     setEditingGroup(null)
@@ -21,10 +23,14 @@ export function ServerGroups({ groups, allServers, onRefresh }) {
     setDialogOpen(true)
   }
 
-  const handleDelete = async (groupId) => {
-    if (!confirm('¿Estás seguro de eliminar este grupo de servidores?')) return
+  const handleDeleteClick = (group) => {
+    setDeleteAlert({ open: true, group })
+  }
+
+  const handleDeleteConfirm = async () => {
+    const group = deleteAlert.group
     try {
-      const response = await fetch(`/api/admin/admins/server-groups?groupId=${groupId}`, {
+      const response = await fetch(`/api/admin/admins/server-groups?groupId=${group.id}`, {
         method: 'DELETE'
       })
 
@@ -38,6 +44,8 @@ export function ServerGroups({ groups, allServers, onRefresh }) {
     } catch (error) {
       console.error('Error deleting server group:', error)
       addToast({ title: 'Error al eliminar grupo de servidores', color: 'danger', variant: 'solid' })
+    } finally {
+      setDeleteAlert({ open: false, group: null })
     }
   }
 
@@ -76,7 +84,7 @@ export function ServerGroups({ groups, allServers, onRefresh }) {
                     <Button size="sm" variant="outline" onClick={() => handleEdit(group)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700 p-1.5" >
                       <Pencil className="size-3" />
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(group.id)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700 p-1.5" >
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteClick(group)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700 p-1.5" >
                       <Trash2 className="size-3" />
                     </Button>
                   </div>
@@ -88,6 +96,25 @@ export function ServerGroups({ groups, allServers, onRefresh }) {
       </Card>
 
       <ServerGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} editingGroup={editingGroup} allServers={allServers} onSuccess={handleSuccess} />
+
+      <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, group: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Eliminar grupo de servidores?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas eliminar el grupo <strong className="text-zinc-200">{deleteAlert.group?.name}</strong>? Todos los administradores asignados a este grupo perderán el acceso a estos servidores. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, group: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

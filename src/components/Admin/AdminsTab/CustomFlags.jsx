@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { addToast } from "@heroui/react"
 import { Tag, Plus, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
-import { Button } from "@/components/UI/button"
 import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
+import { Button } from "@/components/UI/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 
 export function CustomFlags({ permissions, onRefresh }) {
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [deleteAlert, setDeleteAlert] = useState({ open: false, flag: null })
   const [formData, setFormData] = useState({
     flag: '@custom/',
     description: ''
@@ -43,8 +45,12 @@ export function CustomFlags({ permissions, onRefresh }) {
     }
   }
 
-  const handleDelete = async (flag) => {
-    if (!confirm('¿Estás seguro de eliminar este flag personalizado?')) return
+  const handleDeleteClick = (flag) => {
+    setDeleteAlert({ open: true, flag })
+  }
+
+  const handleDeleteConfirm = async () => {
+    const flag = deleteAlert.flag
     try {
       const response = await fetch(`/api/admin/admins/permissions?flag=${encodeURIComponent(flag)}`, {
         method: 'DELETE'
@@ -60,6 +66,8 @@ export function CustomFlags({ permissions, onRefresh }) {
     } catch (error) {
       console.error('Error deleting custom flag:', error)
       addToast({ title: 'Error al eliminar flag', color: 'danger', variant: 'solid' })
+    } finally {
+      setDeleteAlert({ open: false, flag: null })
     }
   }
 
@@ -88,7 +96,7 @@ export function CustomFlags({ permissions, onRefresh }) {
                       <div className="text-zinc-100 font-medium text-sm mb-1 break-all">{flag.flag}</div>
                       <div className="text-zinc-400 text-xs wrap-break-words">{flag.description}</div>
                     </div>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(flag.flag)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700 p-1.5 shrink-0" >
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteClick(flag.flag)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700 p-1.5 shrink-0" >
                       <Trash2 className="size-3" />
                     </Button>
                   </div>
@@ -125,6 +133,25 @@ export function CustomFlags({ permissions, onRefresh }) {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, flag: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Eliminar flag personalizado?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de eliminar el flag <strong className="text-zinc-200">{deleteAlert.flag}</strong>? Esta acción no se puede deshacer y el flag se eliminará permanentemente del sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, flag: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

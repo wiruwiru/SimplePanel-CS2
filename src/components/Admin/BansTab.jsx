@@ -1,15 +1,18 @@
 "use client"
 
+import { addToast } from "@heroui/react"
+import { useAuth } from "@/contexts/AuthContext"
+import { hasPermission, getPermissionLevel } from "@/lib/permission-utils"
 import { useState, useEffect, useCallback } from 'react';
 import { Ban, Plus, Pencil, Trash2, ShieldOff, Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAuth } from "@/contexts/AuthContext"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
-import { Button } from "@/components/UI/button"
 import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 
 const ITEMS_PER_PAGE = 20
 
@@ -41,7 +44,7 @@ const getStatusConfig = (status) => {
 };
 
 export function BansTab() {
-  const { hasFlag } = useAuth()
+  const { hasFlag, flags, user } = useAuth()
   const [bans, setBans] = useState([]);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -58,11 +61,26 @@ export function BansTab() {
     duration: '0'
   });
 
+  const [deleteAlert, setDeleteAlert] = useState({ open: false, ban: null });
+  const [unbanAlert, setUnbanAlert] = useState({ open: false, ban: null });
+
   const canView = hasFlag('@web/ban.view');
   const canAdd = hasFlag('@web/ban.add');
-  const canEdit = hasFlag('@web/ban.edit');
-  const canUnban = hasFlag('@web/ban.unban');
-  const canRemove = hasFlag('@web/ban.remove');
+
+  const canEdit = (ban) => {
+    if (!ban) return false;
+    return hasPermission(flags, '@web/ban.edit', true, ban.adminSteamId, user?.steamId);
+  };
+
+  const canUnban = (ban) => {
+    if (!ban) return false;
+    return hasPermission(flags, '@web/ban.unban', true, ban.adminSteamId, user?.steamId);
+  };
+
+  const canRemove = (ban) => {
+    if (!ban) return false;
+    return hasPermission(flags, '@web/ban.remove', true, ban.adminSteamId, user?.steamId);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -132,7 +150,7 @@ export function BansTab() {
   };
 
   const handleEdit = (ban) => {
-    if (!canEdit) return;
+    if (!canEdit(ban)) return;
     setEditingBan(ban);
     setFormData({
       steamId: ban.steamId,
@@ -143,16 +161,39 @@ export function BansTab() {
     setDialogOpen(true);
   };
 
-  const handleUnban = (ban) => {
-    if (!canUnban) return;
-    console.log('Desbanear:', ban);
+  const handleUnbanClick = (ban) => {
+    if (!canUnban(ban)) return;
+    setUnbanAlert({ open: true, ban });
   };
 
-  const handleDelete = (ban) => {
-    if (!canRemove) return;
-    if (confirm('¿Estás seguro de eliminar este baneo?')) {
-      console.log('Eliminar:', ban);
+  const handleUnbanConfirm = async () => {
+    const ban = unbanAlert.ban;
+    try {
+      addToast({ title: 'Usuario desbaneado correctamente', color: 'success', variant: 'solid' });
       fetchBans();
+    } catch (error) {
+      console.error('Error unbanning:', error);
+      addToast({ title: 'Error al desbanear usuario', color: 'danger', variant: 'solid' });
+    } finally {
+      setUnbanAlert({ open: false, ban: null });
+    }
+  };
+
+  const handleDeleteClick = (ban) => {
+    if (!canRemove(ban)) return;
+    setDeleteAlert({ open: true, ban });
+  };
+
+  const handleDeleteConfirm = async () => {
+    const ban = deleteAlert.ban;
+    try {
+      addToast({ title: 'Baneo eliminado correctamente', color: 'success', variant: 'solid' });
+      fetchBans();
+    } catch (error) {
+      console.error('Error deleting ban:', error);
+      addToast({ title: 'Error al eliminar baneo', color: 'danger', variant: 'solid' });
+    } finally {
+      setDeleteAlert({ open: false, ban: null });
     }
   };
 
@@ -238,20 +279,20 @@ export function BansTab() {
                       <Badge className={statusConfig(ban.status).className}>{statusConfig(ban.status).label}</Badge>
                     </div>
                     <div className="flex gap-2 mt-3 flex-wrap">
-                      {canEdit && (
+                      {canEdit(ban) && (
                         <Button size="sm" variant="outline" onClick={() => handleEdit(ban)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
                           <Pencil className="size-3 mr-1" />
                           Editar
                         </Button>
                       )}
-                      {canUnban && ban.status === 'ACTIVE' && (
-                        <Button size="sm" variant="outline" onClick={() => handleUnban(ban)} className="bg-zinc-900 border-zinc-700 text-green-400 hover:bg-zinc-700">
+                      {ban.status === 'ACTIVE' && canUnban(ban) && (
+                        <Button size="sm" variant="outline" onClick={() => handleUnbanClick(ban)} className="bg-zinc-900 border-zinc-700 text-green-400 hover:bg-zinc-700">
                           <ShieldOff className="size-3 mr-1" />
                           Desbanear
                         </Button>
                       )}
-                      {canRemove && (
-                        <Button size="sm" variant="outline" onClick={() => handleDelete(ban)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700">
+                      {canRemove(ban) && (
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteClick(ban)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700">
                           <Trash2 className="size-3 mr-1" />
                           Eliminar
                         </Button>
@@ -333,12 +374,50 @@ export function BansTab() {
               </Select>
             </div>
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-800">Cancelar</Button>
+              <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-100">Cancelar</Button>
               <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">{editingBan ? 'Guardar Cambios' : 'Crear Baneo'}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={unbanAlert.open} onOpenChange={(open) => setUnbanAlert({ open, ban: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Desbanear usuario?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas desbanear a <strong className="text-zinc-200">{unbanAlert.ban?.player}</strong>? Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setUnbanAlert({ open: false, ban: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnbanConfirm} className="bg-green-600 hover:bg-green-700 text-white">
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, ban: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Eliminar baneo?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas eliminar el baneo de <strong className="text-zinc-200">{deleteAlert.ban?.player}</strong>? Esta acción eliminará permanentemente el registro del baneo de la base de datos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, ban: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

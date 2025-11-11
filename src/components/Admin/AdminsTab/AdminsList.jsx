@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { addToast } from "@heroui/react"
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { Button } from "@/components/UI/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { AdminDialog } from "@/components/Admin/AdminsTab/UI/AdminDialog"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 
 const Badge = ({ children, className = '' }) => (
   <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${className}`}>{children}</span>
@@ -15,6 +16,7 @@ const Badge = ({ children, className = '' }) => (
 export function AdminsList({ admins, profiles, permissions, permissionGroups, serverGroups, onRefresh }) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingAdmin, setEditingAdmin] = useState(null)
+  const [deleteAlert, setDeleteAlert] = useState({ open: false, admin: null })
 
   const getAvatarUrl = (steamId) => {
     return profiles[steamId]?.avatarUrl || "/placeholder.svg?height=40&width=40"
@@ -34,11 +36,14 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
     setDialogOpen(true)
   }
 
-  const handleDelete = async (steamId) => {
-    if (!confirm('¿Estás seguro de eliminar este administrador?')) return
+  const handleDeleteClick = (admin) => {
+    setDeleteAlert({ open: true, admin })
+  }
 
+  const handleDeleteConfirm = async () => {
+    const admin = deleteAlert.admin
     try {
-      const response = await fetch(`/api/admin/admins?steamId=${steamId}`, {
+      const response = await fetch(`/api/admin/admins?steamId=${admin.steamId}`, {
         method: 'DELETE'
       })
 
@@ -52,6 +57,8 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
     } catch (error) {
       console.error('Error deleting admin:', error)
       addToast({ title: 'Error al eliminar administrador', color: 'danger', variant: 'solid' })
+    } finally {
+      setDeleteAlert({ open: false, admin: null })
     }
   }
 
@@ -102,7 +109,7 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
                     <Button size="sm" variant="outline" onClick={() => handleEdit(admin)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
                       <Pencil className="size-3" />
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(admin.steamId)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700">
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteClick(admin)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700">
                       <Trash2 className="size-3" />
                     </Button>
                   </div>
@@ -116,15 +123,26 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
         </CardContent>
       </Card>
 
-      <AdminDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        editingAdmin={editingAdmin}
-        permissions={permissions}
-        permissionGroups={permissionGroups}
-        serverGroups={serverGroups}
-        onSuccess={handleSuccess}
-      />
+      <AdminDialog open={dialogOpen} onOpenChange={setDialogOpen} editingAdmin={editingAdmin} permissions={permissions} permissionGroups={permissionGroups} serverGroups={serverGroups} onSuccess={handleSuccess} />
+
+      <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, admin: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Eliminar administrador?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas eliminar a <strong className="text-zinc-200">{deleteAlert.admin?.name}</strong> como administrador? Esta acción eliminará todos sus permisos y accesos en todos los servidores.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, admin: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

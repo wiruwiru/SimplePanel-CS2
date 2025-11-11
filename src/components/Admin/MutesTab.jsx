@@ -1,15 +1,18 @@
 "use client"
 
-import { useState, useEffect, useCallback } from 'react';
-import { VolumeX, Plus, Pencil, Trash2, Volume2, Search, MessageSquareOff, Mic, ChevronLeft, ChevronRight } from 'lucide-react';
+import { addToast } from "@heroui/react"
 import { useAuth } from "@/contexts/AuthContext"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
-import { Button } from "@/components/UI/button"
+import { useState, useEffect, useCallback } from 'react';
+import { hasPermission } from "@/lib/permission-utils"
+import { VolumeX, Plus, Pencil, Trash2, Volume2, Search, MessageSquareOff, Mic, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 
 const ITEMS_PER_PAGE = 20
 
@@ -85,7 +88,7 @@ const MuteTypeBadge = ({ type }) => {
 };
 
 export function MutesTab() {
-  const { hasFlag } = useAuth()
+  const { hasFlag, flags, user } = useAuth()
   const [mutes, setMutes] = useState([]);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -101,11 +104,26 @@ export function MutesTab() {
     type: 'MUTE'
   });
 
+  const [deleteAlert, setDeleteAlert] = useState({ open: false, mute: null });
+  const [unmuteAlert, setUnmuteAlert] = useState({ open: false, mute: null });
+
   const canView = hasFlag('@web/mute.view');
   const canAdd = hasFlag('@web/mute.add');
-  const canEdit = hasFlag('@web/mute.edit');
-  const canUnmute = hasFlag('@web/mute.unmute');
-  const canRemove = hasFlag('@web/mute.remove');
+
+  const canEdit = (mute) => {
+    if (!mute) return false;
+    return hasPermission(flags, '@web/mute.edit', true, mute.adminSteamId, user?.steamId);
+  };
+
+  const canUnmute = (mute) => {
+    if (!mute) return false;
+    return hasPermission(flags, '@web/mute.unmute', true, mute.adminSteamId, user?.steamId);
+  };
+
+  const canRemove = (mute) => {
+    if (!mute) return false;
+    return hasPermission(flags, '@web/mute.remove', true, mute.adminSteamId, user?.steamId);
+  };
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -173,16 +191,39 @@ export function MutesTab() {
     fetchMutes();
   };
 
-  const handleUnmute = (mute) => {
-    if (!canUnmute) return;
-    console.log('Desmutear:', mute);
+  const handleUnmuteClick = (mute) => {
+    if (!canUnmute(mute)) return;
+    setUnmuteAlert({ open: true, mute });
   };
 
-  const handleDelete = (mute) => {
-    if (!canRemove) return;
-    if (confirm('¿Estás seguro de eliminar este muteo?')) {
-      console.log('Eliminar:', mute);
+  const handleUnmuteConfirm = async () => {
+    const mute = unmuteAlert.mute;
+    try {
+      addToast({ title: 'Usuario desmuteado correctamente', color: 'success', variant: 'solid' });
       fetchMutes();
+    } catch (error) {
+      console.error('Error unmuting:', error);
+      addToast({ title: 'Error al desmutear usuario', color: 'danger', variant: 'solid' });
+    } finally {
+      setUnmuteAlert({ open: false, mute: null });
+    }
+  };
+
+  const handleDeleteClick = (mute) => {
+    if (!canRemove(mute)) return;
+    setDeleteAlert({ open: true, mute });
+  };
+
+  const handleDeleteConfirm = async () => {
+    const mute = deleteAlert.mute;
+    try {
+      addToast({ title: 'Muteo eliminado correctamente', color: 'success', variant: 'solid' });
+      fetchMutes();
+    } catch (error) {
+      console.error('Error deleting mute:', error);
+      addToast({ title: 'Error al eliminar muteo', color: 'danger', variant: 'solid' });
+    } finally {
+      setDeleteAlert({ open: false, mute: null });
     }
   };
 
@@ -266,20 +307,20 @@ export function MutesTab() {
                       </div>
                     </div>
                     <div className="flex gap-2 mt-3 flex-wrap">
-                      {canEdit && (
+                      {canEdit(mute) && (
                         <Button size="sm" variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
                           <Pencil className="size-3 mr-1" />
                           Editar
                         </Button>
                       )}
-                      {canUnmute && mute.status === 'ACTIVE' && (
-                        <Button size="sm" variant="outline" onClick={() => handleUnmute(mute)} className="bg-zinc-900 border-zinc-700 text-green-400 hover:bg-zinc-700">
+                      {mute.status === 'ACTIVE' && canUnmute(mute) && (
+                        <Button size="sm" variant="outline" onClick={() => handleUnmuteClick(mute)} className="bg-zinc-900 border-zinc-700 text-green-400 hover:bg-zinc-700">
                           <Volume2 className="size-3 mr-1" />
                           Desmutear
                         </Button>
                       )}
-                      {canRemove && (
-                        <Button size="sm" variant="outline" onClick={() => handleDelete(mute)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700">
+                      {canRemove(mute) && (
+                        <Button size="sm" variant="outline" onClick={() => handleDeleteClick(mute)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700">
                           <Trash2 className="size-3 mr-1" />
                           Eliminar
                         </Button>
@@ -364,12 +405,50 @@ export function MutesTab() {
               </Select>
             </div>
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-800">Cancelar</Button>
+              <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-100">Cancelar</Button>
               <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">Crear Muteo</Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={unmuteAlert.open} onOpenChange={(open) => setUnmuteAlert({ open, mute: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Desmutear usuario?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas desmutear a <strong className="text-zinc-200">{unmuteAlert.mute?.player}</strong>? Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setUnmuteAlert({ open: false, mute: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnmuteConfirm} className="bg-green-600 hover:bg-green-700 text-white">
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, mute: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Eliminar muteo?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas eliminar el muteo de <strong className="text-zinc-200">{deleteAlert.mute?.player}</strong>? Esta acción eliminará permanentemente el registro del muteo de la base de datos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, mute: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

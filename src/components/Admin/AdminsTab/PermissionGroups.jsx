@@ -6,10 +6,12 @@ import { Plus, UserCog, Pencil, Trash2 } from 'lucide-react';
 import { Button } from "@/components/UI/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { PermissionGroupDialog } from "@/components/Admin/AdminsTab/UI/PermissionGroupDialog"
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 
 export function PermissionGroups({ groups, permissions, onRefresh }) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingGroup, setEditingGroup] = useState(null)
+  const [deleteAlert, setDeleteAlert] = useState({ open: false, group: null })
 
   const handleNew = () => {
     setEditingGroup(null)
@@ -21,11 +23,14 @@ export function PermissionGroups({ groups, permissions, onRefresh }) {
     setDialogOpen(true)
   }
 
-  const handleDelete = async (groupId) => {
-    if (!confirm('¿Estás seguro de eliminar este grupo?')) return
+  const handleDeleteClick = (group) => {
+    setDeleteAlert({ open: true, group })
+  }
 
+  const handleDeleteConfirm = async () => {
+    const group = deleteAlert.group
     try {
-      const response = await fetch(`/api/admin/admins/permission-groups?groupId=${groupId}`, {
+      const response = await fetch(`/api/admin/admins/permission-groups?groupId=${group.id}`, {
         method: 'DELETE'
       })
 
@@ -39,6 +44,8 @@ export function PermissionGroups({ groups, permissions, onRefresh }) {
     } catch (error) {
       console.error('Error deleting permission group:', error)
       addToast({ title: 'Error al eliminar grupo', color: 'danger', variant: 'solid' })
+    } finally {
+      setDeleteAlert({ open: false, group: null })
     }
   }
 
@@ -77,7 +84,7 @@ export function PermissionGroups({ groups, permissions, onRefresh }) {
                     <Button size="sm" variant="outline" onClick={() => handleEdit(group)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700 p-1.5" >
                       <Pencil className="size-3" />
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(group.id)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700 p-1.5" >
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteClick(group)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700 p-1.5" >
                       <Trash2 className="size-3" />
                     </Button>
                   </div>
@@ -89,6 +96,25 @@ export function PermissionGroups({ groups, permissions, onRefresh }) {
       </Card>
 
       <PermissionGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} editingGroup={editingGroup} permissions={permissions} onSuccess={handleSuccess} />
+
+      <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, group: null })}>
+        <AlertDialogContent className="bg-zinc-900 border-zinc-800">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-zinc-100">¿Eliminar grupo de permisos?</AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400">
+              ¿Estás seguro de que deseas eliminar el grupo <strong className="text-zinc-200">{deleteAlert.group?.name}</strong>? Todos los administradores que usen este grupo perderán sus permisos asociados. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, group: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
