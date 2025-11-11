@@ -8,6 +8,7 @@ import { AdminDialog } from "@/components/Admin/AdminsTab/UI/AdminDialog"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
+import { deleteAdmin } from "@/services/admins/admins"
 
 const Badge = ({ children, className = '' }) => (
   <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${className}`}>{children}</span>
@@ -43,20 +44,12 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
   const handleDeleteConfirm = async () => {
     const admin = deleteAlert.admin
     try {
-      const response = await fetch(`/api/admin/admins?steamId=${admin.steamId}`, {
-        method: 'DELETE'
-      })
-
-      if (response.ok) {
-        addToast({ title: 'Administrador eliminado', color: 'success', variant: 'solid' })
-        onRefresh()
-      } else {
-        const error = await response.json()
-        addToast({ title: error.error || 'Error', color: 'danger', variant: 'solid' })
-      }
+      await deleteAdmin(admin.steamId)
+      addToast({ title: 'Administrador eliminado', color: 'success', variant: 'solid' })
+      onRefresh()
     } catch (error) {
       console.error('Error deleting admin:', error)
-      addToast({ title: 'Error al eliminar administrador', color: 'danger', variant: 'solid' })
+      addToast({ title: error.message || 'Error al eliminar administrador', color: 'danger', variant: 'solid' })
     } finally {
       setDeleteAlert({ open: false, admin: null })
     }

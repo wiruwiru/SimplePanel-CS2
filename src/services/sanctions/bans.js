@@ -59,4 +59,3 @@ export async function deleteBan(id) {
 export async function unbanBan(id) {
   return updateBan(id, { status: 'UNBANNED' });
 }
-

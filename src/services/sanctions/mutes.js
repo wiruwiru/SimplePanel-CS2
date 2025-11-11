@@ -60,4 +60,3 @@ export async function deleteMute(id) {
 export async function unmuteMute(id) {
   return updateMute(id, { status: 'UNMUTED' });
 }
-
