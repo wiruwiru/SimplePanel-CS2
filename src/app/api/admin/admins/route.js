@@ -47,7 +47,7 @@ export async function GET(request) {
           name: admin.player_name,
           steamId: steamId,
           immunity: admin.immunity,
-          group: admin.group_name || 'Sin Grupo',
+          group: admin.group_name || 'Sin grupo',
           groupId: admin.group_id ? Number(admin.group_id) : null,
           flags: admin.flags ? admin.flags.split(',') : [],
           servers: [],
