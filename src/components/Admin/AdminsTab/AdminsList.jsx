@@ -86,10 +86,12 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
               <div key={admin.steamId} className="bg-zinc-800 rounded-lg border border-zinc-700 p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <Avatar className="size-10 shrink-0">
-                      <AvatarImage src={getAvatarUrl(admin.steamId)} alt={admin.name} />
-                      <AvatarFallback>{admin.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                    </Avatar>
+                    <a href={`https://steamcommunity.com/profiles/${admin.steamId}`} target="_blank" rel="noopener noreferrer" className="shrink-0" >
+                      <Avatar className="size-10 shrink-0 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
+                        <AvatarImage src={getAvatarUrl(admin.steamId)} alt={admin.name} />
+                        <AvatarFallback>{admin.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                    </a>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="text-zinc-100 font-medium">{getDisplayName(admin)}</span>

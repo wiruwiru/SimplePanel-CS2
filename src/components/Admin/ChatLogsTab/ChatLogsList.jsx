@@ -59,7 +59,7 @@ export function ChatLogsList({ chatlogs, loading, getAvatarUrl, getDisplayName, 
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <a href={`https://steamcommunity.com/profiles/${log.playerSteam64}`} target="_blank" rel="noopener noreferrer">
-                  <Avatar className="size-10 shrink-0">
+                  <Avatar className="size-10 shrink-0 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
                     <AvatarImage src={getAvatarUrl(log.playerSteam64)} alt={log.playerName} />
                     <AvatarFallback>{log.playerName.substring(0, 2).toUpperCase()}</AvatarFallback>
                   </Avatar>

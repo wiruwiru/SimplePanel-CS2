@@ -335,7 +335,7 @@ export function MuteList() {
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <a href={`https://steamcommunity.com/profiles/${mute.steamId}`} target="_blank" rel="noopener noreferrer" >
-                              <Avatar className="size-8">
+                              <Avatar className="size-8 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
                                 <AvatarImage src={getAvatarUrl(mute.steamId)} alt={mute.player} />
                                 <AvatarFallback>{mute.player.substring(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>

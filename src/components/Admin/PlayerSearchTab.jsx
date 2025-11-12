@@ -160,7 +160,7 @@ export function PlayerSearchTab() {
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-start gap-3 flex-1">
                         <a href={`https://steamcommunity.com/profiles/${player.steamId}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} >
-                          <Avatar className="size-10 shrink-0">
+                          <Avatar className="size-10 shrink-0 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
                             <AvatarImage src={getAvatarUrl(player.steamId) || "/placeholder.svg"} alt={player.name} />
                             <AvatarFallback>{player.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
@@ -186,7 +186,7 @@ export function PlayerSearchTab() {
                     </div>
 
                     <div className="mt-3" onClick={(e) => e.stopPropagation()}>
-                      <Button size="sm" variant="outline" onClick={() => togglePlayerExpand(player.steamId)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
+                      <Button size="sm" variant="outline" onClick={() => togglePlayerExpand(player.steamId)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-600 transition-colors" >
                         <Network className="size-3 mr-1" />
                         {expandedPlayer === player.steamId ? "Ocultar" : "Ver"} su dirección IP
                       </Button>
