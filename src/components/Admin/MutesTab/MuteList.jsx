@@ -98,7 +98,7 @@ export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit
                 </a>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-zinc-100 font-medium">{getDisplayName(mute.steamId, mute.player)}</span>
+                    <span className="text-zinc-100 font-medium">{getDisplayName(mute)}</span>
                     <span className="text-zinc-500 text-xs font-mono">({mute.steamId})</span>
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-zinc-400 mt-2 mb-1">

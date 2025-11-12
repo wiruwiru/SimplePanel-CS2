@@ -57,7 +57,7 @@ export function BanList({ bans, loading, getAvatarUrl, getDisplayName, canEdit, 
                   </a>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-zinc-100 font-medium">{getDisplayName(ban.steamId, ban.player)}</span>
+                      <span className="text-zinc-100 font-medium">{getDisplayName(ban)}</span>
                       <span className="text-zinc-500 text-xs font-mono">({ban.steamId})</span>
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 mb-1">
