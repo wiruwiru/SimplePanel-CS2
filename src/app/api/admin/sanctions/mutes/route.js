@@ -45,6 +45,7 @@ export async function GET(request) {
         player_name,
         player_steamid,
         admin_name,
+        admin_steamid,
         reason,
         duration,
         ends,
@@ -79,6 +80,7 @@ export async function GET(request) {
       player: mute.player_name || "Desconocido",
       steamId: mute.player_steamid ? String(mute.player_steamid) : "",
       admin: mute.admin_name || "Consola",
+      adminSteamId: mute.admin_steamid ? String(mute.admin_steamid) : null,
       reason: mute.reason || "Sin razón especificada",
       duration: mute.duration === 0 ? "Permanente" : `${mute.duration} minutos`,
       date: new Date(mute.created).toLocaleString('es-AR', {
@@ -258,19 +260,36 @@ export async function PATCH(request) {
     }
     const flags = await getUserFlags(user.steamId)
 
-    const canEdit = hasPermission(
-      flags,
-      "@web/mute.edit",
-      true,
-      muteAdminSteamId,
-      user.steamId
-    )
-
-    if (!canEdit) {
-      return NextResponse.json(
-        { error: "Acceso denegado - No tienes permisos para editar este mute" },
-        { status: 403 }
+    if (status === 'UNMUTED') {
+      const canUnmute = hasPermission(
+        flags,
+        "@web/mute.unmute",
+        true,
+        muteAdminSteamId,
+        user.steamId
       )
+
+      if (!canUnmute) {
+        return NextResponse.json(
+          { error: "Acceso denegado - No tienes permisos para desmutear este mute" },
+          { status: 403 }
+        )
+      }
+    } else {
+      const canEdit = hasPermission(
+        flags,
+        "@web/mute.edit",
+        true,
+        muteAdminSteamId,
+        user.steamId
+      )
+
+      if (!canEdit) {
+        return NextResponse.json(
+          { error: "Acceso denegado - No tienes permisos para editar este mute" },
+          { status: 403 }
+        )
+      }
     }
 
     const updates = []

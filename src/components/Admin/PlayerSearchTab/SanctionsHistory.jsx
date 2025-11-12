@@ -5,6 +5,7 @@ import { Ban, VolumeX, X, MessageSquareOff, Mic, Volume2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/UI/hover-card"
 
 const getStatusConfig = (status) => {
   switch (status?.toUpperCase()) {
@@ -113,9 +114,9 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={onClose} />
-      <div className="fixed left-4 top-28 w-[280px] max-h-[calc(100vh-8rem)] bg-zinc-900 border border-zinc-800 rounded-lg z-50 overflow-hidden shadow-xl hidden 2xl:block">
+      <div className="fixed left-4 top-28 bottom-24 w-[280px] bg-zinc-900 border border-zinc-800 rounded-lg z-50 overflow-hidden shadow-xl hidden 2xl:block">
         <Card className="bg-zinc-900 border-0 h-full flex flex-col">
-        <CardHeader className="border-b border-zinc-800 p-3">
+        <CardHeader className="border-b border-zinc-800 p-3 shrink-0">
           <div className="flex items-center justify-between mb-2">
             <CardTitle className="text-zinc-100 flex items-center gap-1.5 text-sm">
               <Ban className="size-4 text-[#FFB800]" />
@@ -138,7 +139,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
             </div>
           )}
         </CardHeader>
-        <CardContent className="flex-1 p-3 overflow-y-auto">
+        <CardContent className="flex-1 p-3 overflow-y-auto min-h-0">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Spinner className="size-5 text-[#FFB800]" />
@@ -161,9 +162,19 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
                   </div>
 
                   <div className="space-y-1 text-xs">
-                    <div className="text-zinc-300 line-clamp-1">
-                      <span className="text-zinc-500">Razón:</span> {sanction.reason}
-                    </div>
+                    <HoverCard>
+                      <HoverCardTrigger asChild>
+                        <div className="text-zinc-300 line-clamp-1 cursor-help">
+                          <span className="text-zinc-500">Razón:</span> {sanction.reason}
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-auto max-w-xs p-3 bg-zinc-800 border-zinc-700 text-zinc-100">
+                        <div className="text-xs">
+                          <div className="font-medium mb-1 text-zinc-400">Razón:</div>
+                          <div className="text-zinc-300">{sanction.reason}</div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
                     <div className="text-zinc-400">
                       <span className="text-zinc-500">Duración:</span> {sanction.duration}
                     </div>
@@ -179,8 +190,8 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
       </Card>
     </div>
       <div className="fixed inset-4 2xl:hidden z-50 flex items-center justify-center">
-        <Card className="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-md max-h-[calc(100vh-2rem)] flex flex-col shadow-xl">
-          <CardHeader className="border-b border-zinc-800 p-4">
+        <Card className="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-md max-h-[calc(100vh-8rem)] flex flex-col shadow-xl">
+          <CardHeader className="border-b border-zinc-800 p-4 shrink-0">
             <div className="flex items-center justify-between mb-3">
               <CardTitle className="text-zinc-100 flex items-center gap-2">
                 <Ban className="size-5 text-[#FFB800]" />
@@ -203,7 +214,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
               </div>
             )}
           </CardHeader>
-          <CardContent className="flex-1 p-4 overflow-y-auto">
+          <CardContent className="flex-1 p-4 overflow-y-auto min-h-0">
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <Spinner className="size-6 text-[#FFB800]" />
@@ -226,9 +237,19 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
                     </div>
                     
                     <div className="space-y-1.5 text-sm">
-                      <div className="text-zinc-300">
-                        <span className="text-zinc-500">Razón:</span> {sanction.reason}
-                      </div>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <div className="text-zinc-300 line-clamp-2 cursor-help">
+                            <span className="text-zinc-500">Razón:</span> {sanction.reason}
+                          </div>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-auto max-w-sm p-3 bg-zinc-800 border-zinc-700 text-zinc-100">
+                          <div className="text-sm">
+                            <div className="font-medium mb-1 text-zinc-400">Razón:</div>
+                            <div className="text-zinc-300">{sanction.reason}</div>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
                       <div className="text-zinc-400">
                         <span className="text-zinc-500">Duración:</span> {sanction.duration}
                       </div>

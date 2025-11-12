@@ -48,6 +48,7 @@ export async function GET(request) {
         player_steamid,
         player_ip,
         admin_name,
+        admin_steamid,
         reason,
         duration,
         ends,
@@ -82,6 +83,7 @@ export async function GET(request) {
       steamId: ban.player_steamid ? String(ban.player_steamid) : "",
       ip: ban.player_ip || "",
       admin: ban.admin_name || "Consola",
+      adminSteamId: ban.admin_steamid ? String(ban.admin_steamid) : null,
       reason: ban.reason || "Sin razón especificada",
       duration: ban.duration === 0 ? "Permanente" : `${ban.duration} minutos`,
       date: new Date(ban.created).toLocaleString('es-AR', {
@@ -290,19 +292,36 @@ export async function PATCH(request) {
     }
     const flags = await getUserFlags(user.steamId)
 
-    const canEdit = hasPermission(
-      flags,
-      "@web/ban.edit",
-      true,
-      banAdminSteamId,
-      user.steamId
-    )
-
-    if (!canEdit) {
-      return NextResponse.json(
-        { error: "Acceso denegado - No tienes permisos para editar este ban" },
-        { status: 403 }
+    if (status === 'UNBANNED') {
+      const canUnban = hasPermission(
+        flags,
+        "@web/ban.unban",
+        true,
+        banAdminSteamId,
+        user.steamId
       )
+
+      if (!canUnban) {
+        return NextResponse.json(
+          { error: "Acceso denegado - No tienes permisos para desbanear este ban" },
+          { status: 403 }
+        )
+      }
+    } else {
+      const canEdit = hasPermission(
+        flags,
+        "@web/ban.edit",
+        true,
+        banAdminSteamId,
+        user.steamId
+      )
+
+      if (!canEdit) {
+        return NextResponse.json(
+          { error: "Acceso denegado - No tienes permisos para editar este ban" },
+          { status: 403 }
+        )
+      }
     }
 
     const updates = []
