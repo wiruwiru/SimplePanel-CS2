@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { addToast } from "@heroui/react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
 import { Button } from "@/components/UI/button"
@@ -18,15 +18,48 @@ const Checkbox = ({ checked, onChange, id, label }) => (
   </div>
 );
 
-const getInitialFormData = (editingAdmin) => {
+const getInitialFormData = (editingAdmin, serverGroups) => {
   if (editingAdmin) {
+    let serverGroup = 'all';
+    
+    if (editingAdmin.servers && editingAdmin.servers.length > 0) {
+      const adminServerIds = editingAdmin.servers.map(s => s.id).sort();
+
+      const allServersCount = serverGroups.reduce((total, group) => {
+        return total + (group.servers ? group.servers.length : 0);
+      }, 0);
+
+      const allServerIds = new Set();
+      serverGroups.forEach(group => {
+        if (group.servers) {
+          group.servers.forEach(server => allServerIds.add(server.id));
+        }
+      });
+      
+      const hasAllServers = adminServerIds.length === allServerIds.size &&  adminServerIds.every(id => allServerIds.has(id));
+      if (!hasAllServers) {
+        const matchingGroup = serverGroups.find(group => {
+          if (!group.servers || group.servers.length === 0) return false;
+          const groupServerIds = group.servers.map(s => s.id).sort();
+          return groupServerIds.length === adminServerIds.length &&
+                 groupServerIds.every((id, idx) => id === adminServerIds[idx]);
+        });
+        
+        if (matchingGroup) {
+          serverGroup = String(matchingGroup.id);
+        } else {
+          serverGroup = 'custom';
+        }
+      }
+    }
+    
     return {
-      steamId: editingAdmin.steamId,
-      name: editingAdmin.name,
-      permissionGroup: editingAdmin.groupId,
-      serverGroup: editingAdmin.servers.length > 0 ? 'custom' : 'all',
-      customFlags: editingAdmin.flags,
-      immunity: editingAdmin.immunity
+      steamId: editingAdmin.steamId || '',
+      name: editingAdmin.name || '',
+      permissionGroup: editingAdmin.groupId || null,
+      serverGroup: serverGroup,
+      customFlags: Array.isArray(editingAdmin.flags) ? editingAdmin.flags : [],
+      immunity: editingAdmin.immunity || 0
     }
   }
   return {
@@ -40,10 +73,21 @@ const getInitialFormData = (editingAdmin) => {
 }
 
 export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, permissionGroups, serverGroups, onSuccess }) {
-  const [formData, setFormData] = useState(() => getInitialFormData(editingAdmin))
+  const initialFormData = useMemo(() => getInitialFormData(editingAdmin, serverGroups), [editingAdmin, serverGroups])
+  const [formData, setFormData] = useState(initialFormData)
+
+  useEffect(() => {
+    if (open) {
+      const timeoutId = setTimeout(() => {
+        setFormData(initialFormData)
+      }, 0)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [open, initialFormData])
+  
   const handleOpenChange = (isOpen) => {
     if (isOpen) {
-      setFormData(getInitialFormData(editingAdmin))
+      setFormData(getInitialFormData(editingAdmin, serverGroups))
     }
     onOpenChange(isOpen)
   }

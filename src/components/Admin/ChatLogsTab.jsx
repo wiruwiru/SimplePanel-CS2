@@ -13,9 +13,8 @@ export function ChatLogsTab() {
   const { hasFlag } = useAuth()
   const [showFilters, setShowFilters] = useState(false)
   
-  const { chatlogs, search, setSearch, playerSearch, setPlayerSearch, team, setTeam, messageType, setMessageType, serverId, setServerId, servers, currentPage, total, totalPages, startIndex, loading, getAvatarUrl, getDisplayName, handlePageChange, clearFilters, hasActiveFilters } = useChatLogs()
-
   const canView = hasFlag("@web/chatlogs.view")
+  const { chatlogs, search, setSearch, playerSearch, setPlayerSearch, team, setTeam, messageType, setMessageType, serverId, setServerId, servers, currentPage, total, totalPages, startIndex, loading, getAvatarUrl, getDisplayName, handlePageChange, clearFilters, hasActiveFilters } = useChatLogs(canView)
 
   if (!canView) {
     return (

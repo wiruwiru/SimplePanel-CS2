@@ -71,6 +71,7 @@ INSERT INTO `sp_permissions` (`flag`, `description`, `is_custom`) VALUES
 
 ('@web/root', 'Full web access to all features', 0),
 ('@web/access', 'Access to admin panel', 0),
+
 ('@web/admin.create', 'Web-only: Permission to create an admin.', 0),
 ('@web/admin.edit', 'Web-only: Permission to edit an admin.', 0),
 ('@web/admin.delete', 'Web-only: Permission to delete an admin.', 0),
@@ -83,6 +84,7 @@ INSERT INTO `sp_permissions` (`flag`, `description`, `is_custom`) VALUES
 ('@web/ban.edit.own', 'Web-only: Permission to edit own bans.', 0),
 ('@web/ban.unban.own', 'Web-only: Permission to unban own bans.', 0),
 ('@web/ban.remove.own', 'Web-only: Permission to remove own ban records.', 0),
+
 ('@web/mute.view', 'Web-only: Permission to view mutes.', 0),
 ('@web/mute.add', 'Web-only: Permission to create a mute.', 0),
 ('@web/mute.edit', 'Web-only: Permission to edit a mute.', 0),
@@ -91,9 +93,11 @@ INSERT INTO `sp_permissions` (`flag`, `description`, `is_custom`) VALUES
 ('@web/mute.edit.own', 'Web-only: Permission to edit own mutes.', 0),
 ('@web/mute.unmute.own', 'Web-only: Permission to unmute own mutes.', 0),
 ('@web/mute.remove.own', 'Web-only: Permission to remove own mute records.', 0),
+
 ('@web/group.create', 'Web-only: Permission to create a group.', 0),
 ('@web/group.edit', 'Web-only: Permission to edit a group.', 0),
 ('@web/group.delete', 'Web-only: Permission to delete a group.', 0),
+
 ('@web/search.players', 'Web-only: Permission to search players and IPs.', 0),
 ('@web/chatlogs.view', 'Web-only: Permission to view chatlogs.', 0)
 ON DUPLICATE KEY UPDATE `description` = VALUES(`description`);

@@ -8,6 +8,7 @@ import { AdminDialog } from "@/components/Admin/AdminsTab/UI/AdminDialog"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/UI/hover-card"
 import { deleteAdmin } from "@/services/admins/admins"
 
 const Badge = ({ children, className = '' }) => (
@@ -99,7 +100,25 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
                       {admin.flags.length > 0 && (
                         <div className="text-zinc-400 text-xs mt-1">
                           Permisos: {admin.flags.slice(0, 3).join(', ')}
-                          {admin.flags.length > 3 && ` +${admin.flags.length - 3} más`}
+                          {admin.flags.length > 3 && (
+                            <HoverCard>
+                              <HoverCardTrigger asChild>
+                                <span className="cursor-pointer hover:text-[#FFB800] transition-colors"> +{admin.flags.length - 3} más</span>
+                              </HoverCardTrigger>
+                              <HoverCardContent className="bg-zinc-800 border-zinc-700 text-zinc-100 w-80">
+                                <div className="space-y-2">
+                                  <h4 className="text-sm font-semibold text-zinc-100 mb-2">Todos los permisos ({admin.flags.length})</h4>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {admin.flags.map((flag, index) => (
+                                      <span key={index} className="px-2 py-1 bg-zinc-700 text-zinc-200 rounded text-xs font-mono">
+                                        {flag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </HoverCardContent>
+                            </HoverCard>
+                          )}
                         </div>
                       )}
                     </div>

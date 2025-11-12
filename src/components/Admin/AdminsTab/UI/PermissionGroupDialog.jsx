@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { addToast } from "@heroui/react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
 import { Button } from "@/components/UI/button"
@@ -30,7 +30,18 @@ const getInitialFormData = (editingGroup) => {
 }
 
 export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permissions, onSuccess }) {
-  const [formData, setFormData] = useState(() => getInitialFormData(editingGroup))
+  const initialFormData = useMemo(() => getInitialFormData(editingGroup), [editingGroup])
+  const [formData, setFormData] = useState(initialFormData)
+
+  useEffect(() => {
+    if (open) {
+      const timeoutId = setTimeout(() => {
+        setFormData(initialFormData)
+      }, 0)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [open, initialFormData])
+  
   const handleOpenChange = (isOpen) => {
     if (isOpen) {
       setFormData(getInitialFormData(editingGroup))

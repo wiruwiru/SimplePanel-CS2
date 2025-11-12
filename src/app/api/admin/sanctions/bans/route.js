@@ -290,37 +290,60 @@ export async function PATCH(request) {
         banAdminSteamId = adminQuery[0].player_steamid
       }
     }
+
+    if (banAdminSteamId) {
+      banAdminSteamId = String(banAdminSteamId)
+    }
+    
     const flags = await getUserFlags(user.steamId)
 
     if (status === 'UNBANNED') {
-      const canUnban = hasPermission(
-        flags,
-        "@web/ban.unban",
-        true,
-        banAdminSteamId,
-        user.steamId
-      )
-
-      if (!canUnban) {
-        return NextResponse.json(
-          { error: "Acceso denegado - No tienes permisos para desbanear este ban" },
-          { status: 403 }
+      if (!banAdminSteamId) {
+        if (!hasPermission(flags, "@web/ban.unban", false)) {
+          return NextResponse.json(
+            { error: "Acceso denegado - No tienes permisos para desbanear este ban" },
+            { status: 403 }
+          )
+        }
+      } else {
+        const canUnban = hasPermission(
+          flags,
+          "@web/ban.unban",
+          true,
+          banAdminSteamId,
+          String(user.steamId)
         )
+
+        if (!canUnban) {
+          return NextResponse.json(
+            { error: "Acceso denegado - No tienes permisos para desbanear este ban" },
+            { status: 403 }
+          )
+        }
       }
     } else {
-      const canEdit = hasPermission(
-        flags,
-        "@web/ban.edit",
-        true,
-        banAdminSteamId,
-        user.steamId
-      )
-
-      if (!canEdit) {
-        return NextResponse.json(
-          { error: "Acceso denegado - No tienes permisos para editar este ban" },
-          { status: 403 }
+      if (!banAdminSteamId) {
+        if (!hasPermission(flags, "@web/ban.edit", false)) {
+          return NextResponse.json(
+            { error: "Acceso denegado - No tienes permisos para editar este ban" },
+            { status: 403 }
+          )
+        }
+      } else {
+        const canEdit = hasPermission(
+          flags,
+          "@web/ban.edit",
+          true,
+          banAdminSteamId,
+          String(user.steamId)
         )
+
+        if (!canEdit) {
+          return NextResponse.json(
+            { error: "Acceso denegado - No tienes permisos para editar este ban" },
+            { status: 403 }
+          )
+        }
       }
     }
 

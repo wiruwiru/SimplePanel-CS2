@@ -172,12 +172,21 @@ export async function PATCH(request) {
       return NextResponse.json({ error: "SteamID es requerido" }, { status: 400 })
     }
 
-    await db.query(`DELETE FROM sa_admins WHERE player_steamid = ?`, [steamId])
-
     let servers = []
     if (serverGroupId === 'all') {
       const allServers = await db.query(`SELECT id FROM sa_servers`)
       servers = allServers.map(s => Number(s.id))
+    } else if (serverGroupId === 'custom') {
+      const currentAdmins = await db.query(
+        `SELECT DISTINCT server_id FROM sa_admins WHERE player_steamid = ? AND server_id IS NOT NULL`,
+        [steamId]
+      )
+      servers = currentAdmins.map(a => Number(a.server_id))
+
+      if (servers.length === 0) {
+        const allServers = await db.query(`SELECT id FROM sa_servers`)
+        servers = allServers.map(s => Number(s.id))
+      }
     } else {
       const groupServers = await db.query(
         `SELECT server_id FROM sp_server_group_servers WHERE server_group_id = ?`,
@@ -185,6 +194,27 @@ export async function PATCH(request) {
       )
       servers = groupServers.map(s => Number(s.server_id))
     }
+
+    if (servers.length === 0) {
+      return NextResponse.json({ error: "No se encontraron servidores para asignar" }, { status: 400 })
+    }
+
+    const existingAdmins = await db.query(
+      `SELECT id FROM sa_admins WHERE player_steamid = ?`,
+      [steamId]
+    )
+    
+    if (existingAdmins && existingAdmins.length > 0) {
+      const adminIds = existingAdmins.map(a => Number(a.id))
+      if (adminIds.length > 0) {
+        await db.query(
+          `DELETE FROM sa_admins_flags WHERE admin_id IN (${adminIds.map(() => '?').join(',')})`,
+          adminIds
+        )
+      }
+    }
+
+    await db.query(`DELETE FROM sa_admins WHERE player_steamid = ?`, [steamId])
 
     for (const serverId of servers) {
       const result = await db.query(

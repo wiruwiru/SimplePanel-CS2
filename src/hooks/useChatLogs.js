@@ -3,7 +3,7 @@ import { useProfiles } from './useProfiles'
 
 const ITEMS_PER_PAGE = 20
 
-export function useChatLogs() {
+export function useChatLogs(canView = true) {
   const [chatlogs, setChatlogs] = useState([])
   const [search, setSearch] = useState("")
   const [playerSearch, setPlayerSearch] = useState("")
@@ -59,6 +59,8 @@ export function useChatLogs() {
   }, [])
 
   const fetchChatlogs = useCallback(async () => {
+    if (!canView) return
+    
     setLoading(true)
     try {
       const params = new URLSearchParams({
@@ -90,15 +92,19 @@ export function useChatLogs() {
     } finally {
       setLoading(false)
     }
-  }, [currentPage, debouncedSearch, debouncedPlayerSearch, team, messageType, serverId, fetchProfiles])
+  }, [canView, currentPage, debouncedSearch, debouncedPlayerSearch, team, messageType, serverId, fetchProfiles])
 
   useEffect(() => {
-    fetchServers()
-  }, [fetchServers])
+    if (canView) {
+      fetchServers()
+    }
+  }, [canView, fetchServers])
 
   useEffect(() => {
-    fetchChatlogs()
-  }, [fetchChatlogs])
+    if (canView) {
+      fetchChatlogs()
+    }
+  }, [canView, fetchChatlogs])
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
