@@ -34,6 +34,7 @@ export function MutesTab() {
 
   const canEdit = (mute) => {
     if (!mute) return false
+    if (mute.status === 'EXPIRED') return false
     return hasPermission(flags, '@web/mute.edit', true, mute.adminSteamId, user?.steamId)
   }
 

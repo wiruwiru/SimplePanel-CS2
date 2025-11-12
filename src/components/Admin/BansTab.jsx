@@ -35,6 +35,7 @@ export function BansTab() {
 
   const canEdit = (ban) => {
     if (!ban) return false
+    if (ban.status === 'EXPIRED') return false
     return hasPermission(flags, '@web/ban.edit', true, ban.adminSteamId, user?.steamId)
   }
 
