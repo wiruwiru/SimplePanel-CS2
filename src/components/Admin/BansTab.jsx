@@ -28,7 +28,7 @@ export function BansTab() {
   })
 
   const [deleteAlert, setDeleteAlert] = useState({ open: false, ban: null })
-  const [unbanAlert, setUnbanAlert] = useState({ open: false, ban: null })
+  const [unbanAlert, setUnbanAlert] = useState({ open: false, ban: null, reason: '' })
 
   const canView = hasFlag('@web/ban.view')
   const canAdd = hasFlag('@web/ban.add')
@@ -83,20 +83,20 @@ export function BansTab() {
 
   const handleUnbanClick = (ban) => {
     if (!canUnban(ban)) return
-    setUnbanAlert({ open: true, ban })
+    setUnbanAlert({ open: true, ban, reason: '' })
   }
 
   const handleUnbanConfirm = async () => {
     const ban = unbanAlert.ban
     try {
-      await unbanBan(ban.id)
+      await unbanBan(ban.id, unbanAlert.reason || undefined)
       addToast({ title: 'Usuario desbaneado correctamente', color: 'success', variant: 'solid' })
       refetch()
     } catch (error) {
       console.error('Error unbanning:', error)
       addToast({ title: error.message || 'Error al desbanear usuario', color: 'danger', variant: 'solid' })
     } finally {
-      setUnbanAlert({ open: false, ban: null })
+      setUnbanAlert({ open: false, ban: null, reason: '' })
     }
   }
 
@@ -178,7 +178,7 @@ export function BansTab() {
 
       <BanForm open={dialogOpen} onOpenChange={setDialogOpen} editingBan={editingBan} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} onCancel={handleCancel} />
 
-      <AlertDialog open={unbanAlert.open} onOpenChange={(open) => setUnbanAlert({ open, ban: null })}>
+      <AlertDialog open={unbanAlert.open} onOpenChange={(open) => setUnbanAlert({ open, ban: null, reason: '' })}>
         <AlertDialogContent className="bg-zinc-900 border-zinc-800">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-zinc-100">¿Desbanear usuario?</AlertDialogTitle>
@@ -186,8 +186,12 @@ export function BansTab() {
               ¿Estás seguro de que deseas desbanear a <strong className="text-zinc-200">{unbanAlert.ban?.player}</strong>? Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="py-4">
+            <label className="block text-sm font-medium text-zinc-300 mb-2">Motivo del desbaneo (opcional)</label>
+            <Input type="text" placeholder="Ej: SS Realizada, no se le encontró nada." value={unbanAlert.reason} onChange={(e) => setUnbanAlert({ ...unbanAlert, reason: e.target.value })} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
+          </div>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setUnbanAlert({ open: false, ban: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+            <AlertDialogCancel onClick={() => setUnbanAlert({ open: false, ban: null, reason: '' })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleUnbanConfirm} className="bg-green-600 hover:bg-green-700 text-white">

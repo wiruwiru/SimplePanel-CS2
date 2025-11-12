@@ -27,7 +27,7 @@ export function MutesTab() {
   })
 
   const [deleteAlert, setDeleteAlert] = useState({ open: false, mute: null })
-  const [unmuteAlert, setUnmuteAlert] = useState({ open: false, mute: null })
+  const [unmuteAlert, setUnmuteAlert] = useState({ open: false, mute: null, reason: '' })
 
   const canView = hasFlag('@web/mute.view')
   const canAdd = hasFlag('@web/mute.add')
@@ -64,20 +64,20 @@ export function MutesTab() {
 
   const handleUnmuteClick = (mute) => {
     if (!canUnmute(mute)) return
-    setUnmuteAlert({ open: true, mute })
+    setUnmuteAlert({ open: true, mute, reason: '' })
   }
 
   const handleUnmuteConfirm = async () => {
     const mute = unmuteAlert.mute
     try {
-      await unmuteMute(mute.id)
+      await unmuteMute(mute.id, unmuteAlert.reason || undefined)
       addToast({ title: 'Usuario desmuteado correctamente', color: 'success', variant: 'solid' })
       refetch()
     } catch (error) {
       console.error('Error unmuting:', error)
       addToast({ title: error.message || 'Error al desmutear usuario', color: 'danger', variant: 'solid' })
     } finally {
-      setUnmuteAlert({ open: false, mute: null })
+      setUnmuteAlert({ open: false, mute: null, reason: '' })
     }
   }
 
@@ -152,7 +152,7 @@ export function MutesTab() {
 
       <MuteForm open={dialogOpen} onOpenChange={setDialogOpen} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} onCancel={handleCancel} />
 
-      <AlertDialog open={unmuteAlert.open} onOpenChange={(open) => setUnmuteAlert({ open, mute: null })}>
+      <AlertDialog open={unmuteAlert.open} onOpenChange={(open) => setUnmuteAlert({ open, mute: null, reason: '' })}>
         <AlertDialogContent className="bg-zinc-900 border-zinc-800">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-zinc-100">¿Desmutear usuario?</AlertDialogTitle>
@@ -160,8 +160,12 @@ export function MutesTab() {
               ¿Estás seguro de que deseas desmutear a <strong className="text-zinc-200">{unmuteAlert.mute?.player}</strong>? Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="py-4">
+            <label className="block text-sm font-medium text-zinc-300 mb-2">Motivo del desmuteo (opcional)</label>
+            <Input type="text" placeholder="Ej: Se perdono al usuario por ser la primera vez." value={unmuteAlert.reason} onChange={(e) => setUnmuteAlert({ ...unmuteAlert, reason: e.target.value })} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
+          </div>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setUnmuteAlert({ open: false, mute: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
+            <AlertDialogCancel onClick={() => setUnmuteAlert({ open: false, mute: null, reason: '' })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleUnmuteConfirm} className="bg-green-600 hover:bg-green-700 text-white">

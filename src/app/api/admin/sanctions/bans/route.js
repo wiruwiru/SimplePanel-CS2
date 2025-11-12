@@ -32,18 +32,20 @@ export async function GET(request) {
 
     let query = `
       SELECT 
-        id,
-        player_name,
-        player_steamid,
-        player_ip,
-        admin_name,
-        admin_steamid,
-        reason,
-        duration,
-        ends,
-        created,
-        status
-      FROM sa_bans
+        b.id,
+        b.player_name,
+        b.player_steamid,
+        b.player_ip,
+        b.admin_name,
+        b.admin_steamid,
+        b.reason,
+        b.duration,
+        b.ends,
+        b.created,
+        b.status,
+        ub.reason as unban_reason
+      FROM sa_bans b
+      LEFT JOIN sa_unbans ub ON b.unban_id = ub.id
     `
     
     let countQuery = "SELECT COUNT(*) as total FROM sa_bans"
@@ -207,7 +209,7 @@ export async function PATCH(request) {
     }
 
     const body = await request.json()
-    const { id, reason, duration, status } = body
+    const { id, reason, duration, status, unbanReason } = body
 
     if (!id) {
       return NextResponse.json(
@@ -217,7 +219,7 @@ export async function PATCH(request) {
     }
 
     const existingBan = await db.query(
-      `SELECT admin_steamid, admin_name, player_steamid, player_name, player_ip, reason, duration, ends, status FROM sa_bans WHERE id = ?`,
+      `SELECT admin_steamid, admin_name, player_steamid, player_name, player_ip, reason, duration, ends, status, unban_id FROM sa_bans WHERE id = ?`,
       [id]
     )
 
@@ -326,6 +328,32 @@ export async function PATCH(request) {
         { error: "No hay campos para actualizar" },
         { status: 400 }
       )
+    }
+
+    let unbanId = null
+    if (status === 'UNBANNED') {
+      if (existingBan[0].unban_id) {
+        return NextResponse.json(
+          { error: "Este ban ya ha sido desbaneado anteriormente" },
+          { status: 400 }
+        )
+      }
+
+      const adminIdQuery = await db.query(
+        `SELECT id FROM sa_admins WHERE player_steamid = ? LIMIT 1`,
+        [user.steamId]
+      )
+      const adminId = adminIdQuery && adminIdQuery.length > 0 ? adminIdQuery[0].id : 0
+
+      const unbanReasonValue = unbanReason && unbanReason.trim() ? unbanReason.trim() : 'Unknown'
+      const unbanResult = await db.query(
+        `INSERT INTO sa_unbans (ban_id, admin_id, reason, date) VALUES (?, ?, ?, NOW())`,
+        [id, adminId, unbanReasonValue]
+      )
+      unbanId = unbanResult.insertId
+
+      updates.push('unban_id = ?')
+      values.push(unbanId)
     }
 
     values.push(id)

@@ -33,6 +33,7 @@ export async function updateMute(id, data) {
       duration: data.duration !== undefined ? parseInt(data.duration) : undefined,
       status: data.status,
       type: data.type,
+      unmuteReason: data.unmuteReason,
     }),
   });
 
@@ -57,6 +58,6 @@ export async function deleteMute(id) {
   return await response.json();
 }
 
-export async function unmuteMute(id) {
-  return updateMute(id, { status: 'UNMUTED' });
+export async function unmuteMute(id, unmuteReason) {
+  return updateMute(id, { status: 'UNMUTED', unmuteReason });
 }

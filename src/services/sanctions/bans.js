@@ -32,6 +32,7 @@ export async function updateBan(id, data) {
       reason: data.reason,
       duration: data.duration !== undefined ? parseInt(data.duration) : undefined,
       status: data.status,
+      unbanReason: data.unbanReason,
     }),
   });
 
@@ -56,6 +57,6 @@ export async function deleteBan(id) {
   return await response.json();
 }
 
-export async function unbanBan(id) {
-  return updateBan(id, { status: 'UNBANNED' });
+export async function unbanBan(id, unbanReason) {
+  return updateBan(id, { status: 'UNBANNED', unbanReason });
 }

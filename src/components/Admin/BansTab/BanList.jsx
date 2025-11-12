@@ -82,6 +82,12 @@ export function BanList({ bans, loading, getAvatarUrl, getDisplayName, canEdit, 
                       <span>Admin: {ban.admin}</span>
                       <span>{ban.date}</span>
                     </div>
+                    {ban.status === 'UNBANNED' && ban.unbanReason && (
+                      <div className="mt-2 pt-2 border-t border-zinc-700">
+                        <span className="text-xs text-zinc-500">Motivo del desbaneo: </span>
+                        <span className="text-xs text-blue-400">{ban.unbanReason}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <Badge className={status.className}>{status.label}</Badge>

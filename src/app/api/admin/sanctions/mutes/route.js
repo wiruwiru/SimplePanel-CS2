@@ -31,18 +31,20 @@ export async function GET(request) {
 
     let query = `
       SELECT 
-        id,
-        player_name,
-        player_steamid,
-        admin_name,
-        admin_steamid,
-        reason,
-        duration,
-        ends,
-        created,
-        status,
-        type
-      FROM sa_mutes
+        m.id,
+        m.player_name,
+        m.player_steamid,
+        m.admin_name,
+        m.admin_steamid,
+        m.reason,
+        m.duration,
+        m.ends,
+        m.created,
+        m.status,
+        m.type,
+        um.reason as unmute_reason
+      FROM sa_mutes m
+      LEFT JOIN sa_unmutes um ON m.unmute_id = um.id
     `
     
     let countQuery = "SELECT COUNT(*) as total FROM sa_mutes"
@@ -179,7 +181,7 @@ export async function PATCH(request) {
     }
 
     const body = await request.json()
-    const { id, reason, duration, status, type } = body
+    const { id, reason, duration, status, type, unmuteReason } = body
 
     if (!id) {
       return NextResponse.json(
@@ -189,7 +191,7 @@ export async function PATCH(request) {
     }
 
     const existingMute = await db.query(
-      `SELECT admin_steamid, admin_name, player_steamid, player_name, reason, duration, ends, status, type FROM sa_mutes WHERE id = ?`,
+      `SELECT admin_steamid, admin_name, player_steamid, player_name, reason, duration, ends, status, type, unmute_id FROM sa_mutes WHERE id = ?`,
       [id]
     )
 
@@ -280,6 +282,32 @@ export async function PATCH(request) {
         { error: "No hay campos para actualizar" },
         { status: 400 }
       )
+    }
+
+    let unmuteId = null
+    if (status === 'UNMUTED') {
+      if (existingMute[0].unmute_id) {
+        return NextResponse.json(
+          { error: "Este mute ya ha sido desmuteado anteriormente" },
+          { status: 400 }
+        )
+      }
+
+      const adminIdQuery = await db.query(
+        `SELECT id FROM sa_admins WHERE player_steamid = ? LIMIT 1`,
+        [user.steamId]
+      )
+      const adminId = adminIdQuery && adminIdQuery.length > 0 ? adminIdQuery[0].id : 0
+
+      const unmuteReasonValue = unmuteReason && unmuteReason.trim() ? unmuteReason.trim() : 'Unknown'
+      const unmuteResult = await db.query(
+        `INSERT INTO sa_unmutes (mute_id, admin_id, reason, date) VALUES (?, ?, ?, NOW())`,
+        [id, adminId, unmuteReasonValue]
+      )
+      unmuteId = unmuteResult.insertId
+
+      updates.push('unmute_id = ?')
+      values.push(unmuteId)
     }
 
     values.push(id)
