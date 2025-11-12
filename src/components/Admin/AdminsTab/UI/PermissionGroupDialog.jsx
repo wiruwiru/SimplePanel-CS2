@@ -113,7 +113,7 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100">Cancelar</Button>
+            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
             <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">{editingGroup ? 'Actualizar' : 'Crear'}</Button>
           </DialogFooter>
         </form>

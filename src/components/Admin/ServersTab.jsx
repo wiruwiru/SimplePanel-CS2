@@ -210,7 +210,7 @@ export function ServersTab() {
               <Switch checked={formData.visible} onChange={(checked) => setFormData({ ...formData, visible: checked })} />
             </div>
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-100" disabled={submitting} >Cancelar</Button>
+              <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800" disabled={submitting} >Cancelar</Button>
               <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]" disabled={submitting} >
                 {submitting ? (
                   <>

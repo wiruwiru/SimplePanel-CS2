@@ -65,7 +65,7 @@ export function ChatLogsTab() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-zinc-300 font-medium">Filtros avanzados</span>
                 {hasActiveFilters && (
-                  <Button variant="ghost" size="sm" onClick={clearFilters} className="text-zinc-400 hover:text-zinc-200">
+                  <Button variant="ghost" size="sm" onClick={clearFilters} className="text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800">
                     Limpiar filtros
                   </Button>
                 )}

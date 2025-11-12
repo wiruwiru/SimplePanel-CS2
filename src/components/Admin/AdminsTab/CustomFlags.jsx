@@ -127,7 +127,7 @@ export function CustomFlags({ permissions, onRefresh }) {
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => {setDialogOpen(false); setFormData({ flag: '@custom/', description: '' })}} className="text-zinc-400 hover:text-zinc-100" >Cancelar</Button>
+              <Button type="button" variant="ghost" onClick={() => {setDialogOpen(false); setFormData({ flag: '@custom/', description: '' })}} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800" >Cancelar</Button>
               <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">Crear Flag</Button>
             </DialogFooter>
           </form>
