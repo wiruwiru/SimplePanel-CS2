@@ -67,7 +67,7 @@ function AdminPage() {
           <TabsTrigger value="bans">Baneos</TabsTrigger>
           <TabsTrigger value="mutes">Muteos</TabsTrigger>
           <TabsTrigger value="playersearch">Buscar jugadores</TabsTrigger>
-          <TabsTrigger value="chatlogs">ChatLogs</TabsTrigger>
+          <TabsTrigger value="chatlogs">Logs de chat</TabsTrigger>
           <TabsTrigger value="admins">Administradores</TabsTrigger>
           <TabsTrigger value="servers">Servidores</TabsTrigger>
         </TabsList>

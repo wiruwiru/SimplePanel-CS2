@@ -3,6 +3,7 @@ import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess, getUserFlags } from "@/lib/api-auth"
 import { hasPermission } from "@/lib/permission-utils"
+import { sendDiscordWebhook } from "@/lib/discord-webhook"
 
 export async function GET(request) {
   try {
@@ -183,6 +184,28 @@ export async function POST(request) {
 
     const muteId = Number(result.insertId)
 
+    try {
+      const muteData = {
+        id: muteId,
+        playerName: playerName || "Desconocido",
+        playerSteamId: playerSteamId,
+        reason: reason,
+        duration: durationMinutes,
+        ends: ends,
+        status: 'ACTIVE',
+        type: type || 'GAG'
+      }
+
+      const adminData = {
+        name: adminName,
+        steamId: user.steamId
+      }
+
+      await sendDiscordWebhook('create', 'mute', muteData, adminData)
+    } catch (webhookError) {
+      console.error("Error enviando webhook (mute creado de todas formas):", webhookError)
+    }
+
     return NextResponse.json({
       success: true,
       message: "Mute añadido correctamente",
@@ -237,7 +260,7 @@ export async function PATCH(request) {
     }
 
     const existingMute = await db.query(
-      `SELECT admin_steamid, admin_name, player_steamid FROM sa_mutes WHERE id = ?`,
+      `SELECT admin_steamid, admin_name, player_steamid, player_name, reason, duration, ends, status, type FROM sa_mutes WHERE id = ?`,
       [id]
     )
 
@@ -332,10 +355,55 @@ export async function PATCH(request) {
 
     values.push(id)
 
+    const oldMuteData = {
+      id: id,
+      playerName: existingMute[0].player_name,
+      playerSteamId: existingMute[0].player_steamid,
+      reason: existingMute[0].reason,
+      duration: existingMute[0].duration,
+      ends: existingMute[0].ends,
+      status: existingMute[0].status,
+      type: existingMute[0].type
+    }
+
     await db.query(
       `UPDATE sa_mutes SET ${updates.join(', ')} WHERE id = ?`,
       values
     )
+
+    const updatedMute = await db.query(
+      `SELECT player_name, player_steamid, reason, duration, ends, status, type FROM sa_mutes WHERE id = ?`,
+      [id]
+    )
+
+    const newMuteData = {
+      id: id,
+      playerName: updatedMute[0].player_name,
+      playerSteamId: updatedMute[0].player_steamid,
+      reason: updatedMute[0].reason,
+      duration: updatedMute[0].duration,
+      ends: updatedMute[0].ends,
+      status: updatedMute[0].status,
+      type: updatedMute[0].type
+    }
+
+    const currentAdminQuery = await db.query(
+      `SELECT player_name FROM sa_admins WHERE player_steamid = ? LIMIT 1`,
+      [user.steamId]
+    )
+    const currentAdminName = currentAdminQuery && currentAdminQuery.length > 0 ? currentAdminQuery[0].player_name : "Admin Web"
+
+    try {
+      const adminData = {
+        name: currentAdminName,
+        steamId: user.steamId
+      }
+
+      const action = status === 'UNMUTED' ? 'unmute' : 'update'
+      await sendDiscordWebhook(action, 'mute', newMuteData, adminData, oldMuteData)
+    } catch (webhookError) {
+      console.error("Error enviando webhook (mute actualizado de todas formas):", webhookError)
+    }
 
     return NextResponse.json({
       success: true,
@@ -390,7 +458,7 @@ export async function DELETE(request) {
     }
 
     const existingMute = await db.query(
-      `SELECT admin_steamid, admin_name FROM sa_mutes WHERE id = ?`,
+      `SELECT admin_steamid, admin_name, player_name, player_steamid, reason, duration, ends, status, type FROM sa_mutes WHERE id = ?`,
       [id]
     )
 
@@ -426,6 +494,34 @@ export async function DELETE(request) {
         { error: "Acceso denegado - No tienes permisos para eliminar este mute" },
         { status: 403 }
       )
+    }
+
+    const currentAdminQuery = await db.query(
+      `SELECT player_name FROM sa_admins WHERE player_steamid = ? LIMIT 1`,
+      [user.steamId]
+    )
+    const currentAdminName = currentAdminQuery && currentAdminQuery.length > 0 ? currentAdminQuery[0].player_name : "Admin Web"
+
+    try {
+      const muteData = {
+        id: id,
+        playerName: existingMute[0].player_name,
+        playerSteamId: existingMute[0].player_steamid,
+        reason: existingMute[0].reason,
+        duration: existingMute[0].duration,
+        ends: existingMute[0].ends,
+        status: existingMute[0].status,
+        type: existingMute[0].type
+      }
+
+      const adminData = {
+        name: currentAdminName,
+        steamId: user.steamId
+      }
+
+      await sendDiscordWebhook('delete', 'mute', muteData, adminData)
+    } catch (webhookError) {
+      console.error("Error enviando webhook (mute eliminado de todas formas):", webhookError)
     }
 
     await db.query(`DELETE FROM sa_mutes WHERE id = ?`, [id])

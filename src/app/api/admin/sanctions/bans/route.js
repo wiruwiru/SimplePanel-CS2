@@ -4,6 +4,7 @@ import { db } from "@/lib/database"
 import { verifyAdminAccess, getUserFlags, getApiSession } from "@/lib/api-auth"
 import { hasPermission } from "@/lib/permission-utils"
 import { findAndKickPlayer, reloadBansOnAllServers } from "@/lib/rcon-utils"
+import { sendDiscordWebhook } from "@/lib/discord-webhook"
 
 export async function GET(request) {
   try {
@@ -215,6 +216,28 @@ export async function POST(request) {
       console.error("Error al recargar bans en servidores (ban añadido de todas formas):", reloadError)
     }
 
+    try {
+      const banData = {
+        id: banId,
+        playerName: finalPlayerName,
+        playerSteamId: playerSteamId,
+        playerIp: playerIp || null,
+        reason: reason,
+        duration: durationMinutes,
+        ends: ends,
+        status: 'ACTIVE'
+      }
+
+      const adminData = {
+        name: adminName,
+        steamId: user.steamId
+      }
+
+      await sendDiscordWebhook('create', 'ban', banData, adminData)
+    } catch (webhookError) {
+      console.error("Error enviando webhook (ban creado de todas formas):", webhookError)
+    }
+
     return NextResponse.json({
       success: true,
       message: "Ban añadido correctamente",
@@ -269,7 +292,7 @@ export async function PATCH(request) {
     }
 
     const existingBan = await db.query(
-      `SELECT admin_steamid, admin_name, player_steamid FROM sa_bans WHERE id = ?`,
+      `SELECT admin_steamid, admin_name, player_steamid, player_name, player_ip, reason, duration, ends, status FROM sa_bans WHERE id = ?`,
       [id]
     )
 
@@ -382,10 +405,55 @@ export async function PATCH(request) {
 
     values.push(id)
 
+    const oldBanData = {
+      id: id,
+      playerName: existingBan[0].player_name,
+      playerSteamId: existingBan[0].player_steamid,
+      playerIp: existingBan[0].player_ip,
+      reason: existingBan[0].reason,
+      duration: existingBan[0].duration,
+      ends: existingBan[0].ends,
+      status: existingBan[0].status
+    }
+
     await db.query(
       `UPDATE sa_bans SET ${updates.join(', ')} WHERE id = ?`,
       values
     )
+
+    const updatedBan = await db.query(
+      `SELECT player_name, player_steamid, player_ip, reason, duration, ends, status FROM sa_bans WHERE id = ?`,
+      [id]
+    )
+
+    const newBanData = {
+      id: id,
+      playerName: updatedBan[0].player_name,
+      playerSteamId: updatedBan[0].player_steamid,
+      playerIp: updatedBan[0].player_ip,
+      reason: updatedBan[0].reason,
+      duration: updatedBan[0].duration,
+      ends: updatedBan[0].ends,
+      status: updatedBan[0].status
+    }
+
+    const currentAdminQuery = await db.query(
+      `SELECT player_name FROM sa_admins WHERE player_steamid = ? LIMIT 1`,
+      [user.steamId]
+    )
+    const currentAdminName = currentAdminQuery && currentAdminQuery.length > 0 ? currentAdminQuery[0].player_name : "Admin Web"
+
+    try {
+      const adminData = {
+        name: currentAdminName,
+        steamId: user.steamId
+      }
+
+      const action = status === 'UNBANNED' ? 'unban' : 'update'
+      await sendDiscordWebhook(action, 'ban', newBanData, adminData, oldBanData)
+    } catch (webhookError) {
+      console.error("Error enviando webhook (ban actualizado de todas formas):", webhookError)
+    }
 
     if (status === 'ACTIVE' && existingBan[0].player_steamid) {
       try {
@@ -457,7 +525,7 @@ export async function DELETE(request) {
     }
 
     const existingBan = await db.query(
-      `SELECT admin_steamid, admin_name FROM sa_bans WHERE id = ?`,
+      `SELECT admin_steamid, admin_name, player_name, player_steamid, player_ip, reason, duration, ends, status FROM sa_bans WHERE id = ?`,
       [id]
     )
 
@@ -493,6 +561,34 @@ export async function DELETE(request) {
         { error: "Acceso denegado - No tienes permisos para eliminar este ban" },
         { status: 403 }
       )
+    }
+
+    const currentAdminQuery = await db.query(
+      `SELECT player_name FROM sa_admins WHERE player_steamid = ? LIMIT 1`,
+      [user.steamId]
+    )
+    const currentAdminName = currentAdminQuery && currentAdminQuery.length > 0 ? currentAdminQuery[0].player_name : "Admin Web"
+
+    try {
+      const banData = {
+        id: id,
+        playerName: existingBan[0].player_name,
+        playerSteamId: existingBan[0].player_steamid,
+        playerIp: existingBan[0].player_ip,
+        reason: existingBan[0].reason,
+        duration: existingBan[0].duration,
+        ends: existingBan[0].ends,
+        status: existingBan[0].status
+      }
+
+      const adminData = {
+        name: currentAdminName,
+        steamId: user.steamId
+      }
+
+      await sendDiscordWebhook('delete', 'ban', banData, adminData)
+    } catch (webhookError) {
+      console.error("Error enviando webhook (ban eliminado de todas formas):", webhookError)
     }
 
     await db.query(`DELETE FROM sa_bans WHERE id = ?`, [id])

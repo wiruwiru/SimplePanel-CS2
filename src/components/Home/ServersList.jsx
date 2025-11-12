@@ -138,7 +138,7 @@ export function ServersList() {
                       <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full shrink-0 ${isOnline ? "bg-green-500" : "bg-red-500"}`} />
                       <div className="text-left min-w-0 flex-1 max-w-[200px] xs:max-w-[280px] sm:max-w-[420px] md:max-w-[600px] lg:max-w-none">
                         <div className="text-zinc-100 text-sm md:text-base truncate">{server.name}</div>
-                        <div className="text-zinc-400 text-xs md:text-sm truncate">{server.map}</div>
+                        <div className="text-zinc-400 text-xs md:text-sm truncate">{server.map === "unknown" ? "APAGADO" : server.map}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-4 shrink-0">
@@ -164,9 +164,9 @@ export function ServersList() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-4 bg-zinc-900 rounded-lg p-3 md:p-4">
                         <div className="relative w-full h-48 lg:h-auto rounded-lg overflow-hidden bg-zinc-800">
-                          <img src={getMapImageUrl(details.map)} alt={`Mapa ${details.map}`} className="w-full h-full object-cover" />
+                          <img src={getMapImageUrl(details.map)} alt={`Mapa ${details.map === "unknown" ? "APAGADO" : details.map}`} className="w-full h-full object-cover" />
                           <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-3">
-                            <p className="text-white text-sm">{details.map}</p>
+                            <p className="text-white text-sm">{details.map === "unknown" ? "APAGADO" : details.map}</p>
                           </div>
                         </div>
 

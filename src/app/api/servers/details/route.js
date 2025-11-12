@@ -91,7 +91,7 @@ export async function GET(request) {
 
     const serverInfo = {
       name: steamServer.name || "Unknown Server",
-      map: steamServer.map || "unknown",
+      map: steamServer.map || "APAGADO",
       maxPlayers: steamServer.max_players || 0,
       numPlayers: steamServer.players || 0,
       players: players,
