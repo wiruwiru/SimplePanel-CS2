@@ -4,15 +4,10 @@ import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
 import { Button } from "@/components/UI/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
+import { DurationInput } from "@/components/Admin/DurationInput"
 
 const Textarea = ({ placeholder, value, onChange, className = '' }) => (
   <textarea placeholder={placeholder} value={value} onChange={onChange} rows={4} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] resize-none w-full ${className}`} />
-)
-
-const Select = ({ value, onChange, children, className = '' }) => (
-  <select value={value} onChange={onChange} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full ${className}`} >
-    {children}
-  </select>
 )
 
 export function BanForm({ open, onOpenChange, editingBan, formData, setFormData, onSubmit, onCancel }) {
@@ -36,25 +31,26 @@ export function BanForm({ open, onOpenChange, editingBan, formData, setFormData,
             <Textarea id="reason" placeholder="Describe el motivo del baneo..." value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} required />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="duration" className="text-zinc-300">Duración</Label>
-            <Select id="duration" value={formData.duration} onChange={(e) => setFormData({ ...formData, duration: e.target.value })} >
-              <option value="0">Permanente</option>
-              <option value="60">1 hora</option>
-              <option value="360">6 horas</option>
-              <option value="720">12 horas</option>
-              <option value="1440">1 día</option>
-              <option value="4320">3 días</option>
-              <option value="10080">1 semana</option>
-              <option value="43200">1 mes</option>
-            </Select>
+            <Label htmlFor="duration" className="text-zinc-300">Duración (en minutos)</Label>
+            <DurationInput value={formData.duration} onChange={(newValue) => setFormData({ ...formData, duration: newValue })} allowPermanent={true}
+              presets={[
+                { value: 30, label: '30 min' },
+                { value: 60, label: '1 hora' },
+                { value: 180, label: '3 horas' },
+                { value: 360, label: '6 horas' },
+                { value: 720, label: '12 horas' },
+                { value: 1440, label: '1 día' },
+                { value: 2880, label: '2 días' },
+                { value: 4320, label: '3 días' },
+                { value: 10080, label: '1 semana' },
+                { value: 20160, label: '2 semanas' },
+                { value: 43200, label: '1 mes' },
+                { value: 86400, label: '2 meses' }
+              ]} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={onCancel} className="text-zinc-400 hover:text-zinc-100">
-              Cancelar
-            </Button>
-            <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">
-              {editingBan ? 'Guardar Cambios' : 'Crear Baneo'}
-            </Button>
+            <Button type="button" variant="ghost" onClick={onCancel} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
+            <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">{editingBan ? 'Guardar Cambios' : 'Crear Baneo'}</Button>
           </DialogFooter>
         </form>
       </DialogContent>
