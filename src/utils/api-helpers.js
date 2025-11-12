@@ -121,3 +121,32 @@ export function createErrorResponse(message, status = 500) {
 export function createSuccessResponse(data, status = 200) {
   return NextResponse.json(data, { status })
 }
+
+/**
+ * Convert BigInt values to strings recursively in an object
+ * @param {any} obj - Object that may contain BigInt values
+ * @returns {any} - Object with BigInt values converted to strings
+ */
+export function convertBigIntToString(obj) {
+  if (obj === null || obj === undefined) {
+    return obj
+  }
+  
+  if (typeof obj === 'bigint') {
+    return String(obj)
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map(convertBigIntToString)
+  }
+  
+  if (typeof obj === 'object') {
+    const converted = {}
+    for (const [key, value] of Object.entries(obj)) {
+      converted[key] = convertBigIntToString(value)
+    }
+    return converted
+  }
+  
+  return obj
+}
