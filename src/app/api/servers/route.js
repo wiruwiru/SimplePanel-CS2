@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/database"
+import { getServersWithStatus } from "@/services/servers/server-query"
 
 export async function GET() {
   try {
@@ -18,45 +19,7 @@ export async function GET() {
       return NextResponse.json([])
     }
 
-    const steamApiKey = process.env.STEAM_API_KEY
-    const steamApiUrl = `https://api.steampowered.com/IGameServersService/GetServerList/v1/?key=${steamApiKey}&limit=9999&filter=\\gamedir\\csgo\\region\\2`;
-
-    let steamServers = []
-    try {
-      const steamResponse = await fetch(steamApiUrl)
-      const steamData = await steamResponse.json()
-      if (steamData.response && steamData.response.servers) {
-        steamServers = steamData.response.servers
-      }
-    } catch (error) {
-      console.error("Error fetching from Steam API:", error)
-    }
-
-    const serversWithInfo = dbServers.map((dbServer) => {
-      const steamServer = steamServers.find((s) => s.addr === dbServer.address)
-      
-      if (steamServer) {
-        return {
-          id: dbServer.id,
-          name: steamServer.name || dbServer.hostname,
-          address: dbServer.address,
-          map: steamServer.map || "APAGADO",
-          players: steamServer.players || 0,
-          maxPlayers: steamServer.max_players || 0,
-          status: "online",
-        }
-      }
-
-      return {
-        id: dbServer.id,
-        name: dbServer.hostname,
-        address: dbServer.address,
-        map: "APAGADO",
-        players: 0,
-        maxPlayers: 0,
-        status: "offline",
-      }
-    })
+    const serversWithInfo = await getServersWithStatus(dbServers)
 
     return NextResponse.json(serversWithInfo)
   } catch (error) {

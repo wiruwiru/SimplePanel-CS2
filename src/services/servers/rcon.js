@@ -209,4 +209,3 @@ export async function reloadBansOnAllServers() {
 
   return results
 }
-

@@ -2,31 +2,20 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess, getUserFlags } from "@/lib/api-auth"
-import { hasPermission } from "@/lib/permission-utils"
-import { sendDiscordWebhook } from "@/lib/discord-webhook"
+import { hasPermission } from "@/utils/permissions"
+import { sendDiscordWebhook } from "@/services/notifications/discord"
+import { getAuthenticatedUser, checkPermission, formatSanction } from "@/utils/api-helpers"
 
 export async function GET(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
+    
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    const { authorized, error: authError, status: authStatus } = await verifyAdminAccess({ headers: { cookie: `session=${sessionToken.value}` } }, "@web/mute.view")
+    const { authorized, error: authError, status: authStatus } = await verifyAdminAccess({ headers: { cookie: `session=${cookieStore.get('session').value}` } }, "@web/mute.view")
     if (!authorized) {
       return NextResponse.json(
         { error: authError },
@@ -76,24 +65,7 @@ export async function GET(request) {
       db.query(countQuery, countParams)
     ])
 
-    const formattedMutes = mutes.map(mute => ({
-      id: Number(mute.id),
-      player: mute.player_name || "Desconocido",
-      steamId: mute.player_steamid ? String(mute.player_steamid) : "",
-      admin: mute.admin_name || "Consola",
-      adminSteamId: mute.admin_steamid ? String(mute.admin_steamid) : null,
-      reason: mute.reason || "Sin razón especificada",
-      duration: mute.duration === 0 ? "Permanente" : `${mute.duration} minutos`,
-      date: new Date(mute.created).toLocaleString('es-AR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      status: mute.status || 'ACTIVE',
-      type: mute.type || 'GAG'
-    }))
+    const formattedMutes = mutes.map(mute => formatSanction({ ...mute, type: mute.type || 'GAG' }, 'mute'))
 
     return NextResponse.json({
       mutes: formattedMutes,
@@ -113,38 +85,15 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
     
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    if (!user || !user.steamId) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
-    }
-
-    const flags = await getUserFlags(user.steamId)
-    if (!hasPermission(flags, "@web/mute.add")) {
-      return NextResponse.json(
-        { error: "Acceso denegado - Se requiere @web/mute.add" },
-        { status: 403 }
-      )
+    const { authorized, error: permError, status: permStatus } = await checkPermission(user.steamId, "@web/mute.add")
+    if (!authorized) {
+      return NextResponse.json({ error: permError }, { status: permStatus })
     }
 
     const body = await request.json()
@@ -223,30 +172,10 @@ export async function POST(request) {
 export async function PATCH(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
     
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
-    }
-
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    if (!user || !user.steamId) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
     const body = await request.json()
@@ -421,30 +350,10 @@ export async function PATCH(request) {
 export async function DELETE(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
     
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
-    }
-
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    if (!user || !user.steamId) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
     const { searchParams } = new URL(request.url)

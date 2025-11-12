@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { addToast } from "@heroui/react"
 import { useAuth } from "@/contexts/AuthContext"
-import { hasPermission } from "@/lib/permission-utils"
+import { hasPermission } from "@/utils/permissions"
 import { Ban, Plus, Search } from 'lucide-react'
 import { createBan, updateBan, deleteBan, unbanBan } from "@/services/sanctions/bans"
 import { useBans } from "@/hooks/useBans"

@@ -1,5 +1,6 @@
 import { parse } from "cookie"
 import { db } from "@/lib/database"
+import { getSessionFromCookies } from "@/utils/session"
 
 export async function getApiSession(req) {
   try {
@@ -15,6 +16,14 @@ export async function getApiSession(req) {
     console.error("Error al obtener la sesión:", error)
     return { user: null, flags: [] }
   }
+}
+
+/**
+ * @param {Object} cookieStore - Next.js cookies() return value
+ * @returns {Object|null} User object or null
+ */
+export function getUserFromCookies(cookieStore) {
+  return getSessionFromCookies(cookieStore)
 }
 
 export async function getUserFlags(steamId) {

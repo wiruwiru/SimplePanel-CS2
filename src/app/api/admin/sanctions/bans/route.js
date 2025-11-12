@@ -2,33 +2,21 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess, getUserFlags, getApiSession } from "@/lib/api-auth"
-import { hasPermission } from "@/lib/permission-utils"
-import { findAndKickPlayer, reloadBansOnAllServers } from "@/lib/rcon-utils"
-import { sendDiscordWebhook } from "@/lib/discord-webhook"
+import { hasPermission } from "@/utils/permissions"
+import { findAndKickPlayer, reloadBansOnAllServers } from "@/services/servers/rcon"
+import { sendDiscordWebhook } from "@/services/notifications/discord"
+import { getAuthenticatedUser, formatSanction } from "@/utils/api-helpers"
 
 export async function GET(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
     
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    const { authorized, error: authError, status: authStatus } = await verifyAdminAccess({ headers: { cookie: `session=${sessionToken.value}` } }, "@web/ban.view")
+    const { authorized, error: authError, status: authStatus } = await verifyAdminAccess({ headers: { cookie: `session=${cookieStore.get('session').value}` } }, "@web/ban.view")
     if (!authorized) {
       return NextResponse.json(
         { error: authError },
@@ -78,24 +66,7 @@ export async function GET(request) {
       db.query(countQuery, countParams)
     ])
 
-    const formattedBans = bans.map(ban => ({
-      id: Number(ban.id),
-      player: ban.player_name || "Desconocido",
-      steamId: ban.player_steamid ? String(ban.player_steamid) : "",
-      ip: ban.player_ip || "",
-      admin: ban.admin_name || "Consola",
-      adminSteamId: ban.admin_steamid ? String(ban.admin_steamid) : null,
-      reason: ban.reason || "Sin razón especificada",
-      duration: ban.duration === 0 ? "Permanente" : `${ban.duration} minutos`,
-      date: new Date(ban.created).toLocaleString('es-AR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      status: ban.status || 'ACTIVE'
-    }))
+    const formattedBans = bans.map(ban => formatSanction(ban, 'ban'))
 
     return NextResponse.json({
       bans: formattedBans,
@@ -115,29 +86,10 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
-    }
-
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    if (!user || !user.steamId) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
+    
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
     const flags = await getUserFlags(user.steamId)
@@ -166,23 +118,16 @@ export async function POST(request) {
     }
 
     let finalPlayerName = playerName
-    if (!finalPlayerName && process.env.STEAM_API_KEY) {
+    if (!finalPlayerName) {
       try {
-        const steamApiUrl = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${process.env.STEAM_API_KEY}&steamids=${playerSteamId}`
-        const steamApiResponse = await fetch(steamApiUrl)
-        const steamData = await steamApiResponse.json()
-
-        if (steamData.response?.players?.[0]) {
-          finalPlayerName = steamData.response.players[0].personaname || "Desconocido"
-        } else {
-          finalPlayerName = "Desconocido"
-        }
+        const { getPlayerSummaries } = await import("@/utils/steam-api")
+        const profiles = await getPlayerSummaries([playerSteamId])
+        const playerProfile = profiles[playerSteamId]
+        finalPlayerName = playerProfile?.displayName || "Desconocido"
       } catch (steamError) {
         console.error("Error obteniendo nombre del jugador desde Steam:", steamError)
         finalPlayerName = "Desconocido"
       }
-    } else if (!finalPlayerName) {
-      finalPlayerName = "Desconocido"
     }
 
     const adminQuery = await db.query(
@@ -255,30 +200,10 @@ export async function POST(request) {
 export async function PATCH(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
     
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
-    }
-
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    if (!user || !user.steamId) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
     const body = await request.json()
@@ -488,30 +413,10 @@ export async function PATCH(request) {
 export async function DELETE(request) {
   try {
     const cookieStore = await cookies()
-    const sessionToken = cookieStore.get('session')
+    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
     
-    if (!sessionToken) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
-    }
-
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Sesión inválida" },
-        { status: 401 }
-      )
-    }
-
-    if (!user || !user.steamId) {
-      return NextResponse.json(
-        { error: "No autorizado" },
-        { status: 401 }
-      )
+    if (userError) {
+      return NextResponse.json({ error: userError }, { status: userStatus })
     }
 
     const { searchParams } = new URL(request.url)

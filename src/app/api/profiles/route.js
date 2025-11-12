@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { getPlayerSummaries } from "@/utils/steam-api"
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)
@@ -9,24 +10,8 @@ export async function GET(req) {
   }
 
   try {
-    const steamApiKey = process.env.STEAM_API_KEY
-    const response = await fetch(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamApiKey}&steamids=${ids}`)
-    if (!response.ok) {
-      throw new Error("Steam API request failed")
-    }
-
-    const data = await response.json()
-    const profiles = {}
-
-    if (data.response && data.response.players) {
-      data.response.players.forEach((player) => {
-        profiles[player.steamid] = {
-          displayName: player.personaname,
-          avatarUrl: player.avatarfull,
-        }
-      })
-    }
-
+    const idsArray = ids.split(',').filter(Boolean)
+    const profiles = await getPlayerSummaries(idsArray)
     return NextResponse.json(profiles)
   } catch (error) {
     console.error("Error fetching Steam profiles:", error)

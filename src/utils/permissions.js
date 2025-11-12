@@ -1,4 +1,5 @@
 /**
+ * Permission utility functions
  * @param {string[]} userFlags
  * @param {string} requiredFlag
  * @param {boolean} isOwn

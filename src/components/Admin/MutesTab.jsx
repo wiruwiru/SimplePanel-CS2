@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { addToast } from "@heroui/react"
 import { useAuth } from "@/contexts/AuthContext"
-import { hasPermission } from "@/lib/permission-utils"
+import { hasPermission } from "@/utils/permissions"
 import { VolumeX, Plus, Search } from 'lucide-react'
 import { createMute, deleteMute, unmuteMute } from "@/services/sanctions/mutes"
 import { useMutes } from "@/hooks/useMutes"

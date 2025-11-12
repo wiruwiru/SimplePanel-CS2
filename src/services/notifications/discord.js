@@ -32,25 +32,7 @@ export async function sendDiscordWebhook(action, type, data, adminData, oldData 
     }
 
     const color = colors[action] || 0x6b7280
-
-    const formatDuration = (minutes) => {
-      if (!minutes || minutes === 0) return 'Permanente'
-      if (minutes < 60) return `${minutes} minutos`
-      if (minutes < 1440) return `${Math.floor(minutes / 60)} horas`
-      return `${Math.floor(minutes / 1440)} días`
-    }
-
-    const formatDate = (date) => {
-      if (!date) return 'N/A'
-      return new Date(date).toLocaleString('es-AR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-    }
+    const { formatDuration, formatDate } = await import("@/utils/formatters")
 
     const embed = {
       title: `${typeLabel} ${actionLabel}`,
