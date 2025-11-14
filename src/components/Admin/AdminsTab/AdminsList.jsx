@@ -97,6 +97,9 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
                         <span className="text-zinc-100 font-medium">{getDisplayName(admin)}</span>
                         <Badge className="bg-purple-600 text-white">{admin.group}</Badge>
                         <Badge className="bg-blue-600 text-white">{admin.immunity}</Badge>
+                        {admin.serverGroup && (
+                          <Badge className="bg-emerald-600 text-white">{admin.serverGroup}</Badge>
+                        )}
                       </div>
                       <div className="text-zinc-500 text-sm font-mono">{admin.steamId}</div>
                       {admin.flags.length > 0 && (

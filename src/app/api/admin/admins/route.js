@@ -51,6 +51,8 @@ export async function GET(request) {
           groupId: admin.group_id ? Number(admin.group_id) : null,
           flags: admin.flags ? admin.flags.split(',') : [],
           servers: [],
+          serverGroupId: null,
+          serverGroup: null,
           expires: admin.ends
         })
       }
@@ -63,6 +65,41 @@ export async function GET(request) {
         })
       }
     })
+
+    const serverGroups = await db.query(`
+      SELECT 
+        sg.id,
+        sg.name,
+        GROUP_CONCAT(sgs.server_id) as server_ids
+      FROM sp_server_groups sg
+      LEFT JOIN sp_server_group_servers sgs ON sg.id = sgs.server_group_id
+      GROUP BY sg.id, sg.name
+    `)
+
+    for (const adminData of adminMap.values()) {
+      if (adminData.servers.length > 0) {
+        const adminServerIds = adminData.servers.map(s => s.id).sort().join(',')
+
+        const allServers = await db.query(`SELECT id FROM sa_servers`)
+        const allServerIds = allServers.map(s => Number(s.id)).sort().join(',')
+        
+        if (adminServerIds === allServerIds) {
+          adminData.serverGroup = 'Todos los servidores'
+          adminData.serverGroupId = 'all'
+        } else {
+          for (const serverGroup of serverGroups) {
+            if (serverGroup.server_ids) {
+              const groupServerIds = serverGroup.server_ids.split(',').sort().join(',')
+              if (adminServerIds === groupServerIds) {
+                adminData.serverGroup = serverGroup.name
+                adminData.serverGroupId = Number(serverGroup.id)
+                break
+              }
+            }
+          }
+        }
+      }
+    }
 
     return NextResponse.json({
       admins: Array.from(adminMap.values())
