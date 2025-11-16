@@ -158,54 +158,55 @@ export async function findAndKickPlayer(steamId64, reason = "Sanción aplicada")
   return results
 }
 
-export async function reloadBansOnAllServers() {
-  const servers = await getAllServers()
-  const results = []
+// NOTE: no longer necessary (for the time being)
+// export async function reloadBansOnAllServers() {
+//   const servers = await getAllServers()
+//   const results = []
 
-  for (const server of servers) {
-    if (!server.rcon) {
-      continue
-    }
+//   for (const server of servers) {
+//     if (!server.rcon) {
+//       continue
+//     }
     
-    let rcon = null
-    try {
-      const [host, portStr] = server.address.split(":")
-      const port = parseInt(portStr)
+//     let rcon = null
+//     try {
+//       const [host, portStr] = server.address.split(":")
+//       const port = parseInt(portStr)
       
-      if (!host || !port) {
-        throw new Error("Dirección de servidor inválida")
-      }
+//       if (!host || !port) {
+//         throw new Error("Dirección de servidor inválida")
+//       }
 
-      rcon = await RCON({
-        ip: host,
-        port: port,
-        password: server.rcon
-      })
+//       rcon = await RCON({
+//         ip: host,
+//         port: port,
+//         password: server.rcon
+//       })
 
-      const response = await rcon.exec("css_reloadbans")
-      rcon.destroy()
+//       const response = await rcon.exec("css_reloadbans")
+//       rcon.destroy()
       
-      results.push({
-        serverId: server.id,
-        serverAddress: server.address,
-        success: true,
-        response: response
-      })
-    } catch (error) {
-      console.error(`Error recargando bans en servidor ${server.address}:`, error.message)
-      if (rcon) {
-        try {
-          rcon.destroy()
-        } catch (e) {}
-      }
-      results.push({
-        serverId: server.id,
-        serverAddress: server.address,
-        success: false,
-        error: error.message
-      })
-    }
-  }
+//       results.push({
+//         serverId: server.id,
+//         serverAddress: server.address,
+//         success: true,
+//         response: response
+//       })
+//     } catch (error) {
+//       console.error(`Error recargando bans en servidor ${server.address}:`, error.message)
+//       if (rcon) {
+//         try {
+//           rcon.destroy()
+//         } catch (e) {}
+//       }
+//       results.push({
+//         serverId: server.id,
+//         serverAddress: server.address,
+//         success: false,
+//         error: error.message
+//       })
+//     }
+//   }
 
-  return results
-}
+//   return results
+// }

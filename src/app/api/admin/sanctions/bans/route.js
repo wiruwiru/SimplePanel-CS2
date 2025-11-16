@@ -157,11 +157,11 @@ export async function POST(request) {
       console.error("Error al expulsar jugador (ban añadido de todas formas):", rconError)
     }
 
-    try {
-      await reloadBansOnAllServers()
-    } catch (reloadError) {
-      console.error("Error al recargar bans en servidores (ban añadido de todas formas):", reloadError)
-    }
+    // try {
+    //   await reloadBansOnAllServers()
+    // } catch (reloadError) {
+    //   console.error("Error al recargar bans en servidores (ban añadido de todas formas):", reloadError)
+    // }
 
     try {
       const banData = {
@@ -417,13 +417,11 @@ export async function PATCH(request) {
       }
     }
 
-    if (status === 'ACTIVE') {
-      try {
-        await reloadBansOnAllServers()
-      } catch (reloadError) {
-        console.error("Error al recargar bans en servidores:", reloadError)
-      }
-    }
+    // try {
+    //   await reloadBansOnAllServers()
+    // } catch (reloadError) {
+    //   console.error("Error al recargar bans en servidores:", reloadError)
+    // }
 
     return NextResponse.json({
       success: true,
@@ -525,6 +523,12 @@ export async function DELETE(request) {
     }
 
     await db.query(`DELETE FROM sa_bans WHERE id = ?`, [id])
+
+    // try {
+    //   await reloadBansOnAllServers()
+    // } catch (reloadError) {
+    //   console.error("Error al recargar bans en servidores:", reloadError)
+    // }
 
     return NextResponse.json({
       success: true,
