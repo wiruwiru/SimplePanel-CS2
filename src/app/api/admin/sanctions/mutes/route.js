@@ -183,7 +183,7 @@ export async function PATCH(request) {
     }
 
     const body = await request.json()
-    const { id, reason, duration, status, type, unmuteReason } = body
+    const { id, playerSteamId, reason, duration, status, type, unmuteReason } = body
 
     if (!id) {
       return NextResponse.json(
@@ -250,6 +250,25 @@ export async function PATCH(request) {
 
     const updates = []
     const values = []
+
+    if (playerSteamId !== undefined) {
+      updates.push('player_steamid = ?')
+      values.push(playerSteamId)
+
+      if (playerSteamId && playerSteamId !== existingMute[0].player_steamid) {
+        try {
+          const { getPlayerSummaries } = await import("@/utils/steam-api")
+          const profiles = await getPlayerSummaries([playerSteamId])
+          const playerProfile = profiles[playerSteamId]
+          if (playerProfile?.displayName) {
+            updates.push('player_name = ?')
+            values.push(playerProfile.displayName)
+          }
+        } catch (steamError) {
+          console.error("Error obteniendo nombre del jugador desde Steam:", steamError)
+        }
+      }
+    }
 
     if (reason !== undefined) {
       updates.push('reason = ?')

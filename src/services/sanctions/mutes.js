@@ -29,6 +29,7 @@ export async function updateMute(id, data) {
     },
     body: JSON.stringify({
       id,
+      playerSteamId: data.steamId,
       reason: data.reason,
       duration: data.duration !== undefined ? parseInt(data.duration) : undefined,
       status: data.status,

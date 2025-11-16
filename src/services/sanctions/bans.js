@@ -29,6 +29,8 @@ export async function updateBan(id, data) {
     },
     body: JSON.stringify({
       id,
+      playerSteamId: data.steamId,
+      playerIp: data.ip !== undefined ? (data.ip === '' || data.ip === null ? null : data.ip) : undefined,
       reason: data.reason,
       duration: data.duration !== undefined ? parseInt(data.duration) : undefined,
       status: data.status,
