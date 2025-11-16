@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MessageSquare, Search, Filter } from "lucide-react"
+import { MessageSquare, Search, Filter, RefreshCw } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useChatLogs } from "@/hooks/useChatLogs"
 import { Input } from "@/components/UI/input"
@@ -14,7 +14,7 @@ export function ChatLogsTab() {
   const [showFilters, setShowFilters] = useState(false)
   
   const canView = hasFlag("@web/chatlogs.view")
-  const { chatlogs, search, setSearch, playerSearch, setPlayerSearch, team, setTeam, messageType, setMessageType, serverId, setServerId, servers, currentPage, total, totalPages, startIndex, loading, getAvatarUrl, getDisplayName, handlePageChange, clearFilters, hasActiveFilters } = useChatLogs(canView)
+  const { chatlogs, search, setSearch, playerSearch, setPlayerSearch, team, setTeam, messageType, setMessageType, serverId, setServerId, servers, currentPage, total, totalPages, startIndex, loading, getAvatarUrl, getDisplayName, handlePageChange, clearFilters, hasActiveFilters, refetch } = useChatLogs(canView)
 
   if (!canView) {
     return (
@@ -40,11 +40,16 @@ export function ChatLogsTab() {
               <p className="text-zinc-400 text-sm mt-1">Visualiza y filtra los mensajes del chat de los servidores</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
-            <Filter className="size-4 mr-2" />
-            Filtros
-            {hasActiveFilters && <span className="ml-2 px-1.5 py-0.5 bg-[#FFB800] text-black rounded-full text-xs">!</span>}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
+              <Filter className="size-4 mr-2" />
+              Filtros
+              {hasActiveFilters && <span className="ml-2 px-1.5 py-0.5 bg-[#FFB800] text-black rounded-full text-xs">!</span>}
+            </Button>
+            <Button variant="outline" size="sm" onClick={refetch} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" title="Refrescar">
+              <RefreshCw className="size-4" />
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>

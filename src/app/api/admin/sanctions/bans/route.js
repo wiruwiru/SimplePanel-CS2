@@ -43,9 +43,11 @@ export async function GET(request) {
         b.ends,
         b.created,
         b.status,
-        ub.reason as unban_reason
+        ub.reason as unban_reason,
+        ub_admin.player_name as unban_admin_name
       FROM sa_bans b
       LEFT JOIN sa_unbans ub ON b.unban_id = ub.id
+      LEFT JOIN sa_admins ub_admin ON ub.admin_id = ub_admin.id
     `
     
     let countQuery = "SELECT COUNT(*) as total FROM sa_bans"

@@ -119,8 +119,16 @@ export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit
                   </div>
                   {mute.status === 'UNMUTED' && mute.unmuteReason && (
                     <div className="mt-2 pt-2 border-t border-zinc-700">
-                      <span className="text-xs text-zinc-500">Motivo del desmuteo: </span>
-                      <span className="text-xs text-blue-400">{mute.unmuteReason}</span>
+                      <div className="mb-1">
+                        <span className="text-xs text-zinc-500">Motivo del desmuteo: </span>
+                        <span className="text-xs text-blue-400">{mute.unmuteReason}</span>
+                      </div>
+                      {mute.unmuteAdmin && (
+                        <div>
+                          <span className="text-xs text-zinc-500">Admin: </span>
+                          <span className="text-xs text-zinc-300">{mute.unmuteAdmin}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

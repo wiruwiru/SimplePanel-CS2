@@ -84,8 +84,16 @@ export function BanList({ bans, loading, getAvatarUrl, getDisplayName, canEdit, 
                     </div>
                     {ban.status === 'UNBANNED' && ban.unbanReason && (
                       <div className="mt-2 pt-2 border-t border-zinc-700">
-                        <span className="text-xs text-zinc-500">Motivo del desbaneo: </span>
-                        <span className="text-xs text-blue-400">{ban.unbanReason}</span>
+                        <div className="mb-1">
+                          <span className="text-xs text-zinc-500">Motivo del desbaneo: </span>
+                          <span className="text-xs text-blue-400">{ban.unbanReason}</span>
+                        </div>
+                        {ban.unbanAdmin && (
+                          <div>
+                            <span className="text-xs text-zinc-500">Admin: </span>
+                            <span className="text-xs text-zinc-300">{ban.unbanAdmin}</span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

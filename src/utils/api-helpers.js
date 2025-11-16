@@ -102,6 +102,12 @@ export function formatSanction(sanction, type = 'ban') {
   if (sanction.unmute_reason && sanction.unmute_reason !== 'Unknown') {
     formatted.unmuteReason = sanction.unmute_reason
   }
+  if (sanction.unban_admin_name) {
+    formatted.unbanAdmin = sanction.unban_admin_name
+  }
+  if (sanction.unmute_admin_name) {
+    formatted.unmuteAdmin = sanction.unmute_admin_name
+  }
 
   return formatted
 }

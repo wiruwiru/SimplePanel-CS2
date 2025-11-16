@@ -42,9 +42,11 @@ export async function GET(request) {
         m.created,
         m.status,
         m.type,
-        um.reason as unmute_reason
+        um.reason as unmute_reason,
+        um_admin.player_name as unmute_admin_name
       FROM sa_mutes m
       LEFT JOIN sa_unmutes um ON m.unmute_id = um.id
+      LEFT JOIN sa_admins um_admin ON um.admin_id = um_admin.id
     `
     
     let countQuery = "SELECT COUNT(*) as total FROM sa_mutes"
