@@ -79,7 +79,7 @@ export function BanList({ bans, loading, getAvatarUrl, getDisplayName, canEdit, 
                       )}
                     </div>
                     <div className="flex gap-4 mt-1 text-xs text-zinc-500">
-                      <span>Admin: {ban.admin}</span>
+                      <span>Admin: <span className="text-zinc-300">{ban.admin}</span></span>
                       <span>{ban.date}</span>
                     </div>
                     {ban.status === 'UNBANNED' && ban.unbanReason && (

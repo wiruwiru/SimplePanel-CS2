@@ -114,7 +114,7 @@ export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit
                     </span>
                   </div>
                   <div className="flex gap-4 mt-1 text-xs text-zinc-500">
-                    <span>Admin: {mute.admin}</span>
+                    <span>Admin: <span className="text-zinc-300">{mute.admin}</span></span>
                     <span>{mute.date}</span>
                   </div>
                   {mute.status === 'UNMUTED' && mute.unmuteReason && (
