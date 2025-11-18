@@ -49,19 +49,19 @@ export async function GET(request) {
       LEFT JOIN sa_admins um_admin ON um.admin_id = um_admin.id
     `
     
-    let countQuery = "SELECT COUNT(*) as total FROM sa_mutes"
+    let countQuery = "SELECT COUNT(*) as total FROM sa_mutes m"
     let params = []
     let countParams = []
 
     if (search) {
-      query += ` WHERE (player_name LIKE ? OR player_steamid LIKE ?)`
-      countQuery += ` WHERE (player_name LIKE ? OR player_steamid LIKE ?)`
+      query += ` WHERE (m.player_name LIKE ? OR m.player_steamid LIKE ?)`
+      countQuery += ` WHERE (m.player_name LIKE ? OR m.player_steamid LIKE ?)`
       const searchParam = `%${search}%`
       params = [searchParam, searchParam]
       countParams = [searchParam, searchParam]
     }
 
-    query += " ORDER BY created DESC LIMIT ? OFFSET ?"
+    query += " ORDER BY m.created DESC LIMIT ? OFFSET ?"
     params.push(limit, offset)
 
     const [mutes, countResult] = await Promise.all([
