@@ -124,14 +124,14 @@ export function MutesTab() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <VolumeX className="size-5 text-[#FFB800]" />
+              <VolumeX className="size-5" style={{ color: 'var(--theme-primary)' }} />
               <div>
                 <CardTitle className="text-zinc-100">Gestión de Muteos</CardTitle>
                 <p className="text-zinc-400 text-sm mt-1">Gestiona los muteos (gag, mute, silence) de los jugadores</p>
               </div>
             </div>
             {canAdd && (
-              <Button onClick={() => setDialogOpen(true)} className="bg-[#FFB800] hover:bg-[#ce9300]">
+              <Button onClick={() => setDialogOpen(true)} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hover:opacity-90" onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
                 <Plus className="size-4 mr-2" />
                 Nuevo Muteo
               </Button>

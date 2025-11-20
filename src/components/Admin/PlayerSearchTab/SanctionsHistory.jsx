@@ -119,7 +119,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
         <CardHeader className="border-b border-zinc-800 p-3 shrink-0">
           <div className="flex items-center justify-between mb-2">
             <CardTitle className="text-zinc-100 flex items-center gap-1.5 text-sm">
-              <Ban className="size-4 text-[#FFB800]" />
+              <Ban className="size-4" style={{ color: 'var(--theme-primary)' }} />
               <span>Historial</span>
             </CardTitle>
             <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded transition-colors" aria-label="Cerrar" >
@@ -142,7 +142,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
         <CardContent className="flex-1 p-3 overflow-y-auto min-h-0">
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Spinner className="size-5 text-[#FFB800]" />
+              <Spinner className="size-5" style={{ color: 'var(--theme-primary)' }} />
             </div>
           ) : sanctions.length === 0 ? (
             <div className="text-center py-8 text-zinc-400">
@@ -194,7 +194,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
           <CardHeader className="border-b border-zinc-800 p-4 shrink-0">
             <div className="flex items-center justify-between mb-3">
               <CardTitle className="text-zinc-100 flex items-center gap-2">
-                <Ban className="size-5 text-[#FFB800]" />
+                <Ban className="size-5" style={{ color: 'var(--theme-primary)' }} />
                 <span>Historial de sanciones</span>
               </CardTitle>
               <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded transition-colors" aria-label="Cerrar" >
@@ -217,7 +217,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
           <CardContent className="flex-1 p-4 overflow-y-auto min-h-0">
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Spinner className="size-6 text-[#FFB800]" />
+                <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
               </div>
             ) : sanctions.length === 0 ? (
               <div className="text-center py-12 text-zinc-400">

@@ -61,7 +61,18 @@ export function ServerGroups({ groups, allServers, onRefresh }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-zinc-100">Grupos de Servidores</CardTitle>
-            <Button onClick={handleNew} size="sm" className="bg-[#FFB800] hover:bg-[#ce9300]">
+            <Button 
+              onClick={handleNew} 
+              size="sm" 
+              className="text-white" 
+              style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} 
+              onMouseEnter={(e) => { 
+                e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; 
+              }} 
+              onMouseLeave={(e) => { 
+                e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; 
+              }}
+            >
               <Plus className="size-4 mr-2" />
               Nuevo
             </Button>

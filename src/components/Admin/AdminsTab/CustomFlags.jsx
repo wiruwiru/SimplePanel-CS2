@@ -77,10 +77,10 @@ export function CustomFlags({ permissions, onRefresh }) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-zinc-100">
-              <Tag className="size-5 text-[#FFB800]" />
+              <Tag className="size-5" style={{ color: 'var(--theme-primary)' }} />
               Flags personalizados
             </CardTitle>
-            <Button onClick={() => setDialogOpen(true)} size="sm" className="bg-[#FFB800] hover:bg-[#ce9300]">
+            <Button onClick={() => setDialogOpen(true)} size="sm" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
               <Plus className="size-4 mr-2" />
               Nuevo Flag
             </Button>
@@ -128,7 +128,7 @@ export function CustomFlags({ permissions, onRefresh }) {
 
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => {setDialogOpen(false); setFormData({ flag: '@custom/', description: '' })}} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800" >Cancelar</Button>
-              <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">Crear Flag</Button>
+              <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>Crear Flag</Button>
             </DialogFooter>
           </form>
         </DialogContent>

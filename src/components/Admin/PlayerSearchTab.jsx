@@ -131,7 +131,7 @@ export function PlayerSearchTab() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <UserSearch className="size-5 text-[#FFB800]" />
+            <UserSearch className="size-5" style={{ color: 'var(--theme-primary)' }} />
             <div>
               <CardTitle className="text-zinc-100">Búsqueda de jugadores</CardTitle>
               <p className="text-zinc-400 text-sm mt-1">Busca jugadores por su nombre, SteamID64 o IP</p>
@@ -148,7 +148,7 @@ export function PlayerSearchTab() {
 
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Spinner className="size-6 text-[#FFB800]" />
+              <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
             </div>
           ) : players.length === 0 ? (
             <div className="text-center py-8 text-zinc-400">No se encontraron registros de jugadores</div>
@@ -156,11 +156,11 @@ export function PlayerSearchTab() {
             <>
               <div className="space-y-2">
                 {players.map((player) => (
-                  <div key={player.steamId} className={`bg-zinc-800 rounded-lg border border-zinc-700 p-4 cursor-pointer transition-all hover:bg-zinc-700 hover:border-zinc-600 ${selectedPlayer?.steamId === player.steamId ? 'ring-2 ring-[#FFB800] border-[#FFB800]' : ''}`} onClick={() => handlePlayerClick(player)} >
+                  <div key={player.steamId} className={`bg-zinc-800 rounded-lg border border-zinc-700 p-4 cursor-pointer transition-all hover:bg-zinc-700 hover:border-zinc-600 ${selectedPlayer?.steamId === player.steamId ? 'ring-2' : ''}`} style={selectedPlayer?.steamId === player.steamId ? { '--tw-ring-color': 'var(--theme-primary)', borderColor: 'var(--theme-primary)' } : {}} onClick={() => handlePlayerClick(player)} >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-start gap-3 flex-1">
                         <a href={`https://steamcommunity.com/profiles/${player.steamId}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} >
-                          <Avatar className="size-10 shrink-0 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
+                          <Avatar className="size-10 shrink-0 hover:ring-2 transition-all cursor-pointer" style={{ '--tw-ring-color': 'var(--theme-primary)' }}>
                             <AvatarImage src={getAvatarUrl(player.steamId) || "/placeholder.svg"} alt={player.name} />
                             <AvatarFallback>{player.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
@@ -234,7 +234,7 @@ export function PlayerSearchTab() {
                         }
 
                         return (
-                          <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => handlePageChange(pageNum)} className={currentPage === pageNum ? "bg-[#FFB800] hover:bg-[#ce9300]" : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"}>{pageNum}</Button>
+                          <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => handlePageChange(pageNum)} style={currentPage === pageNum ? { backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' } : {}} className={currentPage === pageNum ? "" : "bg-card border-border text-muted-foreground hover:bg-muted"} onMouseEnter={currentPage === pageNum ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; } : undefined} onMouseLeave={currentPage === pageNum ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; } : undefined}>{pageNum}</Button>
                         )
                       })}
                     </div>

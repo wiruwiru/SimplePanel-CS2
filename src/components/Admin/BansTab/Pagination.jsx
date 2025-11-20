@@ -29,7 +29,7 @@ export function Pagination({ currentPage, totalPages, startIndex, total, onPageC
             }
 
             return (
-              <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => onPageChange(pageNum)} className={currentPage === pageNum ? "bg-[#FFB800] hover:bg-[#ce9300]" : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"} >
+              <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => onPageChange(pageNum)} style={currentPage === pageNum ? { backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' } : {}} className={currentPage === pageNum ? "hover:opacity-90" : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"} onMouseEnter={currentPage === pageNum ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; } : undefined} onMouseLeave={currentPage === pageNum ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; } : undefined}>
                 {pageNum}
               </Button>
             )

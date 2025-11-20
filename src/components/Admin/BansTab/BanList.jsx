@@ -27,7 +27,7 @@ export function BanList({ bans, loading, getAvatarUrl, getDisplayName, canEdit, 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Spinner className="size-6 text-[#FFB800]" />
+        <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
       </div>
     )
   }
@@ -50,7 +50,7 @@ export function BanList({ bans, loading, getAvatarUrl, getDisplayName, canEdit, 
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-start gap-3 flex-1">
                   <a href={`https://steamcommunity.com/profiles/${ban.steamId}`} target="_blank" rel="noopener noreferrer">
-                    <Avatar className="size-10 shrink-0 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
+                    <Avatar className="size-10 shrink-0 hover:ring-2 transition-all cursor-pointer" style={{ '--tw-ring-color': 'var(--theme-primary)' }}>
                       <AvatarImage src={getAvatarUrl(ban.steamId)} alt={ban.player} />
                       <AvatarFallback>{ban.player.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>

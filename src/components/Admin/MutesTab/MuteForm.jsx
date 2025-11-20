@@ -7,11 +7,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { DurationInput } from "@/components/Admin/DurationInput"
 
 const Textarea = ({ placeholder, value, onChange, className = '' }) => (
-  <textarea placeholder={placeholder} value={value} onChange={onChange} rows={4} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] resize-none w-full ${className}`} />
+  <textarea placeholder={placeholder} value={value} onChange={onChange} rows={4} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none w-full ${className}`} style={{ '--tw-ring-color': 'var(--theme-primary)' }} />
 )
 
 const Select = ({ value, onChange, children, className = '' }) => (
-  <select value={value} onChange={onChange} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full ${className}`} >
+  <select value={value} onChange={onChange} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring w-full ${className}`} style={{ '--tw-ring-color': 'var(--theme-primary)' }} >
     {children}
   </select>
 )
@@ -30,7 +30,7 @@ export function MuteForm({ open, onOpenChange, formData, setFormData, onSubmit, 
           </div>
           <div className="space-y-2">
             <Label htmlFor="type" className="text-zinc-300">Tipo de Muteo</Label>
-            <Select id="type" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })} >
+            <Select id="type" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })}>
               <option value="MUTE">Mute (Voz)</option>
               <option value="GAG">Gag (Chat de texto)</option>
               <option value="SILENCE">Silence (Voz + Chat)</option>
@@ -38,7 +38,7 @@ export function MuteForm({ open, onOpenChange, formData, setFormData, onSubmit, 
           </div>
           <div className="space-y-2">
             <Label htmlFor="reason" className="text-zinc-300">Motivo</Label>
-            <Textarea id="reason" placeholder="Describe el motivo del muteo..." value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} required />
+            <Textarea id="reason" placeholder="Describe el motivo del muteo..." value={formData.reason} onChange={(e) => setFormData({ ...formData, reason: e.target.value })} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="duration" className="text-zinc-300">Duración (en minutos)</Label>
@@ -60,7 +60,7 @@ export function MuteForm({ open, onOpenChange, formData, setFormData, onSubmit, 
           </div>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={onCancel} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
-            <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">Crear Muteo</Button>
+            <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>Crear Muteo</Button>
           </DialogFooter>
         </form>
       </DialogContent>

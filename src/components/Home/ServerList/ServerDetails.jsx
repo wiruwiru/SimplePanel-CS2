@@ -9,7 +9,7 @@ export function ServerDetails({ server, details, isLoading, onCopyIP, onConnect,
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <Spinner className="size-6 text-[#FFB800]" />
+        <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
         <span className="ml-3 text-zinc-400">Obteniendo detalles del servidor...</span>
       </div>
     )
@@ -69,7 +69,7 @@ export function ServerDetails({ server, details, isLoading, onCopyIP, onConnect,
               <ClipboardCopy className="size-4" />
               {copiedId === server.id ? "¡Copiado!" : "Copiar IP"}
             </Button>
-            <Button onClick={() => onConnect(server.address)} className="flex items-center justify-center gap-2 bg-[#FFB800] hover:bg-[#ce9300] text-white transition-colors" >
+            <Button onClick={() => onConnect(server.address)} className="flex items-center justify-center gap-2 transition-colors" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>
               <GamepadIcon className="size-4" />
               Conectar
             </Button>

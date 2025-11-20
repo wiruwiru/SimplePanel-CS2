@@ -12,7 +12,7 @@ import { Spinner } from "@/components/UI/spinner"
 import { addToast } from "@heroui/react"
 
 const Switch = ({ checked, onChange }) => (
-  <button type="button" onClick={() => onChange(!checked)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? "bg-[#FFB800]" : "bg-zinc-700"}`} >
+  <button type="button" onClick={() => onChange(!checked)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? "" : "bg-zinc-700"}`} style={checked ? { backgroundColor: 'var(--theme-primary)' } : {}} >
     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked ? "translate-x-6" : "translate-x-1"}`} />
   </button>
 );
@@ -137,7 +137,7 @@ export function ServersTab() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <Spinner className="size-8 text-[#FFB800]" />
+            <Spinner className="size-8" style={{ color: 'var(--theme-primary)' }} />
             <span className="ml-3 text-zinc-400">Cargando servidores...</span>
           </div>
         </CardContent>
@@ -211,7 +211,7 @@ export function ServersTab() {
             </div>
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => setDialogOpen(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800" disabled={submitting} >Cancelar</Button>
-              <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]" disabled={submitting} >
+              <Button type="submit" className="text-white" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { if (!submitting) e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { if (!submitting) e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }} disabled={submitting} >
                 {submitting ? (
                   <>
                     <Spinner className="size-4 mr-2" />

@@ -8,12 +8,12 @@ import { Input } from "@/components/UI/input"
 import { Label } from "@/components/UI/label"
 
 const Select = ({ value, onChange, children, className = '' }) => (
-  <select value={value} onChange={onChange} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full ${className}`}>{children}</select>
+  <select value={value} onChange={onChange} className={`bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring w-full ${className}`}>{children}</select>
 );
 
 const Checkbox = ({ checked, onChange, id, label }) => (
   <div className="flex items-center space-x-2">
-    <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 text-[#FFB800] bg-zinc-800 border-zinc-700 rounded focus:ring-[#FFB800] focus:ring-2 cursor-pointer" />
+    <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 bg-zinc-800 border-zinc-700 rounded focus:ring-ring focus:ring-2 cursor-pointer" style={{ color: 'var(--theme-primary)' }} />
     {label && <label htmlFor={id} className="text-sm text-zinc-300 cursor-pointer">{label}</label>}
   </div>
 );
@@ -189,7 +189,7 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
-            <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">{editingAdmin ? 'Actualizar' : 'Crear'}</Button>
+            <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>{editingAdmin ? 'Actualizar' : 'Crear'}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

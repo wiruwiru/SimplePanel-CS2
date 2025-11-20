@@ -184,7 +184,7 @@ export function BanList() {
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent>
             <div className="flex items-center justify-center py-12">
-              <Spinner className="size-8 text-[#FFB800]" />
+              <Spinner className="size-8" style={{ color: 'var(--theme-primary)' }} />
             </div>
           </CardContent>
         </Card>
@@ -203,7 +203,7 @@ export function BanList() {
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-zinc-100">
             <div className="flex items-center gap-2">
-              <Ban className="size-5 text-[#FFB800]" />
+              <Ban className="size-5" style={{ color: 'var(--theme-primary)' }} />
               <span className="text-lg md:text-xl">Baneos ({total})</span>
             </div>
             <div className="flex items-center gap-3">
@@ -217,7 +217,7 @@ export function BanList() {
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Spinner className="size-6 text-[#FFB800]" />
+              <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
             </div>
           ) : bans.length === 0 ? (
             <div className="text-center py-8 text-zinc-400">No se han encontraron baneos</div>
@@ -294,7 +294,7 @@ export function BanList() {
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <a href={`https://steamcommunity.com/profiles/${ban.steamId}`} target="_blank" rel="noopener noreferrer" >
-                              <Avatar className="size-8 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
+                              <Avatar className="size-8 hover:ring-2 transition-all cursor-pointer" style={{ '--tw-ring-color': 'var(--theme-primary)' }}>
                                 <AvatarImage src={getAvatarUrl(ban.steamId)} alt={ban.player} />
                                 <AvatarFallback>{ban.player.substring(0, 2).toUpperCase()}</AvatarFallback>
                               </Avatar>
@@ -358,7 +358,7 @@ export function BanList() {
                     }
 
                     return (
-                      <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => handlePageChange(pageNum)} className={currentPage === pageNum ? "bg-[#FFB800] hover:bg-[#ce9300]" : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"} >{pageNum}</Button>
+                      <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => handlePageChange(pageNum)} style={currentPage === pageNum ? { backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' } : {}} className={currentPage === pageNum ? "" : "bg-card border-border text-muted-foreground hover:bg-muted"} onMouseEnter={currentPage === pageNum ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; } : undefined} onMouseLeave={currentPage === pageNum ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; } : undefined}>{pageNum}</Button>
                     )
                   })}
                 </div>
