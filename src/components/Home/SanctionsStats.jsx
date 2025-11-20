@@ -4,10 +4,12 @@ import { useState, useEffect } from "react"
 import { Ban, VolumeX } from "lucide-react"
 import { Card, CardContent } from "@/components/UI/card"
 import { Spinner } from "@/components/UI/spinner"
+import { useI18n } from "@/contexts/I18nContext"
 
 export function SanctionsStats() {
   const [stats, setStats] = useState({ activeBans: 0, activeMutes: 0 })
   const [loading, setLoading] = useState(true)
+  const { t } = useI18n()
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -58,7 +60,7 @@ export function SanctionsStats() {
                 <Ban className="size-5 md:size-6 text-red-500" />
               </div>
               <div>
-                <p className="text-zinc-400 text-sm md:text-base">Baneos totales</p>
+                <p className="text-zinc-400 text-sm md:text-base">{t("home.total_bans")}</p>
                 <p className="text-zinc-100 text-xl md:text-2xl">{stats.activeBans}</p>
               </div>
             </div>
@@ -74,7 +76,7 @@ export function SanctionsStats() {
                 <VolumeX className="size-5 md:size-6 text-yellow-500" />
               </div>
               <div>
-                <p className="text-zinc-400 text-sm md:text-base">Muteos totales</p>
+                <p className="text-zinc-400 text-sm md:text-base">{t("home.total_mutes")}</p>
                 <p className="text-zinc-100 text-xl md:text-2xl">{stats.activeMutes}</p>
               </div>
             </div>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { addToast } from "@heroui/react"
 import { useAuth } from "@/contexts/AuthContext"
+import { useI18n } from "@/contexts/I18nContext"
 import { hasPermission } from "@/utils/permissions"
 import { Ban, Plus, Search } from 'lucide-react'
 import { createBan, updateBan, deleteBan, unbanBan } from "@/services/sanctions/bans"
@@ -16,6 +17,7 @@ import { BanList } from "./BansTab/BanList"
 
 export function BansTab() {
   const { hasFlag, flags, user } = useAuth()
+  const { t } = useI18n()
   const { bans, search, setSearch, currentPage, total, totalPages, startIndex, loading, getAvatarUrl, getDisplayName, handlePageChange, refetch } = useBans()
 
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -54,10 +56,10 @@ export function BansTab() {
     try {
       if (editingBan) {
         await updateBan(editingBan.id, formData)
-        addToast({ title: 'Baneo actualizado correctamente', color: 'success', variant: 'solid' })
+        addToast({ title: t('bans.updated_success'), color: 'success', variant: 'solid' })
       } else {
         await createBan(formData)
-        addToast({ title: 'Baneo creado correctamente', color: 'success', variant: 'solid' })
+        addToast({ title: t('bans.created_success'), color: 'success', variant: 'solid' })
       }
       setDialogOpen(false)
       setEditingBan(null)
@@ -65,7 +67,7 @@ export function BansTab() {
       refetch()
     } catch (error) {
       console.error('Error saving ban:', error)
-      addToast({ title: error.message || 'Error al guardar baneo', color: 'danger', variant: 'solid' })
+      addToast({ title: error.message || t('bans.save_error'), color: 'danger', variant: 'solid' })
     }
   }
 
@@ -90,11 +92,11 @@ export function BansTab() {
     const ban = unbanAlert.ban
     try {
       await unbanBan(ban.id, unbanAlert.reason || undefined)
-      addToast({ title: 'Usuario desbaneado correctamente', color: 'success', variant: 'solid' })
+      addToast({ title: t('bans.unbanned_success'), color: 'success', variant: 'solid' })
       refetch()
     } catch (error) {
       console.error('Error unbanning:', error)
-      addToast({ title: error.message || 'Error al desbanear usuario', color: 'danger', variant: 'solid' })
+      addToast({ title: error.message || t('bans.unban_error'), color: 'danger', variant: 'solid' })
     } finally {
       setUnbanAlert({ open: false, ban: null, reason: '' })
     }
@@ -109,11 +111,11 @@ export function BansTab() {
     const ban = deleteAlert.ban
     try {
       await deleteBan(ban.id)
-      addToast({ title: 'Baneo eliminado correctamente', color: 'success', variant: 'solid' })
+      addToast({ title: t('bans.deleted_success'), color: 'success', variant: 'solid' })
       refetch()
     } catch (error) {
       console.error('Error deleting ban:', error)
-      addToast({ title: error.message || 'Error al eliminar baneo', color: 'danger', variant: 'solid' })
+      addToast({ title: error.message || t('bans.delete_error'), color: 'danger', variant: 'solid' })
     } finally {
       setDeleteAlert({ open: false, ban: null })
     }
@@ -137,7 +139,7 @@ export function BansTab() {
         <CardContent>
           <div className="text-center py-8 text-zinc-400">
             <Ban className="size-12 mx-auto mb-4 text-zinc-600" />
-            <p>No tienes permisos para ver los baneos.</p>
+            <p>{t('admin.bans.no_permissions_view')}</p>
           </div>
         </CardContent>
       </Card>
@@ -152,14 +154,14 @@ export function BansTab() {
             <div className="flex items-center gap-2">
               <Ban className="size-5" style={{ color: 'var(--theme-primary)' }} />
               <div>
-                <CardTitle className="text-zinc-100">Gestión de Baneos</CardTitle>
-                <p className="text-zinc-400 text-sm mt-1">Gestiona los baneos de los jugadores en los servidores</p>
+                <CardTitle className="text-zinc-100">{t('admin.bans.title')}</CardTitle>
+                <p className="text-zinc-400 text-sm mt-1">{t('admin.bans.description')}</p>
               </div>
             </div>
             {canAdd && (
               <Button onClick={handleNew} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hover:opacity-90" onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
                 <Plus className="size-4 mr-2" />
-                Nuevo Baneo
+                {t('admin.bans.new_ban')}
               </Button>
             )}
           </div>
@@ -168,7 +170,7 @@ export function BansTab() {
           <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-              <Input placeholder="Buscar por nombre, SteamID64 o IP..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
+              <Input placeholder={t('admin.bans.search_placeholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
             </div>
           </div>
 
@@ -181,21 +183,21 @@ export function BansTab() {
       <AlertDialog open={unbanAlert.open} onOpenChange={(open) => setUnbanAlert({ open, ban: null, reason: '' })}>
         <AlertDialogContent className="bg-zinc-900 border-zinc-800">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-zinc-100">¿Desbanear usuario?</AlertDialogTitle>
+            <AlertDialogTitle className="text-zinc-100">{t('bans.unban_confirm_title')}</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">
-              ¿Estás seguro de que deseas desbanear a <strong className="text-zinc-200">{unbanAlert.ban?.player}</strong>? Esta acción no se puede deshacer.
+              {t('bans.unban_confirm_description')} <strong className="text-zinc-200">{unbanAlert.ban?.player}</strong>? {t('bans.unban_confirm_warning')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-4">
-            <label className="block text-sm font-medium text-zinc-300 mb-2">Motivo del desbaneo (opcional)</label>
-            <Input type="text" placeholder="Ej: SS Realizada, no se le encontró nada." value={unbanAlert.reason} onChange={(e) => setUnbanAlert({ ...unbanAlert, reason: e.target.value })} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
+            <label className="block text-sm font-medium text-zinc-300 mb-2">{t('common.reason')} ({t('common.optional') || 'opcional'})</label>
+            <Input type="text" placeholder={t('bans.unban_reason_placeholder')} value={unbanAlert.reason} onChange={(e) => setUnbanAlert({ ...unbanAlert, reason: e.target.value })} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setUnbanAlert({ open: false, ban: null, reason: '' })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
-              Cancelar
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleUnbanConfirm} className="bg-green-600 hover:bg-green-700 text-white">
-              Confirmar
+              {t('common.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -204,17 +206,17 @@ export function BansTab() {
       <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, ban: null })}>
         <AlertDialogContent className="bg-zinc-900 border-zinc-800">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-zinc-100">¿Eliminar baneo?</AlertDialogTitle>
+            <AlertDialogTitle className="text-zinc-100">{t('bans.delete_confirm_title')}</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">
-              ¿Estás seguro de que deseas eliminar el baneo de <strong className="text-zinc-200">{deleteAlert.ban?.player}</strong>? Esta acción eliminará permanentemente el registro del baneo de la base de datos.
+              {t('bans.delete_confirm_description')} <strong className="text-zinc-200">{deleteAlert.ban?.player}</strong>? {t('bans.delete_confirm_warning')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, ban: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
-              Cancelar
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
-              Eliminar
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

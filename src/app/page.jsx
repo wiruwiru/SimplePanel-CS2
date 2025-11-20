@@ -2,7 +2,7 @@ import { SanctionsStats } from "@/components/Home/SanctionsStats"
 import { ServersList } from "@/components/Home/ServersList"
 
 export const metadata = {
-  title: "Inicio | CrisisGamer"
+  title: "Home | SimplePanel"
 }
 
 export default function Home() {

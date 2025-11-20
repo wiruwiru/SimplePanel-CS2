@@ -1,18 +1,21 @@
 "use client"
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useI18n } from "@/contexts/I18nContext"
 import { Button } from "@/components/UI/button"
 
 const ITEMS_PER_PAGE = 20
 
 export function Pagination({ currentPage, totalPages, startIndex, total, onPageChange }) {
+  const { t } = useI18n()
+  
   return (
     <div className="flex items-center justify-between mt-6 pt-4 border-t border-zinc-800">
-      <div className="text-zinc-400 text-sm">Mostrando {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, total)} de {total}</div>
+      <div className="text-zinc-400 text-sm">{t('pagination.showing')} {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, total)} {t('pagination.of')} {total}</div>
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
           <ChevronLeft className="size-4" />
-          <span className="hidden sm:inline ml-1">Anterior</span>
+          <span className="hidden sm:inline ml-1">{t('pagination.previous')}</span>
         </Button>
 
         <div className="flex items-center gap-1">
@@ -37,7 +40,7 @@ export function Pagination({ currentPage, totalPages, startIndex, total, onPageC
         </div>
 
         <Button variant="outline" size="sm" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
-          <span className="hidden sm:inline mr-1">Siguiente</span>
+          <span className="hidden sm:inline mr-1">{t('pagination.next')}</span>
           <ChevronRight className="size-4" />
         </Button>
       </div>

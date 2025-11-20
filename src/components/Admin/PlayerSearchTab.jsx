@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { UserSearch, Search, ChevronLeft, ChevronRight, Network } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
+import { useI18n } from "@/contexts/I18nContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
 import { Button } from "@/components/UI/button"
 import { Input } from "@/components/UI/input"
@@ -18,6 +19,7 @@ const Badge = ({ children, className = "" }) => (
 
 export function PlayerSearchTab() {
   const { hasFlag } = useAuth()
+  const { t } = useI18n()
   const [players, setPlayers] = useState([])
   const [search, setSearch] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
@@ -116,7 +118,7 @@ export function PlayerSearchTab() {
         <CardContent>
           <div className="text-center py-8 text-zinc-400">
             <UserSearch className="size-12 mx-auto mb-4 text-zinc-600" />
-            <p>No tienes permisos para buscar jugadores.</p>
+            <p>{t('admin.player_search.no_permissions')}</p>
           </div>
         </CardContent>
       </Card>
@@ -133,8 +135,8 @@ export function PlayerSearchTab() {
           <div className="flex items-center gap-2">
             <UserSearch className="size-5" style={{ color: 'var(--theme-primary)' }} />
             <div>
-              <CardTitle className="text-zinc-100">Búsqueda de jugadores</CardTitle>
-              <p className="text-zinc-400 text-sm mt-1">Busca jugadores por su nombre, SteamID64 o IP</p>
+              <CardTitle className="text-zinc-100">{t('admin.player_search.title')}</CardTitle>
+              <p className="text-zinc-400 text-sm mt-1">{t('admin.player_search.description')}</p>
             </div>
           </div>
         </CardHeader>
@@ -142,7 +144,7 @@ export function PlayerSearchTab() {
           <div className="mb-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-              <Input placeholder="Buscar por nombre, SteamID64 o IP..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
+              <Input placeholder={t('admin.player_search.search_placeholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10 w-full bg-zinc-800 border-zinc-700 text-zinc-100" />
             </div>
           </div>
 
@@ -151,7 +153,7 @@ export function PlayerSearchTab() {
               <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
             </div>
           ) : players.length === 0 ? (
-            <div className="text-center py-8 text-zinc-400">No se encontraron registros de jugadores</div>
+            <div className="text-center py-8 text-zinc-400">{t('admin.player_search.no_results')}</div>
           ) : (
             <>
               <div className="space-y-2">
@@ -172,23 +174,23 @@ export function PlayerSearchTab() {
                           </div>
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-400">
                             <span>
-                              <span className="text-zinc-500">Última conexión:</span>{" "}
+                              <span className="text-zinc-500">{t('admin.player_search.last_connection')}:</span>{" "}
                               <span className="text-zinc-300">{player.lastConnection}</span>
                             </span>
                             <span>
-                              <span className="text-zinc-500">Conexiones:</span>{" "}
+                              <span className="text-zinc-500">{t('admin.player_search.connections')}:</span>{" "}
                               <span className="text-zinc-300">{player.totalConnections}</span>
                             </span>
                           </div>
                         </div>
                       </div>
-                      <Badge className="bg-blue-600 text-white">{player.totalConnections} {player.totalConnections === 1 ? "registro" : "registros"}</Badge>
+                      <Badge className="bg-blue-600 text-white">{player.totalConnections} {player.totalConnections === 1 ? t('admin.player_search.record') : t('admin.player_search.records')}</Badge>
                     </div>
 
                     <div className="mt-3" onClick={(e) => e.stopPropagation()}>
                       <Button size="sm" variant="outline" onClick={() => togglePlayerExpand(player.steamId)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:border-zinc-600 transition-colors" >
                         <Network className="size-3 mr-1" />
-                        {expandedPlayer === player.steamId ? "Ocultar" : "Ver"} su dirección IP
+                        {expandedPlayer === player.steamId ? t('admin.player_search.hide_ip') : t('admin.player_search.show_ip')}
                       </Button>
 
                       {expandedPlayer === player.steamId && (
@@ -202,7 +204,7 @@ export function PlayerSearchTab() {
                             ))}
                           </div>
                           {player.totalConnections > 5 && (
-                            <p className="text-xs text-zinc-500 italic mt-2">Mostrando las 5 conexiones más recientes de {player.totalConnections} totales</p>
+                            <p className="text-xs text-zinc-500 italic mt-2">{t('admin.player_search.showing_recent')} {player.totalConnections} {t('admin.player_search.total')}</p>
                           )}
                         </div>
                       )}
@@ -213,11 +215,11 @@ export function PlayerSearchTab() {
 
               {totalPages > 1 && (
                 <div className="flex items-center justify-between mt-6 pt-4 border-t border-zinc-800">
-                  <div className="text-zinc-400 text-sm">Mostrando {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, total)} de {total}</div>
+                  <div className="text-zinc-400 text-sm">{t('common.showing')} {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, total)} {t('common.of')} {total}</div>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
                       <ChevronLeft className="size-4" />
-                      <span className="hidden sm:inline ml-1">Anterior</span>
+                      <span className="hidden sm:inline ml-1">{t('common.previous')}</span>
                     </Button>
 
                     <div className="flex items-center gap-1">
@@ -240,7 +242,7 @@ export function PlayerSearchTab() {
                     </div>
 
                     <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
-                      <span className="hidden sm:inline mr-1">Siguiente</span>
+                      <span className="hidden sm:inline mr-1">{t('common.next')}</span>
                       <ChevronRight className="size-4" />
                     </Button>
                   </div>

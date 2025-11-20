@@ -1,55 +1,56 @@
 "use client"
 
-import { Pencil, Trash2, Volume2 } from 'lucide-react';
+import { Pencil, Trash2, Volume2 } from 'lucide-react'
+import { useI18n } from "@/contexts/I18nContext"
 import { Button } from "@/components/UI/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { Spinner } from "@/components/UI/spinner"
 import { Pagination } from "../BansTab/Pagination"
 
-const getStatusConfig = (status) => {
+const getStatusConfig = (status, t) => {
   switch (status?.toUpperCase()) {
     case 'ACTIVE':
-      return { label: 'Activo', className: 'bg-red-600 text-white' }
+      return { label: t('common.active'), className: 'bg-red-600 text-white' }
     case 'EXPIRED':
-      return { label: 'Expirado', className: 'bg-green-600 text-white' }
+      return { label: t('common.expired'), className: 'bg-green-600 text-white' }
     case 'UNMUTED':
-      return { label: 'Desmuteado', className: 'bg-blue-600 text-white' }
+      return { label: t('common.unmuted'), className: 'bg-blue-600 text-white' }
     default:
-      return { label: 'Desconocido', className: 'bg-zinc-700 text-white' }
+      return { label: t('common.unknown'), className: 'bg-zinc-700 text-white' }
   }
 }
 
-const getMuteTypeConfig = (type) => {
+const getMuteTypeConfig = (type, t) => {
   switch (type?.toUpperCase()) {
     case 'GAG':
       return {
-        label: 'Gag',
+        label: t('mutes.gag'),
         icon: '💬',
         className: 'bg-orange-600 text-white'
       }
     case 'MUTE':
       return {
-        label: 'Mute',
+        label: t('mutes.mute'),
         icon: '🎤',
         className: 'bg-purple-600 text-white'
       }
     case 'SILENCE':
       return {
-        label: 'Silence',
+        label: t('mutes.silence'),
         icon: '🔇',
         className: 'bg-pink-600 text-white'
       }
     default:
       return {
-        label: 'Desconocido',
+        label: t('common.unknown'),
         icon: '❓',
         className: 'bg-zinc-700 text-white'
       }
   }
 }
 
-const StatusBadge = ({ status }) => {
-  const config = getStatusConfig(status)
+const StatusBadge = ({ status, t }) => {
+  const config = getStatusConfig(status, t)
   return (
     <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${config.className}`}>
       {config.label}
@@ -57,8 +58,8 @@ const StatusBadge = ({ status }) => {
   )
 }
 
-const MuteTypeBadge = ({ type }) => {
-  const config = getMuteTypeConfig(type)
+const MuteTypeBadge = ({ type, t }) => {
+  const config = getMuteTypeConfig(type, t)
   
   return (
     <span className={`px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 ${config.className}`}>
@@ -69,6 +70,7 @@ const MuteTypeBadge = ({ type }) => {
 }
 
 export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit, canUnmute, canRemove, onEdit, onUnmute, onDelete, currentPage, totalPages, startIndex, total, onPageChange }) {
+  const { t } = useI18n()
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -79,7 +81,7 @@ export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit
 
   if (mutes.length === 0) {
     return (
-      <div className="text-center py-8 text-zinc-400">No se encontraron muteos</div>
+      <div className="text-center py-8 text-zinc-400">{t('admin_lists.no_mutes_found')}</div>
     )
   }
 
@@ -103,29 +105,29 @@ export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-zinc-400 mt-2 mb-1">
                     <span>
-                      <span className="text-sm text-zinc-500">Razón:</span>{' '}
+                      <span className="text-sm text-zinc-500">{t('admin_lists.reason')}:</span>{' '}
                       <span className="text-base text-zinc-300">{mute.reason}</span>
                     </span>
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-400">
                     <span>
-                      <span className="text-zinc-500">Duración:</span>{' '}
+                      <span className="text-zinc-500">{t('admin_lists.duration')}:</span>{' '}
                       <span className="text-zinc-300">{mute.duration}</span>
                     </span>
                   </div>
                   <div className="flex gap-4 mt-1 text-xs text-zinc-500">
-                    <span>Admin: <span className="text-zinc-300">{mute.admin}</span></span>
+                    <span>{t('admin_lists.admin')}: <span className="text-zinc-300">{mute.admin}</span></span>
                     <span>{mute.date}</span>
                   </div>
                   {mute.status === 'UNMUTED' && mute.unmuteReason && (
                     <div className="mt-2 pt-2 border-t border-zinc-700">
                       <div className="mb-1">
-                        <span className="text-xs text-zinc-500">Motivo del desmuteo: </span>
+                        <span className="text-xs text-zinc-500">{t('admin_lists.unmute_reason')}: </span>
                         <span className="text-xs text-blue-400">{mute.unmuteReason}</span>
                       </div>
                       {mute.unmuteAdmin && (
                         <div>
-                          <span className="text-xs text-zinc-500">Admin: </span>
+                          <span className="text-xs text-zinc-500">{t('admin_lists.admin')}: </span>
                           <span className="text-xs text-zinc-300">{mute.unmuteAdmin}</span>
                         </div>
                       )}
@@ -134,27 +136,27 @@ export function MuteList({ mutes, loading, getAvatarUrl, getDisplayName, canEdit
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1.5 shrink-0">
-                <MuteTypeBadge type={mute.type} />
-                <StatusBadge status={mute.status} />
+                <MuteTypeBadge type={mute.type} t={t} />
+                <StatusBadge status={mute.status} t={t} />
               </div>
             </div>
             <div className="flex gap-2 mt-3 flex-wrap">
               {canEdit(mute) && (
-                <Button size="sm" variant="outline" className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
+                <Button size="sm" variant="outline" onClick={() => onEdit(mute)} className="bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
                   <Pencil className="size-3 mr-1" />
-                  Editar
+                  {t('admin_lists.edit')}
                 </Button>
               )}
               {mute.status === 'ACTIVE' && canUnmute(mute) && (
                 <Button size="sm" variant="outline" onClick={() => onUnmute(mute)} className="bg-zinc-900 border-zinc-700 text-green-400 hover:bg-zinc-700" >
                   <Volume2 className="size-3 mr-1" />
-                  Desmutear
+                  {t('admin_lists.unmute')}
                 </Button>
               )}
               {canRemove(mute) && (
                 <Button size="sm" variant="outline" onClick={() => onDelete(mute)} className="bg-zinc-900 border-zinc-700 text-red-400 hover:bg-zinc-700" >
                   <Trash2 className="size-3 mr-1" />
-                  Eliminar
+                  {t('admin_lists.delete')}
                 </Button>
               )}
             </div>

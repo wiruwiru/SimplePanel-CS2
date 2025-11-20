@@ -1,21 +1,23 @@
 "use client"
 
-import { useState } from 'react';
+import { useState } from 'react'
+import { Plus, Pencil, Trash2, Shield } from 'lucide-react'
 import { addToast } from "@heroui/react"
-import { Plus, Pencil, Trash2, Shield } from 'lucide-react';
+import { useI18n } from "@/contexts/I18nContext"
+import { deleteAdmin } from "@/services/admins/admins"
 import { Button } from "@/components/UI/button"
-import { AdminDialog } from "@/components/Admin/AdminsTab/UI/AdminDialog"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/UI/card"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from "@/components/UI/alert-dialog"
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/UI/hover-card"
-import { deleteAdmin } from "@/services/admins/admins"
+import { AdminDialog } from "@/components/Admin/AdminsTab/UI/AdminDialog"
 
 const Badge = ({ children, className = '' }) => (
   <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${className}`}>{children}</span>
 );
 
 export function AdminsList({ admins, profiles, permissions, permissionGroups, serverGroups, onRefresh }) {
+  const { t } = useI18n()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingAdmin, setEditingAdmin] = useState(null)
   const [deleteAlert, setDeleteAlert] = useState({ open: false, admin: null })
@@ -26,6 +28,13 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
 
   const getDisplayName = (admin) => {
     return profiles[admin.steamId]?.displayName || admin.name
+  }
+
+  const getServerGroupDisplay = (serverGroup) => {
+    if (serverGroup === 'all' || serverGroup === 'Todos los servidores' || serverGroup === 'All servers') {
+      return t('admin.admins.all_servers')
+    }
+    return serverGroup
   }
 
   const handleEdit = (admin) => {
@@ -46,11 +55,11 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
     const admin = deleteAlert.admin
     try {
       await deleteAdmin(admin.steamId)
-      addToast({ title: 'Administrador eliminado', color: 'success', variant: 'solid' })
+      addToast({ title: t('admin.admins.deleted_success'), color: 'success', variant: 'solid' })
       onRefresh()
     } catch (error) {
       console.error('Error deleting admin:', error)
-      addToast({ title: error.message || 'Error al eliminar administrador', color: 'danger', variant: 'solid' })
+      addToast({ title: error.message || t('admin.admins.delete_error'), color: 'danger', variant: 'solid' })
     } finally {
       setDeleteAlert({ open: false, admin: null })
     }
@@ -70,13 +79,13 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
             <div className="flex items-center gap-2">
               <Shield className="size-5" style={{ color: 'var(--theme-primary)' }} />
               <div>
-                <CardTitle className="text-zinc-100">Administradores</CardTitle>
-                <p className="text-zinc-400 text-sm mt-1">Gestiona administradores, grupos de permisos y flags personalizados</p>
+                <CardTitle className="text-zinc-100">{t('admin.admins.title')}</CardTitle>
+                <p className="text-zinc-400 text-sm mt-1">{t('admin.admins.description')}</p>
               </div>
             </div>
             <Button onClick={handleNew} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hover:opacity-90" onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
               <Plus className="size-4 mr-2" />
-              Nuevo Admin
+              {t('admin.admins.new_admin')}
             </Button>
           </div>
         </CardHeader>
@@ -98,21 +107,21 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
                         <Badge className="bg-purple-600 text-white">{admin.group}</Badge>
                         <Badge className="bg-blue-600 text-white">{admin.immunity}</Badge>
                         {admin.serverGroup && (
-                          <Badge className="bg-emerald-600 text-white">{admin.serverGroup}</Badge>
+                          <Badge className="bg-emerald-600 text-white">{getServerGroupDisplay(admin.serverGroup)}</Badge>
                         )}
                       </div>
                       <div className="text-zinc-500 text-sm font-mono">{admin.steamId}</div>
                       {admin.flags.length > 0 && (
                         <div className="text-zinc-400 text-xs mt-1">
-                          Permisos: {admin.flags.slice(0, 3).join(', ')}
+                          {t('admin.admins.permissions')}: {admin.flags.slice(0, 3).join(', ')}
                           {admin.flags.length > 3 && (
                             <HoverCard>
                               <HoverCardTrigger asChild>
-                                <span className="cursor-pointer transition-colors" style={{ color: 'var(--muted-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--theme-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted-foreground)'; }}> +{admin.flags.length - 3} más</span>
+                                <span className="cursor-pointer transition-colors" style={{ color: 'var(--muted-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--theme-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted-foreground)'; }}> +{admin.flags.length - 3} {t('admin.admins.more')}</span>
                               </HoverCardTrigger>
                               <HoverCardContent className="bg-zinc-800 border-zinc-700 text-zinc-100 w-80">
                                 <div className="space-y-2">
-                                  <h4 className="text-sm font-semibold text-zinc-100 mb-2">Todos los permisos ({admin.flags.length})</h4>
+                                  <h4 className="text-sm font-semibold text-zinc-100 mb-2">{t('admin.admins.all_permissions')} ({admin.flags.length})</h4>
                                   <div className="flex flex-wrap gap-1.5">
                                     {admin.flags.map((flag, index) => (
                                       <span key={index} className="px-2 py-1 bg-zinc-700 text-zinc-200 rounded text-xs font-mono">
@@ -140,7 +149,7 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
               </div>
             ))}
             {admins.length === 0 && (
-              <div className="text-center py-8 text-zinc-400">No hay administradores registrados</div>
+              <div className="text-center py-8 text-zinc-400">{t('admin.admins.no_admins')}</div>
             )}
           </div>
         </CardContent>
@@ -151,17 +160,17 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
       <AlertDialog open={deleteAlert.open} onOpenChange={(open) => setDeleteAlert({ open, admin: null })}>
         <AlertDialogContent className="bg-zinc-900 border-zinc-800">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-zinc-100">¿Eliminar administrador?</AlertDialogTitle>
+            <AlertDialogTitle className="text-zinc-100">{t('admin.admins.delete_confirm_title')}</AlertDialogTitle>
             <AlertDialogDescription className="text-zinc-400">
-              ¿Estás seguro de que deseas eliminar a <strong className="text-zinc-200">{deleteAlert.admin?.name}</strong> como administrador? Esta acción eliminará todos sus permisos y accesos en todos los servidores.
+              {t('admin.admins.delete_confirm_description')} <strong className="text-zinc-200">{deleteAlert.admin?.name}</strong> {t('admin.admins.delete_confirm_warning')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDeleteAlert({ open: false, admin: null })} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700">
-              Cancelar
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700 text-white">
-              Eliminar
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

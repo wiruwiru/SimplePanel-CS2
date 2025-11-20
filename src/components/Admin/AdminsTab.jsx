@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Shield } from 'lucide-react';
 import { useAuth } from "@/contexts/AuthContext"
+import { useI18n } from "@/contexts/I18nContext"
 import { Card, CardContent } from "@/components/UI/card"
 import { Spinner } from "@/components/UI/spinner"
 import { useAdmins } from "@/hooks/useAdmins"
@@ -13,6 +14,7 @@ import { CustomFlags } from "@/components/Admin/AdminsTab/CustomFlags"
 
 export function AdminsTab() {
   const { hasFlag } = useAuth()
+  const { t } = useI18n()
   const canManage = hasFlag('@web/root')
   const { admins, permissionGroups, serverGroups, permissions, allServers, profiles, loading, fetchAllData } = useAdmins()
 
@@ -28,7 +30,7 @@ export function AdminsTab() {
         <CardContent>
           <div className="text-center py-8 text-zinc-400">
             <Shield className="size-12 mx-auto mb-4 text-zinc-600" />
-            <p>No tienes permisos para gestionar administradores.</p>
+            <p>{t('admin.admins.no_permissions')}</p>
           </div>
         </CardContent>
       </Card>
@@ -41,7 +43,7 @@ export function AdminsTab() {
         <CardContent>
           <div className="flex items-center justify-center py-8">
             <Spinner className="size-8" style={{ color: 'var(--theme-primary)' }} />
-            <span className="ml-3 text-zinc-400">Cargando...</span>
+            <span className="ml-3 text-zinc-400">{t('admin.admins.loading')}</span>
           </div>
         </CardContent>
       </Card>

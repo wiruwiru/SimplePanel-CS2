@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react'
 import { addToast } from "@heroui/react"
+import { useI18n } from "@/contexts/I18nContext"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
 import { Button } from "@/components/UI/button"
 import { Input } from "@/components/UI/input"
@@ -23,15 +24,23 @@ const getInitialFormData = (editingGroup) => {
     }
   }
   return {
-    name: '',
+    name: '#',
     immunity: 0,
     flags: []
   }
 }
 
 export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permissions, onSuccess }) {
+  const { t } = useI18n()
   const initialFormData = useMemo(() => getInitialFormData(editingGroup), [editingGroup])
   const [formData, setFormData] = useState(initialFormData)
+
+  const handleNameChange = (value) => {
+    if (!value.startsWith('#')) {
+      value = '#' + value.replace(/^#+/, '')
+    }
+    setFormData({...formData, name: value})
+  }
 
   useEffect(() => {
     if (open) {
@@ -44,7 +53,8 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
   
   const handleOpenChange = (isOpen) => {
     if (isOpen) {
-      setFormData(getInitialFormData(editingGroup))
+      const newData = getInitialFormData(editingGroup)
+      setFormData(newData)
     }
     onOpenChange(isOpen)
   }
@@ -63,7 +73,7 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
 
       if (response.ok) {
         addToast({ 
-          title: editingGroup ? 'Grupo actualizado' : 'Grupo creado', 
+          title: editingGroup ? t('permissions.groups.updated_success') : t('permissions.groups.created_success'), 
           color: 'success', 
           variant: 'solid' 
         })
@@ -74,7 +84,7 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
       }
     } catch (error) {
       console.error('Error saving permission group:', error)
-      addToast({ title: 'Error al guardar grupo', color: 'danger', variant: 'solid' })
+      addToast({ title: t('permissions.groups.save_error'), color: 'danger', variant: 'solid' })
     }
   }
 
@@ -82,22 +92,23 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-zinc-100">{editingGroup ? 'Editar Grupo de Permisos' : 'Nuevo Grupo de Permisos'}</DialogTitle>
+          <DialogTitle className="text-zinc-100">{editingGroup ? t('permissions.groups.edit_title') : t('permissions.groups.new_title')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="groupName" className="text-zinc-300">Nombre del Grupo</Label>
-              <Input id="groupName" placeholder="Ej: #administrador" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
+              <Label htmlFor="groupName" className="text-zinc-300">{t('permissions.groups.name')}</Label>
+              <Input id="groupName" placeholder={t('permissions.groups.name_placeholder')} value={formData.name} onChange={(e) => handleNameChange(e.target.value)} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
+              <p className="text-xs text-zinc-500">{t('permissions.groups.name_hint')}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="groupImmunity" className="text-zinc-300">Inmunidad</Label>
+              <Label htmlFor="groupImmunity" className="text-zinc-300">{t('permissions.groups.immunity')}</Label>
               <Input id="groupImmunity" type="number" min="0" max="100" value={formData.immunity} onChange={(e) => setFormData({...formData, immunity: parseInt(e.target.value) || 0})} className="bg-zinc-800 border-zinc-700 text-zinc-100" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-zinc-300">Permisos del Grupo</Label>
+            <Label className="text-zinc-300">{t('permissions.groups.permissions')}</Label>
             <div className="bg-zinc-800 p-4 rounded-lg border border-zinc-700 max-h-64 overflow-y-auto space-y-2">
               {permissions.map(perm => (
                 <Checkbox key={perm.flag} id={`group-${perm.flag}`} label={`${perm.flag} - ${perm.description}`} checked={formData.flags.includes(perm.flag)}
@@ -113,8 +124,8 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
-            <Button type="submit" className="text-white" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>{editingGroup ? 'Actualizar' : 'Crear'}</Button>
+            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">{t('common.cancel')}</Button>
+            <Button type="submit" className="text-white" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>{editingGroup ? t('common.update') : t('common.create')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

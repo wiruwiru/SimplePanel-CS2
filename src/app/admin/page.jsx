@@ -4,6 +4,7 @@ import { useState, Children, cloneElement, isValidElement } from 'react';
 import { Shield } from "lucide-react"
 import withAuth from "@/hooks/withAuth"
 import { useAuth } from "@/contexts/AuthContext"
+import { useI18n } from "@/contexts/I18nContext"
 import { BansTab } from "@/components/Admin/BansTab"
 import { MutesTab } from "@/components/Admin/MutesTab"
 import { AdminsTab } from "@/components/Admin/AdminsTab"
@@ -59,25 +60,26 @@ const TabsContent = ({ value, children }) => (
 
 function AdminPage() {
   const { user, flags } = useAuth()
+  const { t } = useI18n()
 
   return (
     <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-3">
         <Shield className="size-8" style={{ color: 'var(--theme-primary)' }} />
         <div>
-          <h2 className="text-2xl font-bold text-zinc-100 mb-1">Panel de administración</h2>
-          <p className="text-zinc-400 text-sm md:text-base">Añade nuevas sanciones, modifica las existentes o simplemente busca información de un jugador.</p>
+          <h2 className="text-2xl font-bold text-zinc-100 mb-1">{t('admin.title')}</h2>
+          <p className="text-zinc-400 text-sm md:text-base">{t('admin.description')}</p>
         </div>
       </div>
 
       <Tabs defaultValue="bans">
         <TabsList>
-          <TabsTrigger value="bans">Baneos</TabsTrigger>
-          <TabsTrigger value="mutes">Muteos</TabsTrigger>
-          <TabsTrigger value="playersearch">Buscar jugadores</TabsTrigger>
-          <TabsTrigger value="chatlogs">Logs de chat</TabsTrigger>
-          <TabsTrigger value="admins">Administradores</TabsTrigger>
-          <TabsTrigger value="servers">Servidores</TabsTrigger>
+          <TabsTrigger value="bans">{t('admin.tabs.bans')}</TabsTrigger>
+          <TabsTrigger value="mutes">{t('admin.tabs.mutes')}</TabsTrigger>
+          <TabsTrigger value="playersearch">{t('admin.tabs.player_search')}</TabsTrigger>
+          <TabsTrigger value="chatlogs">{t('admin.tabs.chat_logs')}</TabsTrigger>
+          <TabsTrigger value="admins">{t('admin.tabs.admins')}</TabsTrigger>
+          <TabsTrigger value="servers">{t('admin.tabs.servers')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="bans">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { addToast } from "@heroui/react"
+import { useI18n } from "@/contexts/I18nContext"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/UI/dialog"
 import { Button } from "@/components/UI/button"
 import { Input } from "@/components/UI/input"
@@ -73,6 +74,7 @@ const getInitialFormData = (editingAdmin, serverGroups) => {
 }
 
 export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, permissionGroups, serverGroups, onSuccess }) {
+  const { t } = useI18n()
   const initialFormData = useMemo(() => getInitialFormData(editingAdmin, serverGroups), [editingAdmin, serverGroups])
   const [formData, setFormData] = useState(initialFormData)
 
@@ -131,23 +133,23 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-zinc-100">{editingAdmin ? 'Editar Administrador' : 'Nuevo Administrador'}</DialogTitle>
+          <DialogTitle className="text-zinc-100">{editingAdmin ? t('admin.admins.edit_admin') : t('admin.admins.new_admin_title')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="steamId" className="text-zinc-300">SteamID64</Label>
+              <Label htmlFor="steamId" className="text-zinc-300">{t('admin.admins.steamid64')}</Label>
               <Input id="steamId" placeholder="76561199074660131" value={formData.steamId} onChange={(e) => setFormData({...formData, steamId: e.target.value})} className="bg-zinc-800 border-zinc-700 text-zinc-100" required disabled={!!editingAdmin} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-zinc-300">Nombre</Label>
-              <Input id="name" placeholder="Nombre del admin" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
+              <Label htmlFor="name" className="text-zinc-300">{t('admin.admins.name')}</Label>
+              <Input id="name" placeholder={t('admin.admins.name_placeholder')} value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="bg-zinc-800 border-zinc-700 text-zinc-100" required />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="permGroup" className="text-zinc-300">Grupo de Permisos</Label>
+              <Label htmlFor="permGroup" className="text-zinc-300">{t('admin.admins.group')}</Label>
               <Select id="permGroup" value={formData.permissionGroup || ''} onChange={(e) => setFormData({...formData, permissionGroup: e.target.value ? parseInt(e.target.value) : null})} >
                 <option value="">Ninguno</option>
                 {permissionGroups.map(g => (
@@ -156,9 +158,9 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="serverGroup" className="text-zinc-300">Grupo de Servidores</Label>
+              <Label htmlFor="serverGroup" className="text-zinc-300">{t('admin.admins.server_group')}</Label>
               <Select id="serverGroup" value={formData.serverGroup} onChange={(e) => setFormData({...formData, serverGroup: e.target.value})} >
-                <option value="all">Todos los Servidores</option>
+                <option value="all">{t('admin.admins.all_servers')}</option>
                 {serverGroups.map(g => (
                   <option key={g.id} value={g.id}>{g.name}</option>
                 ))}
@@ -167,12 +169,12 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="immunity" className="text-zinc-300">Inmunidad</Label>
+            <Label htmlFor="immunity" className="text-zinc-300">{t('permissions.groups.immunity')}</Label>
             <Input id="immunity" type="number" min="0" max="100" value={formData.immunity} onChange={(e) => setFormData({...formData, immunity: parseInt(e.target.value) || 0})} className="bg-zinc-800 border-zinc-700 text-zinc-100" />
           </div>
 
           <div className="space-y-2">
-            <Label className="text-zinc-300">Flags adicionales</Label>
+            <Label className="text-zinc-300">{t('admin.admins.additional_flags')}</Label>
             <div className="bg-zinc-800 p-4 rounded-lg border border-zinc-700 max-h-48 overflow-y-auto space-y-2">
               {permissions.map(perm => (
                 <Checkbox key={perm.flag} id={perm.flag} label={`${perm.flag} - ${perm.description}`} checked={formData.customFlags.includes(perm.flag)}
@@ -188,8 +190,8 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
-            <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>{editingAdmin ? 'Actualizar' : 'Crear'}</Button>
+            <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">{t('common.cancel')}</Button>
+            <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>{editingAdmin ? t('common.update') : t('common.create')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

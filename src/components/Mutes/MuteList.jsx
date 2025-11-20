@@ -8,53 +8,54 @@ import { Button } from "@/components/UI/button"
 import { Spinner } from "@/components/UI/spinner"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/UI/avatar"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/UI/hover-card"
+import { useI18n } from "@/contexts/I18nContext"
 
 const ITEMS_PER_PAGE = 15
 
-const getStatusConfig = (status) => {
+const getStatusConfig = (status, t) => {
   switch (status?.toUpperCase()) {
     case 'ACTIVE':
-      return { label: 'Activo', className: 'bg-red-600 text-white' };
+      return { label: t('common.active'), className: 'bg-red-600 text-white' };
     case 'EXPIRED':
-      return { label: 'Expirado', className: 'bg-green-600 text-white' };
+      return { label: t('common.expired'), className: 'bg-green-600 text-white' };
     case 'UNMUTED':
-      return { label: 'Desmuteado', className: 'bg-blue-600 text-white' };
+      return { label: t('common.unmuted'), className: 'bg-blue-600 text-white' };
     default:
-      return { label: 'Desconocido', className: 'bg-zinc-700 text-white' };
+      return { label: t('common.unknown'), className: 'bg-zinc-700 text-white' };
   }
 };
 
-const getMuteTypeConfig = (type) => {
+const getMuteTypeConfig = (type, t) => {
   switch (type?.toUpperCase()) {
     case 'GAG':
       return {
-        label: 'Gag',
+        label: t('mutes.gag'),
         icon: MessageSquareOff,
         className: 'bg-orange-600 text-white'
       };
     case 'MUTE':
       return {
-        label: 'Mute',
+        label: t('mutes.mute'),
         icon: Mic,
         className: 'bg-purple-600 text-white'
       };
     case 'SILENCE':
       return {
-        label: 'Silence',
+        label: t('mutes.silence'),
         icon: Volume2,
         className: 'bg-pink-600 text-white'
       };
     default:
       return {
-        label: 'Desconocido',
+        label: t('common.unknown'),
         icon: VolumeX,
         className: 'bg-zinc-700 text-white'
       };
   }
 };
 
-const StatusBadge = ({ status }) => {
-  const config = getStatusConfig(status);
+const StatusBadge = ({ status, t }) => {
+  const config = getStatusConfig(status, t);
   return (
     <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.className}`}>
       {config.label}
@@ -62,8 +63,8 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const MuteTypeBadge = ({ type }) => {
-  const config = getMuteTypeConfig(type);
+const MuteTypeBadge = ({ type, t }) => {
+  const config = getMuteTypeConfig(type, t);
   const Icon = config.icon;
   
   return (
@@ -82,6 +83,7 @@ export function MuteList() {
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState({})
+  const { t } = useI18n()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -185,32 +187,32 @@ export function MuteList() {
 
   const getRemainingMinutes = (mute) => {
     if (mute.durationMinutes === 0) {
-      return "Permanente"
+      return t('common.permanent')
     }
     
     if (mute.status === 'EXPIRED' || mute.status === 'UNMUTED') {
-      return "Finalizada"
+      return t('common.finished')
     }
 
     if (!mute.ends) {
-      return "Desconocido"
+      return t('common.unknown')
     }
 
     const now = Date.now()
     const remaining = mute.ends - now
     if (remaining <= 0) {
-      return "Finalizada"
+      return t('common.finished')
     }
 
     const minutes = Math.floor(remaining / (1000 * 60))
     const hours = Math.floor(minutes / 60)
     const days = Math.floor(hours / 24)
     if (days > 0) {
-      return `${days} día${days > 1 ? 's' : ''} y ${hours % 24} hora${(hours % 24) !== 1 ? 's' : ''}`
+      return `${days} ${days > 1 ? t('common.days_plural') : t('common.days')} ${t('common.and')} ${hours % 24} ${(hours % 24) !== 1 ? t('common.hours_plural') : t('common.hours')}`
     } else if (hours > 0) {
-      return `${hours} hora${hours > 1 ? 's' : ''} y ${minutes % 60} minuto${(minutes % 60) !== 1 ? 's' : ''}`
+      return `${hours} ${hours > 1 ? t('common.hours_plural') : t('common.hours')} ${t('common.and')} ${minutes % 60} ${(minutes % 60) !== 1 ? t('common.minutes_plural') : t('common.minutes')}`
     } else {
-      return `${minutes} minuto${minutes !== 1 ? 's' : ''}`
+      return `${minutes} ${minutes !== 1 ? t('common.minutes_plural') : t('common.minutes')}`
     }
   }
 
@@ -218,8 +220,8 @@ export function MuteList() {
     return (
       <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
         <div>
-          <h2 className="text-zinc-100 mb-1">Lista de muteos</h2>
-          <p className="text-zinc-400 text-sm md:text-base">Lista completa de los jugadores silenciados en nuestros servidores</p>
+          <h2 className="text-zinc-100 mb-1">{t('mutes.title')}</h2>
+          <p className="text-zinc-400 text-sm md:text-base">{t('mutes.description')}</p>
         </div>
         <Card className="bg-zinc-900 border-zinc-800">
           <CardContent>
@@ -235,8 +237,8 @@ export function MuteList() {
   return (
     <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
       <div>
-        <h2 className="text-zinc-100 mb-1">Lista de muteos</h2>
-        <p className="text-zinc-400 text-sm md:text-base">Lista completa de los jugadores silenciados en nuestros servidores</p>
+        <h2 className="text-zinc-100 mb-1">{t('mutes.title')}</h2>
+        <p className="text-zinc-400 text-sm md:text-base">{t('mutes.description')}</p>
       </div>
 
       <Card className="bg-zinc-900 border-zinc-800">
@@ -244,12 +246,12 @@ export function MuteList() {
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-zinc-100">
             <div className="flex items-center gap-2">
               <VolumeX className="size-5" style={{ color: 'var(--theme-primary)' }} />
-              <span className="text-lg md:text-xl">Muteos ({total})</span>
+              <span className="text-lg md:text-xl">{t('mutes.list_title')} ({total})</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="relative flex-1 sm:flex-initial">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
-                <Input placeholder="Buscar por nombre o SteamID64..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-zinc-800 border-zinc-700 text-zinc-100 w-full sm:w-64" />
+                <Input placeholder={t('mutes.search_placeholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-zinc-800 border-zinc-700 text-zinc-100 w-full sm:w-64" />
               </div>
             </div>
           </CardTitle>
@@ -260,7 +262,7 @@ export function MuteList() {
               <Spinner className="size-6" style={{ color: 'var(--theme-primary)' }} />
             </div>
           ) : mutes.length === 0 ? (
-            <div className="text-center py-8 text-zinc-400">No se han encontraron muteos</div>
+            <div className="text-center py-8 text-zinc-400">{t('mutes.no_mutes_found')}</div>
           ) : (
             <>
               <div className="block lg:hidden space-y-3">
@@ -278,19 +280,19 @@ export function MuteList() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1.5">
-                        <MuteTypeBadge type={mute.type} />
-                        <StatusBadge status={mute.status} />
+                        <MuteTypeBadge type={mute.type} t={t} />
+                        <StatusBadge status={mute.status} t={t} />
                       </div>
                     </div>
                     <div className="space-y-1 text-sm">
                       <div className="text-zinc-400">
-                        <span className="text-zinc-500">Razón:</span> {mute.reason}
+                        <span className="text-zinc-500">{t('common.reason')}:</span> {mute.reason}
                       </div>
                       <div className="text-zinc-400">
-                        <span className="text-zinc-500">Admin:</span> {mute.admin}
+                        <span className="text-zinc-500">{t('common.admin')}:</span> {mute.admin}
                       </div>
                       <div className="text-zinc-400">
-                        <span className="text-zinc-500">Duración:</span> {mute.duration}
+                        <span className="text-zinc-500">{t('common.duration')}:</span> {mute.duration}
                       </div>
                       <div className="text-zinc-500 text-xs">{mute.date}</div>
                     </div>
@@ -305,7 +307,7 @@ export function MuteList() {
                         </HoverCardTrigger>
                         <HoverCardContent className="w-auto p-3 bg-zinc-800 border-zinc-700 text-zinc-100">
                           <div className="text-sm">
-                            <div className="font-medium mb-1">Tiempo restante</div>
+                            <div className="font-medium mb-1">{t('common.remaining_time')}</div>
                             <div className="text-zinc-400">{getRemainingMinutes(mute)}</div>
                           </div>
                         </HoverCardContent>
@@ -319,14 +321,14 @@ export function MuteList() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-zinc-800">
-                      <th className="text-left py-3 px-4 text-zinc-400">Jugador</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Razón</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Admin</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Duración</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Progreso</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Fecha de emisión</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Tipo</th>
-                      <th className="text-left py-3 px-4 text-zinc-400">Estado</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.player')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.reason')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.admin')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.duration')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.progress')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.date')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.type')}</th>
+                      <th className="text-left py-3 px-4 text-zinc-400">{t('common.status')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -357,7 +359,7 @@ export function MuteList() {
                             </HoverCardTrigger>
                             <HoverCardContent className="w-auto p-3 bg-zinc-800 border-zinc-700 text-zinc-100">
                               <div className="text-sm">
-                                <div className="font-medium mb-1">Tiempo restante</div>
+                                <div className="font-medium mb-1">{t('common.remaining_time')}</div>
                                 <div className="text-zinc-400">{getRemainingMinutes(mute)}</div>
                               </div>
                             </HoverCardContent>
@@ -365,10 +367,10 @@ export function MuteList() {
                         </td>
                         <td className="py-3 px-4 text-zinc-400 text-sm">{mute.date}</td>
                         <td className="py-3 px-4">
-                          <MuteTypeBadge type={mute.type} />
+                          <MuteTypeBadge type={mute.type} t={t} />
                         </td>
                         <td className="py-3 px-4">
-                          <StatusBadge status={mute.status} />
+                          <StatusBadge status={mute.status} t={t} />
                         </td>
                       </tr>
                     ))}
@@ -381,12 +383,12 @@ export function MuteList() {
           {!loading && totalPages > 1 && (
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-zinc-800">
               <div className="text-zinc-400 text-sm">
-                Mostrando {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, total)} de {total}
+                {t('common.showing')} {startIndex + 1} - {Math.min(startIndex + ITEMS_PER_PAGE, total)} {t('common.of')} {total}
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
                   <ChevronLeft className="size-4" />
-                  <span className="hidden sm:inline ml-1">Anterior</span>
+                  <span className="hidden sm:inline ml-1">{t('common.previous')}</span>
                 </Button>
 
                 <div className="flex items-center gap-1">
@@ -411,7 +413,7 @@ export function MuteList() {
                 </div>
 
                 <Button variant="outline" size="sm" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
-                  <span className="hidden sm:inline mr-1">Siguiente</span>
+                  <span className="hidden sm:inline mr-1">{t('common.next')}</span>
                   <ChevronRight className="size-4" />
                 </Button>
               </div>

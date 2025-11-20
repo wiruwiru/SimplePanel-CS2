@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/contexts/I18nContext"
 import { Input } from "@/components/UI/input"
 import { Button } from "@/components/UI/button"
 
@@ -11,6 +12,8 @@ import { Button } from "@/components/UI/button"
  * @param {boolean} allowPermanent - Whether to allow permanent (0) option
  */
 export function DurationInput({ value, onChange, presets = [], allowPermanent = false }) {
+  const { t } = useI18n()
+  
   const handleInputChange = (e) => {
     const inputValue = e.target.value
     if (inputValue === '' || /^\d+$/.test(inputValue)) {
@@ -29,10 +32,10 @@ export function DurationInput({ value, onChange, presets = [], allowPermanent = 
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
-        <Input type="text" inputMode="numeric" placeholder="Minutos (ej: 60)" value={value === '0' ? '' : value} onChange={handleInputChange} className="bg-zinc-800 border-zinc-700 text-zinc-100 flex-1" />
+        <Input type="text" inputMode="numeric" placeholder={t('duration.minutes_placeholder')} value={value === '0' ? '' : value} onChange={handleInputChange} className="bg-zinc-800 border-zinc-700 text-zinc-100 flex-1" />
         {allowPermanent && (
           <Button type="button" onClick={handlePermanentClick} variant={value === '0' ? 'default' : 'outline'} style={value === '0' ? { backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' } : {}} className={value === '0' ? 'hover:opacity-90' : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700'} onMouseEnter={value === '0' ? (e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; } : undefined} onMouseLeave={value === '0' ? (e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; } : undefined}>
-            Permanente
+            {t('duration.permanent')}
           </Button>
         )}
       </div>
