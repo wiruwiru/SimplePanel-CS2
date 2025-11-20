@@ -20,7 +20,7 @@ export function ChatLogsTab() {
     return (
       <Card className="bg-zinc-900 border-zinc-800">
         <CardContent>
-          <div className="text-center py-8 text-zinc-400">
+          <div className="text-center py-8 text-muted-foreground">
             <MessageSquare className="size-12 mx-auto mb-4 text-zinc-600" />
             <p>No tienes permisos para ver los logs de chat.</p>
           </div>
@@ -34,17 +34,17 @@ export function ChatLogsTab() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MessageSquare className="size-5 text-[#FFB800]" />
+            <MessageSquare className="size-5" style={{ color: 'var(--theme-primary)' }} />
             <div>
               <CardTitle className="text-zinc-100">Logs de Chat</CardTitle>
-              <p className="text-zinc-400 text-sm mt-1">Visualiza y filtra los mensajes del chat de los servidores</p>
+              <p className="text-muted-foreground text-sm mt-1">Visualiza y filtra los mensajes del chat de los servidores</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" >
               <Filter className="size-4 mr-2" />
               Filtros
-              {hasActiveFilters && <span className="ml-2 px-1.5 py-0.5 bg-[#FFB800] text-black rounded-full text-xs">!</span>}
+              {hasActiveFilters && <span className="ml-2 px-1.5 py-0.5 rounded-full text-xs" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }}>!</span>}
             </Button>
             <Button variant="outline" size="sm" onClick={refetch} className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700" title="Refrescar">
               <RefreshCw className="size-4" />
@@ -70,15 +70,15 @@ export function ChatLogsTab() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-zinc-300 font-medium">Filtros avanzados</span>
                 {hasActiveFilters && (
-                  <Button variant="ghost" size="sm" onClick={clearFilters} className="text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800">
+                  <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground hover:text-zinc-200 hover:bg-zinc-800">
                     Limpiar filtros
                   </Button>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <label className="text-zinc-400 text-sm mb-1 block">Equipo</label>
-                  <select value={team} onChange={(e) => setTeam(e.target.value)} className="bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full" >
+                  <label className="text-muted-foreground text-sm mb-1 block">Equipo</label>
+                  <select value={team} onChange={(e) => setTeam(e.target.value)} className="bg-card border border-border text-foreground rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring w-full" >
                     <option value="">Todos</option>
                     <option value="0">NONE</option>
                     <option value="1">SPECT</option>
@@ -87,16 +87,16 @@ export function ChatLogsTab() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-zinc-400 text-sm mb-1 block">Tipo de mensaje</label>
-                  <select value={messageType} onChange={(e) => setMessageType(e.target.value)} className="bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full" >
+                  <label className="text-muted-foreground text-sm mb-1 block">Tipo de mensaje</label>
+                  <select value={messageType} onChange={(e) => setMessageType(e.target.value)} className="bg-card border border-border text-foreground rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring w-full" >
                     <option value="">Todos</option>
                     <option value="global">Global</option>
                     <option value="team">Team</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-zinc-400 text-sm mb-1 block">Servidor</label>
-                  <select value={serverId} onChange={(e) => setServerId(e.target.value)} className="bg-zinc-800 border border-zinc-700 text-zinc-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FFB800] w-full" >
+                  <label className="text-muted-foreground text-sm mb-1 block">Servidor</label>
+                  <select value={serverId} onChange={(e) => setServerId(e.target.value)} className="bg-card border border-border text-foreground rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring w-full" >
                     <option value="">Todos los servidores</option>
                     {servers.map((server) => (
                       <option key={server.id} value={server.id}>

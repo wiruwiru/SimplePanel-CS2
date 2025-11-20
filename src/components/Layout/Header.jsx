@@ -62,7 +62,7 @@ export function Header() {
 
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
-              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`px-4 py-2 rounded-lg transition-colors ${pathname === item.id ? "bg-[#FFB800] text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} >{item.label}</button>
+              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`px-4 py-2 rounded-lg transition-colors ${pathname === item.id ? "text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} style={pathname === item.id ? { backgroundColor: 'var(--theme-primary)' } : {}} >{item.label}</button>
             ))}
           </nav>
 
@@ -103,7 +103,7 @@ export function Header() {
                 </DropdownMenu>
               </div>
             ) : (
-              <Button variant="default" onClick={handleLogin} className="bg-[#FFB800] hover:bg-[#ce9300] text-white hidden md:flex" >
+              <Button variant="default" onClick={handleLogin} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hidden md:flex hover:opacity-90" onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>
                 <User className="size-4 mr-2" />Iniciar sesión
               </Button>
             )}
@@ -117,7 +117,7 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-2 space-y-2">
             {navItems.map((item) => (
-              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`w-full px-4 py-3 rounded-lg transition-colors text-left ${pathname === item.id ? "bg-[#FFB800] text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} >{item.label}</button>
+              <button key={item.id} onClick={() => handleNavClick(item.id)} className={`w-full px-4 py-3 rounded-lg transition-colors text-left ${pathname === item.id ? "text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} style={pathname === item.id ? { backgroundColor: 'var(--theme-primary)' } : {}} >{item.label}</button>
             ))}
             <div className="pt-2 border-t border-zinc-800">
               {loading ? (
@@ -138,7 +138,7 @@ export function Header() {
                   </Button>
                 </>
               ) : (
-                <Button variant="default" onClick={() => {handleLogin(), setMobileMenuOpen(false)}} className="w-full bg-[#FFB800] hover:bg-[#ce9300] text-white" >
+                <Button variant="default" onClick={() => {handleLogin(), setMobileMenuOpen(false)}} className="w-full text-white" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>
                   <User className="size-4 mr-2" />Iniciar sesión
                 </Button>
               )}

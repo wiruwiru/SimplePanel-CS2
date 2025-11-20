@@ -40,7 +40,7 @@ export function AdminsTab() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <Spinner className="size-8 text-[#FFB800]" />
+            <Spinner className="size-8" style={{ color: 'var(--theme-primary)' }} />
             <span className="ml-3 text-zinc-400">Cargando...</span>
           </div>
         </CardContent>

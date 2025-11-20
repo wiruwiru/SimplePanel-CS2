@@ -9,7 +9,7 @@ import { Label } from "@/components/UI/label"
 
 const Checkbox = ({ checked, onChange, id, label }) => (
   <div className="flex items-center space-x-2">
-    <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 text-[#FFB800] bg-zinc-800 border-zinc-700 rounded focus:ring-[#FFB800] focus:ring-2 cursor-pointer" />
+    <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="w-4 h-4 bg-zinc-800 border-zinc-700 rounded focus:ring-ring focus:ring-2 cursor-pointer" style={{ color: 'var(--theme-primary)' }} />
     {label && <label htmlFor={id} className="text-sm text-zinc-300 cursor-pointer">{label}</label>}
   </div>
 );
@@ -114,7 +114,7 @@ export function PermissionGroupDialog({ open, onOpenChange, editingGroup, permis
 
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">Cancelar</Button>
-            <Button type="submit" className="bg-[#FFB800] hover:bg-[#ce9300]">{editingGroup ? 'Actualizar' : 'Crear'}</Button>
+            <Button type="submit" className="text-white" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>{editingGroup ? 'Actualizar' : 'Crear'}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

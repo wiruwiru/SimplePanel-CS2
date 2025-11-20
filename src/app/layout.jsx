@@ -12,12 +12,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className="h-full bg-zinc-950 text-zinc-100">
-      <body className="h-full flex flex-col bg-zinc-950 text-zinc-100">
+    <html lang="es" className="h-full bg-background">
+      <body className="min-h-screen flex flex-col bg-background text-foreground">
         <Providers>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen bg-background">
             <Header />
-            <main className="flex-1 p-4 md:p-6">{children}</main>
+            <main className="flex-1 p-4 md:p-6 bg-background">{children}</main>
             <Footer />
           </div>
         </Providers>

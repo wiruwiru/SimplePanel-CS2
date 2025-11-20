@@ -42,7 +42,15 @@ const TabsList = ({ children, activeTab, setActiveTab }) => (
 );
 
 const TabsTrigger = ({ value, children, activeTab, setActiveTab }) => (
-  <button onClick={() => setActiveTab(value)} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === value ? 'bg-[#FFB800] text-white' : 'text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800'}`}>{children}</button>
+  <button 
+    onClick={() => setActiveTab(value)} 
+    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === value ? '' : 'text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800'}`}
+    style={activeTab === value ? { backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' } : {}}
+    onMouseEnter={activeTab === value ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; } : undefined}
+    onMouseLeave={activeTab === value ? (e) => { e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; } : undefined}
+  >
+    {children}
+  </button>
 );
 
 const TabsContent = ({ value, children }) => (
@@ -55,7 +63,7 @@ function AdminPage() {
   return (
     <div className="space-y-4 md:space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-3">
-        <Shield className="size-8 text-[#FFB800]" />
+        <Shield className="size-8" style={{ color: 'var(--theme-primary)' }} />
         <div>
           <h2 className="text-2xl font-bold text-zinc-100 mb-1">Panel de administración</h2>
           <p className="text-zinc-400 text-sm md:text-base">Añade nuevas sanciones, modifica las existentes o simplemente busca información de un jugador.</p>

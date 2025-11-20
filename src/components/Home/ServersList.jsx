@@ -91,7 +91,7 @@ export function ServersList() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <Spinner className="size-8 text-[#FFB800]" />
+            <Spinner className="size-8" style={{ color: 'var(--theme-primary)' }} />
           </div>
         </CardContent>
       </Card>
@@ -103,7 +103,7 @@ export function ServersList() {
       <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-zinc-100 text-lg md:text-xl">
-            <Server className="size-5 text-[#FFB800]" />Servidores
+            <Server className="size-5" style={{ color: 'var(--theme-primary)' }} />Servidores
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -117,7 +117,7 @@ export function ServersList() {
     <Card className="bg-zinc-900 border-zinc-800">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-zinc-100 text-lg md:text-xl">
-          <Server className="size-5 text-[#FFB800]" />Servidores
+          <Server className="size-5" style={{ color: 'var(--theme-primary)' }} />Servidores
         </CardTitle>
       </CardHeader>
       <CardContent>

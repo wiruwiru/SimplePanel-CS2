@@ -68,13 +68,13 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
-              <Shield className="size-5 text-[#FFB800]" />
+              <Shield className="size-5" style={{ color: 'var(--theme-primary)' }} />
               <div>
                 <CardTitle className="text-zinc-100">Administradores</CardTitle>
                 <p className="text-zinc-400 text-sm mt-1">Gestiona administradores, grupos de permisos y flags personalizados</p>
               </div>
             </div>
-            <Button onClick={handleNew} className="bg-[#FFB800] hover:bg-[#ce9300]">
+            <Button onClick={handleNew} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hover:opacity-90" onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}>
               <Plus className="size-4 mr-2" />
               Nuevo Admin
             </Button>
@@ -87,7 +87,7 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     <a href={`https://steamcommunity.com/profiles/${admin.steamId}`} target="_blank" rel="noopener noreferrer" className="shrink-0" >
-                      <Avatar className="size-10 shrink-0 hover:ring-2 hover:ring-[#FFB800] transition-all cursor-pointer">
+                      <Avatar className="size-10 shrink-0 hover:ring-2 transition-all cursor-pointer" style={{ '--tw-ring-color': 'var(--theme-primary)' }}>
                         <AvatarImage src={getAvatarUrl(admin.steamId)} alt={admin.name} />
                         <AvatarFallback>{admin.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
@@ -108,7 +108,7 @@ export function AdminsList({ admins, profiles, permissions, permissionGroups, se
                           {admin.flags.length > 3 && (
                             <HoverCard>
                               <HoverCardTrigger asChild>
-                                <span className="cursor-pointer hover:text-[#FFB800] transition-colors"> +{admin.flags.length - 3} más</span>
+                                <span className="cursor-pointer transition-colors" style={{ color: 'var(--muted-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--theme-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted-foreground)'; }}> +{admin.flags.length - 3} más</span>
                               </HoverCardTrigger>
                               <HoverCardContent className="bg-zinc-800 border-zinc-700 text-zinc-100 w-80">
                                 <div className="space-y-2">
