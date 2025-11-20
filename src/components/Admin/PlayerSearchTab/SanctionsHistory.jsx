@@ -134,7 +134,7 @@ export function SanctionsHistory({ steamId, playerName, onClose, avatarUrl }) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="text-zinc-100 font-medium truncate text-sm">{playerName}</div>
-                <div className="text-zinc-500 text-xs font-mono truncate">{steamId.slice(-8)}</div>
+                <div className="text-zinc-500 text-xs font-mono truncate">({steamId})</div>
               </div>
             </div>
           )}
