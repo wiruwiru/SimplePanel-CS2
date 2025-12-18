@@ -84,6 +84,11 @@ export function Header() {
             {navItems.map((item) => (
               <button key={item.id} onClick={() => handleNavClick(item.id)} className={`px-4 py-2 rounded-lg transition-colors ${pathname === item.id ? "text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} style={pathname === item.id ? { backgroundColor: 'var(--theme-primary)' } : {}} >{item.label}</button>
             ))}
+            {user && isAdmin && pathname !== "/admin" && (
+              <button onClick={() => handleNavClick("/admin")} className="px-4 py-2 rounded-lg transition-colors text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 flex items-center gap-2">
+                {t("nav.administration")}
+              </button>
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -139,6 +144,11 @@ export function Header() {
             {navItems.map((item) => (
               <button key={item.id} onClick={() => handleNavClick(item.id)} className={`w-full px-4 py-3 rounded-lg transition-colors text-left ${pathname === item.id ? "text-white" : "text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800"}`} style={pathname === item.id ? { backgroundColor: 'var(--theme-primary)' } : {}} >{item.label}</button>
             ))}
+            {user && isAdmin && pathname !== "/admin" && (
+              <button onClick={() => handleNavClick("/admin")} className="w-full px-4 py-3 rounded-lg transition-colors text-left text-zinc-300 hover:text-zinc-100 hover:bg-zinc-800 flex items-center gap-2">
+                {t("nav.administration")}
+              </button>
+            )}
             <div className="pt-2 border-t border-zinc-800">
               {loading ? (
                 <div className="h-10 w-full bg-zinc-700 animate-pulse rounded-lg"></div>
