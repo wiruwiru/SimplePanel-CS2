@@ -50,6 +50,25 @@ The panel itself requires:
    ```
 3. **Configure environment variables**:
    Create a `.env` file with your database and Steam authentication settings.
+
+   #### Generating SESSION_SECRET
+   You need to generate a secure random string for the `SESSION_SECRET` environment variable. Use one of the following methods:
+   **Windows (Node.js)**:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   ```
+   **Linux/Mac**:
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   #### Obtaining STEAM_API_KEY
+   To get your Steam API key:
+   1. Visit [https://steamcommunity.com/dev/apikey](https://steamcommunity.com/dev/apikey)
+   2. Log in with your Steam account
+   3. Register a new API key by providing a domain name.
+   4. Copy the generated API key and add it to your `.env` file as `STEAM_API_KEY`
+
 4. **Set up the database**:
    Run the SQL script located in `scripts/create-tables.sql` on your database.
 5. **Build and run**:
