@@ -1,0 +1,65 @@
+name: SimplePanel Builder
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  PROJECT_NAME: "SimplePanel"
+
+jobs:
+  build-and-release:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Get package.json version
+        id: get_version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Create ZIP Archive
+        if: github.event_name == 'push'
+        run: |
+          zip -r ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.zip build public package.json next.config.mjs .env.example pnpm-lock.yaml \
+          -x "node_modules/*" ".git/*" "*.md" "LICENSE" ".gitignore"
+
+      - name: Create Release
+        if: github.event_name == 'push'
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: "${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.zip"
+          name: "${{ env.PROJECT_NAME }} v${{ env.VERSION }}"
+          tag: "v${{ env.VERSION }}"
+          draft: false
+          prerelease: false
+          body: |
+            :speech_balloon: **Feedback & Bug Reports**  
+            Do you have a suggestion, request, or found a bug? Feel free to **[create an issue](https://github.com/wiruwiru/SimplePanel-CS2/issues)** using the following prefixes:
+            - `[REQ]` or `[SUG]` → Feature requests or suggestions.  
+            - `[BUG]` → Reporting issues or bugs. 
+
+            ⚠️ **This update includes multiple fixes and improvements, but minor issues may still exist. Please report any bugs you encounter!**

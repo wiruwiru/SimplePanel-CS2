@@ -1,0 +1,8 @@
+{
+  "name": "Default",
+  "colors": {
+    "--theme-primary": "#FFB800",
+    "--theme-primary-hover": "#ce9300",
+    "--theme-primary-foreground": "#000000"
+  }
+}
