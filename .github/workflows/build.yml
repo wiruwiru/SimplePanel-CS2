@@ -44,7 +44,7 @@ jobs:
       - name: Create ZIP Archive
         if: github.event_name == 'push'
         run: |
-          zip -r ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.zip build public package.json next.config.mjs .env.example pnpm-lock.yaml \
+          zip -r ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.zip build public package.json next.config.mjs .env.example pnpm-lock.yaml scripts \
           -x "node_modules/*" ".git/*" "*.md" "LICENSE" ".gitignore"
 
       - name: Create Release
