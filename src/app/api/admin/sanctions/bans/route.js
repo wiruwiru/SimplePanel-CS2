@@ -159,11 +159,11 @@ export async function POST(request) {
       console.error("Error kicking player (ban added anyway):", rconError)
     }
 
-    // try {
-    //   await reloadBansOnAllServers()
-    // } catch (reloadError) {
-    //   console.error("Error reloading bans on servers (ban added anyway):", reloadError)
-    // }
+    try {
+      await reloadBansOnAllServers()
+    } catch (reloadError) {
+      console.error("Error reloading bans on servers (ban added anyway):", reloadError)
+    }
 
     try {
       const banData = {
@@ -447,11 +447,11 @@ export async function PATCH(request) {
       }
     }
 
-    // try {
-    //   await reloadBansOnAllServers()
-    // } catch (reloadError) {
-    //   console.error("Error reloading bans on servers:", reloadError)
-    // }
+    try {
+      await reloadBansOnAllServers()
+    } catch (reloadError) {
+      console.error("Error reloading bans on servers:", reloadError)
+    }
 
     return NextResponse.json({
       success: true,
@@ -554,11 +554,11 @@ export async function DELETE(request) {
 
     await db.query(`DELETE FROM sa_bans WHERE id = ?`, [id])
 
-    // try {
-    //   await reloadBansOnAllServers()
-    // } catch (reloadError) {
-    //   console.error("Error reloading bans on servers:", reloadError)
-    // }
+    try {
+      await reloadBansOnAllServers()
+    } catch (reloadError) {
+      console.error("Error reloading bans on servers:", reloadError)
+    }
 
     return NextResponse.json({
       success: true,
