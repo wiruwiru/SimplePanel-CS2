@@ -2,16 +2,16 @@
 SimplePanel-CS2 is a web-based administration panel designed to manage bans, mutes, and administrative tasks for Counter-Strike 2 servers.
 
 ## 🚀 Features
-- **🖥️ Server list**: View your server's details
-- **🎮 Ban Management**: View, create, edit, and remove bans with full permission control
-- **🔇 Mute Management**: Comprehensive mute system with duration tracking and expiration
-- **👥 Admin Management**: Create, edit, and manage administrators with granular permissions
-- **🔐 Permission System**: Flexible permission groups with hierarchical access control
-- **🔍 Player Search**: Search players through connection logs and history
-- **💬 Chat Logs**: View player chat messages (requires SimpleAdmin_ChatLogs module)
-- **🌐 Multi-language Support**: Available in English, Spanish, Portuguese (BR/PT)
-- **🎨 Theme Customization**: Multiple themes with customizable appearance
-- **🔑 Steam Authentication**: Secure login via Steam OpenID
+- **🖥️ Server list**: View your server's details from Steam API.
+- **🎮 Ban Management**: View, create, edit, and remove bans with full permission control.
+- **🔇 Mute Management**: View, create, edit, and remove mutes with full permission control.
+- **👥 Admin Management**: Create, edit, and manage administrators with granular permissions.
+- **🔐 Permission System**: Flexible permission groups with hierarchical access control.
+- **🔍 Player Search**: Search players through connection logs and history.
+- **💬 Chat Logs**: View player chat messages (requires SimpleAdmin_ChatLogs module).
+- **🌐 Multi-language Support**: Create custom language files or use the included ones (English, Spanish, Portuguese BR/PT). Language files are located in `public/lang/`.
+- **🎨 Theme Customization**: Create custom themes or use the included ones (Default, Blue). Theme files are located in `public/themes/`.
+- **🔑 Steam Authentication**: Secure login via Steam OpenID.
 
 ## 📋 Requirements
 ### Server Dependencies
@@ -33,23 +33,28 @@ To enable chat logs functionality, you need to install the following SimpleAdmin
 
 ### Application Dependencies
 The panel itself requires:
-- **Node.js** (v18 or higher recommended)
+- **Node.js** (v20.9.0 or higher)
 - **pnpm** (or npm/yarn)
 - **MySQL/MariaDB** database
 - Access to your CS2 server's SimpleAdmin database
 
 ## 🛠️ Installation
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/wiruwiru/SimplePanel-CS2.git
-   cd SimplePanel-CS2
-   ```
+1. **Download the latest release**:
+   - Go to the [Releases page](https://github.com/wiruwiru/SimplePanel-CS2/releases)
+   - Download the latest `SimplePanel-v*.zip` file
+   - Extract it to your desired location
+
 2. **Install dependencies**:
    ```bash
    pnpm install
    ```
+   Or using npm:
+   ```bash
+   npm install
+   ```
+
 3. **Configure environment variables**:
-   Create a `.env` file with your database and Steam authentication settings.
+   Create a `.env` file in the root directory with your database and Steam authentication settings.
 
    #### Generating SESSION_SECRET
    You need to generate a secure random string for the `SESSION_SECRET` environment variable. Use one of the following methods:
@@ -69,17 +74,18 @@ The panel itself requires:
    3. Register a new API key by providing a domain name.
    4. Copy the generated API key and add it to your `.env` file as `STEAM_API_KEY`
 
-4. **Set up the database**:
-   Run the SQL script located in `scripts/create-tables.sql` on your database.
-5. **Build and run**:
+4. **Start the application**:
    ```bash
-   pnpm build
    pnpm start
    ```
-   Or for development:
+   Or using npm:
    ```bash
-   pnpm dev
+   npm start
    ```
+
+   The database tables will be automatically created on first startup if your database credentials are configured correctly.
+
+> **Note**: If you want to modify or contribute to the project, see [DEVELOPMENT.md](./DEVELOPMENT.md) for development setup instructions.
 
 ## 📖 Available Permissions
 ### Administrative Access
@@ -149,10 +155,25 @@ Permissions follow a hierarchical structure where:
 - [ ] Automated panel installation
 - [ ] Responsive and style improvements
 - [ ] Players can view their active penalties and history when logged in
+- [ ] SimpleAdmin module that helps to easily manage penalties to make the panel more effective.
 
 ### Feature ideas
 - [ ] Reports and appeals
 - [ ] Ticket system
+
+## 📄 License
+
+This project is licensed under a **Modified MIT License with Commercial and Attribution Restrictions**.
+
+### Key Restrictions:
+- **🚫 Commercial Use Prohibited**: The software may not be used for commercial purposes without explicit permission
+- **📝 Mandatory Attribution**: You must maintain visible attribution to WiruWiru in all copies and distributions
+- **⚠️ No Removal of Credits**: You may not remove, obscure, or modify credits to the original author
+
+### Commercial License
+To obtain a commercial license or use this software for commercial purposes, please contact the author at: [https://github.com/wiruwiru](https://github.com/wiruwiru)
+
+For full license details, see [LICENSE](./LICENSE) file.
 
 ## 📞 Support
 - **Issues**: [GitHub Issues](https://github.com/wiruwiru/SimplePanel-CS2/issues)
