@@ -26,7 +26,7 @@ export default function NotFound() {
   }, [router])
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-linear-to-b from-card to-background text-foreground min-h-[calc(100vh-8rem)]">
+    <div className="flex flex-col items-center justify-center text-foreground min-h-[calc(100vh-20rem)]">
       <h1 className="mb-4 text-6xl font-bold" style={{ color: 'var(--theme-primary)' }}>404</h1>
       <h2 className="mb-4 text-2xl">{t('not_found.title')}</h2>
       <p className="mb-8 text-center">
