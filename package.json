@@ -1,6 +1,6 @@
 {
   "name": "simplepanel",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "cookie": "^1.1.1",
     "framer-motion": "^12.23.26",
+    "jose": "^6.1.3",
     "lucide-react": "^0.560.0",
     "mariadb": "^3.4.5",
     "next": "16.0.10",

@@ -60,11 +60,11 @@ The panel itself requires:
    You need to generate a secure random string for the `SESSION_SECRET` environment variable. Use one of the following methods:
    **Windows (Node.js)**:
    ```bash
-   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
    ```
    **Linux/Mac**:
    ```bash
-   openssl rand -base64 32
+   openssl rand -base64 64
    ```
 
    #### Obtaining STEAM_API_KEY
