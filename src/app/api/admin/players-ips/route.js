@@ -15,13 +15,6 @@ export async function GET(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 401 })
-    }
-
     const {
       authorized,
       error: authError,

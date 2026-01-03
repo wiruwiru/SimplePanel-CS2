@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
-import { getUserFlags } from "@/lib/api-auth"
+import { getUserFlags, getUserFromCookies } from "@/lib/api-auth"
 
 export async function GET(request) {
   try {
@@ -14,16 +14,7 @@ export async function GET(request) {
       )
     }
 
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Invalid session" },
-        { status: 401 }
-      )
-    }
-
+    const user = await getUserFromCookies(cookieStore)
     if (!user || !user.steamId) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -72,16 +63,7 @@ export async function PATCH(request) {
       )
     }
 
-    let user
-    try {
-      user = JSON.parse(Buffer.from(sessionToken.value, "base64").toString())
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Invalid session" },
-        { status: 401 }
-      )
-    }
-
+    const user = await getUserFromCookies(cookieStore)
     if (!user || !user.steamId) {
       return NextResponse.json(
         { error: "Unauthorized" },
