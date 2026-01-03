@@ -13,7 +13,7 @@ export async function GET(req) {
   }
 
   try {
-    const user = parseSession(sessionToken)
+    const user = await parseSession(sessionToken)
     
     if (!user) {
       return NextResponse.json(

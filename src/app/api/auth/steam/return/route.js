@@ -1,5 +1,6 @@
 import { db } from "@/lib/database"
 import { serialize } from "cookie"
+import { generateSessionToken } from "@/utils/session"
 
 export async function GET(request) {
   try {
@@ -48,7 +49,7 @@ export async function GET(request) {
       steamId: steamId64,
     }
 
-    const token = Buffer.from(JSON.stringify(user)).toString("base64")
+    const token = await generateSessionToken(user)
     const cookie = serialize("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

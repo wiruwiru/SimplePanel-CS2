@@ -7,9 +7,9 @@ import { formatDate, formatDuration } from "@/utils/formatters"
 /**
  * Get authenticated user from request cookies
  * @param {Object} cookieStore - Next.js cookies() return value
- * @returns {Object} { user, error, status }
+ * @returns {Promise<Object>} { user, error, status }
  */
-export function getAuthenticatedUser(cookieStore) {
+export async function getAuthenticatedUser(cookieStore) {
   const sessionToken = cookieStore.get('session')
   
   if (!sessionToken) {
@@ -20,7 +20,7 @@ export function getAuthenticatedUser(cookieStore) {
     }
   }
 
-  const user = getUserFromCookies(cookieStore)
+  const user = await getUserFromCookies(cookieStore)
   
   if (!user) {
     return {

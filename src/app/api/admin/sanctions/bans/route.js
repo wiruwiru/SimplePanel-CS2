@@ -10,7 +10,7 @@ import { getAuthenticatedUser, formatSanction } from "@/utils/api-helpers"
 export async function GET(request) {
   try {
     const cookieStore = await cookies()
-    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
+    const { user, error: userError, status: userStatus } = await getAuthenticatedUser(cookieStore)
     
     if (userError) {
       return NextResponse.json({ error: userError }, { status: userStatus })
@@ -90,7 +90,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const cookieStore = await cookies()
-    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
+    const { user, error: userError, status: userStatus } = await getAuthenticatedUser(cookieStore)
     
     if (userError) {
       return NextResponse.json({ error: userError }, { status: userStatus })
@@ -204,7 +204,7 @@ export async function POST(request) {
 export async function PATCH(request) {
   try {
     const cookieStore = await cookies()
-    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
+    const { user, error: userError, status: userStatus } = await getAuthenticatedUser(cookieStore)
     
     if (userError) {
       return NextResponse.json({ error: userError }, { status: userStatus })
@@ -469,7 +469,7 @@ export async function PATCH(request) {
 export async function DELETE(request) {
   try {
     const cookieStore = await cookies()
-    const { user, error: userError, status: userStatus } = getAuthenticatedUser(cookieStore)
+    const { user, error: userError, status: userStatus } = await getAuthenticatedUser(cookieStore)
     
     if (userError) {
       return NextResponse.json({ error: userError }, { status: userStatus })
