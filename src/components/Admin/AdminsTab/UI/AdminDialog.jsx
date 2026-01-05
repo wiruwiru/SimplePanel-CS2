@@ -94,6 +94,15 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
     onOpenChange(isOpen)
   }
 
+  const handleGroupChange = (groupId) => {
+    const selectedGroup = permissionGroups.find(g => g.id === parseInt(groupId))
+    setFormData({
+      ...formData,
+      permissionGroup: groupId ? parseInt(groupId) : null,
+      immunity: selectedGroup ? selectedGroup.immunity : 0
+    })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -150,7 +159,7 @@ export function AdminDialog({ open, onOpenChange, editingAdmin, permissions, per
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="permGroup" className="text-zinc-300">{t('admin.admins.group')}</Label>
-              <Select id="permGroup" value={formData.permissionGroup || ''} onChange={(e) => setFormData({...formData, permissionGroup: e.target.value ? parseInt(e.target.value) : null})} >
+              <Select id="permGroup" value={formData.permissionGroup || ''} onChange={(e) => handleGroupChange(e.target.value)} >
                 <option value="">Ninguno</option>
                 {permissionGroups.map(g => (
                   <option key={g.id} value={g.id}>{g.name}</option>
