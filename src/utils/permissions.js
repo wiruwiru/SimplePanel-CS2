@@ -19,7 +19,7 @@ export function hasPermission(userFlags, requiredFlag, isOwn = false, resourceAd
   if (isOwn && resourceAdminSteamId && currentUserSteamId) {
     const ownFlag = `${requiredFlag}.own`;
 
-    const isResourceOwner = resourceAdminSteamId === currentUserSteamId;
+    const isResourceOwner = String(resourceAdminSteamId) === String(currentUserSteamId);
     if (userFlags.includes(ownFlag) && isResourceOwner) {
       return true;
     }

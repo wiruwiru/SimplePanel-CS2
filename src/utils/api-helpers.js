@@ -94,6 +94,7 @@ export function formatSanction(sanction, type = 'ban') {
 
   if (type === 'mute' && sanction.type) {
     formatted.type = sanction.type
+    formatted.durationMinutes = sanction.duration || 0
   }
 
   if (sanction.unban_reason && sanction.unban_reason !== 'Unknown') {

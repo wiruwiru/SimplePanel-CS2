@@ -17,13 +17,13 @@ const Select = ({ value, onChange, children, className = '' }) => (
   </select>
 )
 
-export function MuteForm({ open, onOpenChange, formData, setFormData, onSubmit, onCancel }) {
+export function MuteForm({ open, onOpenChange, editingMute, formData, setFormData, onSubmit, onCancel }) {
   const { t } = useI18n()
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
         <DialogHeader>
-          <DialogTitle className="text-zinc-100">{t('mutes.create')}</DialogTitle>
+          <DialogTitle className="text-zinc-100">{editingMute ? t('mutes.edit') : t('mutes.create')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -62,7 +62,7 @@ export function MuteForm({ open, onOpenChange, formData, setFormData, onSubmit, 
           </div>
           <DialogFooter>
             <Button type="button" variant="ghost" onClick={onCancel} className="text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800">{t('common.cancel')}</Button>
-            <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>{t('mutes.create_mute')}</Button>
+            <Button type="submit" className="hover:opacity-90" style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.backgroundColor = 'var(--theme-primary-hover)'; }} onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.backgroundColor = 'var(--theme-primary)'; }}>{editingMute ? t('mutes.save_changes') : t('mutes.create_mute')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

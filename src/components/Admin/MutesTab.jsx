@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext"
 import { useI18n } from "@/contexts/I18nContext"
 import { hasPermission } from "@/utils/permissions"
 import { VolumeX, Plus, Search } from 'lucide-react'
-import { createMute, deleteMute, unmuteMute } from "@/services/sanctions/mutes"
+import { createMute, updateMute, deleteMute, unmuteMute } from "@/services/sanctions/mutes"
 import { useMutes } from "@/hooks/useMutes"
 import { Input } from "@/components/UI/input"
 import { Button } from "@/components/UI/button"
@@ -21,6 +21,7 @@ export function MutesTab() {
   const { mutes, search, setSearch, currentPage, total, totalPages, startIndex, loading, getAvatarUrl, getDisplayName, handlePageChange, refetch } = useMutes()
 
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingMute, setEditingMute] = useState(null)
   const [formData, setFormData] = useState({
     steamId: '',
     reason: '',
@@ -57,13 +58,19 @@ export function MutesTab() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await createMute(formData)
-      addToast({ title: t('mutes.created_success'), color: 'success', variant: 'solid' })
+      if (editingMute) {
+        await updateMute(editingMute.id, formData)
+        addToast({ title: t('mutes.updated_success'), color: 'success', variant: 'solid' })
+      } else {
+        await createMute(formData)
+        addToast({ title: t('mutes.created_success'), color: 'success', variant: 'solid' })
+      }
       setDialogOpen(false)
+      setEditingMute(null)
       setFormData({ steamId: '', reason: '', duration: '60', type: 'MUTE' })
       refetch()
     } catch (error) {
-      console.error('Error creating mute:', error)
+      console.error('Error saving mute:', error)
       addToast({ title: error.message || t('mutes.save_error'), color: 'danger', variant: 'solid' })
     }
   }
@@ -106,8 +113,27 @@ export function MutesTab() {
     }
   }
 
+  const handleEdit = (mute) => {
+    if (!canEdit(mute)) return
+    setEditingMute(mute)
+    setFormData({
+      steamId: mute.steamId,
+      reason: mute.reason,
+      duration: mute.durationMinutes === 0 ? '0' : String(mute.durationMinutes || '60'),
+      type: mute.type || 'MUTE'
+    })
+    setDialogOpen(true)
+  }
+
+  const handleNew = () => {
+    setEditingMute(null)
+    setFormData({ steamId: '', reason: '', duration: '60', type: 'MUTE' })
+    setDialogOpen(true)
+  }
+
   const handleCancel = () => {
     setDialogOpen(false)
+    setEditingMute(null)
     setFormData({ steamId: '', reason: '', duration: '60', type: 'MUTE' })
   }
 
@@ -137,7 +163,7 @@ export function MutesTab() {
               </div>
             </div>
             {canAdd && (
-              <Button onClick={() => setDialogOpen(true)} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hover:opacity-90" onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
+              <Button onClick={handleNew} style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-primary-foreground)' }} className="hover:opacity-90" onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'} onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}>
                 <Plus className="size-4 mr-2" />
                 {t('admin.mutes.new_mute')}
               </Button>
@@ -152,11 +178,11 @@ export function MutesTab() {
             </div>
           </div>
 
-          <MuteList mutes={mutes} loading={loading} getAvatarUrl={getAvatarUrl} getDisplayName={(mute) => getDisplayName(mute.steamId, mute.player)} canEdit={canEdit} canUnmute={canUnmute} canRemove={canRemove} canAddComment={canAddComment} onEdit={() => {}} onUnmute={handleUnmuteClick} onDelete={handleDeleteClick} currentPage={currentPage} totalPages={totalPages} startIndex={startIndex} total={total} onPageChange={handlePageChange} />
+          <MuteList mutes={mutes} loading={loading} getAvatarUrl={getAvatarUrl} getDisplayName={(mute) => getDisplayName(mute.steamId, mute.player)} canEdit={canEdit} canUnmute={canUnmute} canRemove={canRemove} canAddComment={canAddComment} onEdit={handleEdit} onUnmute={handleUnmuteClick} onDelete={handleDeleteClick} currentPage={currentPage} totalPages={totalPages} startIndex={startIndex} total={total} onPageChange={handlePageChange} />
         </CardContent>
       </Card>
 
-      <MuteForm open={dialogOpen} onOpenChange={setDialogOpen} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} onCancel={handleCancel} />
+      <MuteForm open={dialogOpen} onOpenChange={setDialogOpen} editingMute={editingMute} formData={formData} setFormData={setFormData} onSubmit={handleSubmit} onCancel={handleCancel} />
 
       <AlertDialog open={unmuteAlert.open} onOpenChange={(open) => setUnmuteAlert({ open, mute: null, reason: '' })}>
         <AlertDialogContent className="bg-zinc-900 border-zinc-800">

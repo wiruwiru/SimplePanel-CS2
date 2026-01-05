@@ -227,6 +227,11 @@ export async function PATCH(request) {
         muteAdminSteamId = adminQuery[0].player_steamid
       }
     }
+
+    if (muteAdminSteamId) {
+      muteAdminSteamId = String(muteAdminSteamId)
+    }
+    
     const flags = await getUserFlags(user.steamId)
 
     if (status === 'UNMUTED') {
@@ -454,6 +459,11 @@ export async function DELETE(request) {
         muteAdminSteamId = adminQuery[0].player_steamid
       }
     }
+
+    if (muteAdminSteamId) {
+      muteAdminSteamId = String(muteAdminSteamId)
+    }
+    
     const flags = await getUserFlags(user.steamId)
 
     const canRemove = hasPermission(

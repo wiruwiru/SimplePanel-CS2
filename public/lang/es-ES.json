@@ -99,6 +99,7 @@
     "create": "Crear Nuevo Muteo",
     "edit": "Editar Muteo",
     "create_mute": "Crear Muteo",
+    "save_changes": "Guardar Cambios",
     "reason_placeholder": "Describe el motivo del muteo...",
     "created_success": "Muteo creado correctamente",
     "updated_success": "Muteo actualizado correctamente",

@@ -99,6 +99,7 @@
     "create": "Criar Novo Mute",
     "edit": "Editar Mute",
     "create_mute": "Criar Mute",
+    "save_changes": "Guardar Alterações",
     "reason_placeholder": "Descreve o motivo do mute...",
     "created_success": "Mute criado com sucesso",
     "updated_success": "Mute actualizado com sucesso",
