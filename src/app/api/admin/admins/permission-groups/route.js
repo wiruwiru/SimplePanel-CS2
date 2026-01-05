@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess } from "@/lib/api-auth"
+import { syncGroupFlagsToAdmins } from "@/lib/admin-sync"
 
 export async function GET(request) {
   try {
@@ -109,14 +110,35 @@ export async function PATCH(request) {
       return NextResponse.json({ error: "Group ID is required" }, { status: 400 })
     }
 
+    const oldGroupData = await db.query(
+      `SELECT immunity FROM sa_groups WHERE id = ?`,
+      [groupId]
+    )
+    const oldGroupImmunity = oldGroupData[0]?.immunity || 0
+
     if (name || immunity !== undefined) {
       await db.query(
         `UPDATE sa_groups SET name = ?, immunity = ? WHERE id = ?`,
         [name, immunity || 0, groupId]
       )
+
+      if (immunity !== undefined && Number(immunity) !== Number(oldGroupImmunity)) {
+        const oldGroupFlagsResult = await db.query(
+          `SELECT flag FROM sa_groups_flags WHERE group_id = ?`,
+          [groupId]
+        )
+        const oldGroupFlags = oldGroupFlagsResult.map(gf => gf.flag)
+        await syncGroupFlagsToAdmins(groupId, oldGroupFlags, oldGroupImmunity)
+      }
     }
 
     if (flags !== undefined) {
+      const oldGroupFlagsResult = await db.query(
+        `SELECT flag FROM sa_groups_flags WHERE group_id = ?`,
+        [groupId]
+      )
+      const oldGroupFlags = oldGroupFlagsResult.map(gf => gf.flag)
+
       await db.query(`DELETE FROM sa_groups_flags WHERE group_id = ?`, [groupId])
       if (flags.length > 0) {
         for (const flag of flags) {
@@ -126,6 +148,8 @@ export async function PATCH(request) {
           )
         }
       }
+
+      await syncGroupFlagsToAdmins(groupId, oldGroupFlags, oldGroupImmunity)
     }
 
     return NextResponse.json({ 

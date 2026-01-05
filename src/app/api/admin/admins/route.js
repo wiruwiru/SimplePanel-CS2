@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess } from "@/lib/api-auth"
+import { syncAdminFlagsWithGroup } from "@/lib/admin-sync"
 
 export async function GET(request) {
   try {
@@ -159,28 +160,7 @@ export async function POST(request) {
 
       const adminId = Number(result.insertId)
 
-      if (flags && flags.length > 0) {
-        for (const flag of flags) {
-          await db.query(
-            `INSERT INTO sa_admins_flags (admin_id, flag) VALUES (?, ?)`,
-            [adminId, flag]
-          )
-        }
-      }
-
-      if (groupId) {
-        const groupFlags = await db.query(
-          `SELECT flag FROM sa_groups_flags WHERE group_id = ?`,
-          [groupId]
-        )
-        
-        for (const gf of groupFlags) {
-          await db.query(
-            `INSERT IGNORE INTO sa_admins_flags (admin_id, flag) VALUES (?, ?)`,
-            [adminId, gf.flag]
-          )
-        }
-      }
+      await syncAdminFlagsWithGroup(adminId, groupId, flags || [], immunity !== undefined ? immunity : null)
     }
 
     return NextResponse.json({ success: true, message: "Admin created successfully" })
@@ -262,28 +242,7 @@ export async function PATCH(request) {
 
       const adminId = Number(result.insertId)
 
-      if (flags && flags.length > 0) {
-        for (const flag of flags) {
-          await db.query(
-            `INSERT INTO sa_admins_flags (admin_id, flag) VALUES (?, ?)`,
-            [adminId, flag]
-          )
-        }
-      }
-
-      if (groupId) {
-        const groupFlags = await db.query(
-          `SELECT flag FROM sa_groups_flags WHERE group_id = ?`,
-          [groupId]
-        )
-        
-        for (const gf of groupFlags) {
-          await db.query(
-            `INSERT IGNORE INTO sa_admins_flags (admin_id, flag) VALUES (?, ?)`,
-            [adminId, gf.flag]
-          )
-        }
-      }
+      await syncAdminFlagsWithGroup(adminId, groupId, flags || [], immunity !== undefined ? immunity : null)
     }
 
     return NextResponse.json({ success: true, message: "Admin updated successfully" })
