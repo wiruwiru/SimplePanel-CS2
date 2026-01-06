@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess } from "@/lib/api-auth"
+import { syncServerGroupAdmins } from "@/lib/admin-sync"
 
 export async function GET(request) {
   try {
@@ -136,6 +137,12 @@ export async function PATCH(request) {
     )
 
     if (serverIds !== undefined) {
+      const oldGroupServers = await db.query(
+        `SELECT server_id FROM sp_server_group_servers WHERE server_group_id = ?`,
+        [groupId]
+      )
+      const oldServerIds = oldGroupServers.map(s => Number(s.server_id))
+
       await db.query(
         `DELETE FROM sp_server_group_servers WHERE server_group_id = ?`,
         [groupId]
@@ -149,6 +156,12 @@ export async function PATCH(request) {
             [groupId, serverId]
           )
         }
+      }
+
+      try {
+        await syncServerGroupAdmins(groupId, oldServerIds, serverIds.map(id => Number(id)))
+      } catch (syncError) {
+        console.error("Error syncing server group admins:", syncError)
       }
     }
 

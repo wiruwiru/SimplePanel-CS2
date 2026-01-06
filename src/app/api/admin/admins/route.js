@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "@/lib/database"
 import { verifyAdminAccess } from "@/lib/api-auth"
-import { syncAdminFlagsWithGroup } from "@/lib/admin-sync"
+import { syncAdminFlagsWithGroup, syncAllServersAdmins } from "@/lib/admin-sync"
 
 export async function GET(request) {
   try {
@@ -77,12 +77,12 @@ export async function GET(request) {
       GROUP BY sg.id, sg.name
     `)
 
+    const allServers = await db.query(`SELECT id FROM sa_servers`)
+    const allServerIds = allServers.map(s => Number(s.id)).sort().join(',')
+
     for (const adminData of adminMap.values()) {
       if (adminData.servers.length > 0) {
         const adminServerIds = adminData.servers.map(s => s.id).sort().join(',')
-
-        const allServers = await db.query(`SELECT id FROM sa_servers`)
-        const allServerIds = allServers.map(s => Number(s.id)).sort().join(',')
         
         if (adminServerIds === allServerIds) {
           adminData.serverGroup = 'Todos los servidores'
@@ -101,6 +101,10 @@ export async function GET(request) {
         }
       }
     }
+
+    syncAllServersAdmins().catch(error => {
+      console.error("Background sync of all servers admins failed:", error)
+    })
 
     return NextResponse.json({
       admins: Array.from(adminMap.values())
