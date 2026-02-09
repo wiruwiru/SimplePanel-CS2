@@ -1,0 +1,160 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin '../../hero.js';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #09090b;
+  --foreground: #F4F4F5;
+  --card: #27272A;
+  --card-foreground: #F4F4F5;
+  --popover: #27272A;
+  --popover-foreground: #F4F4F5;
+  --primary: #FFB800;
+  --primary-foreground: #000000;
+  --secondary: #F5F5F5;
+  --secondary-foreground: #353535;
+  --muted: #F5F5F5;
+  --muted-foreground: #8E8E93;
+  --accent: #F5F5F5;
+  --accent-foreground: #353535;
+  --destructive: #EF4444;
+  --border: #3F3F46;
+  --input: #3F3F46;
+  --ring: #A1A1AA;
+  --chart-1: #F97316;
+  --chart-2: #3B82F6;
+  --chart-3: #6366F1;
+  --chart-4: #F59E0B;
+  --chart-5: #EC4899;
+  --sidebar: #FAFAFA;
+  --sidebar-foreground: #252525;
+  --sidebar-primary: #353535;
+  --sidebar-primary-foreground: #FAFAFA;
+  --sidebar-accent: #F5F5F5;
+  --sidebar-accent-foreground: #353535;
+  --sidebar-border: #EBEBEB;
+  --sidebar-ring: #A1A1AA;
+  --success: #16A34A;
+  --warning: #F97316;
+  --error: #DC2626;
+  --info: #3B82F6;
+
+  --theme-primary: #FFB800;
+  --theme-primary-hover: #ce9300;
+  --theme-primary-foreground: #000000;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  
+  html {
+    @apply bg-background;
+    height: 100%;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    background-color: var(--background);
+  }
+  
+  #__next {
+    min-height: 100vh;
+    background-color: var(--background);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) var(--background);
+  }
+
+  *::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 6px;
+    border: 2px solid var(--background);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+
+  .theme-link {
+    color: var(--theme-primary);
+    transition: color 0.2s ease;
+  }
+
+  .theme-link:hover {
+    color: var(--theme-primary-hover);
+  }
+
+  .theme-select-trigger:hover {
+    background-color: var(--theme-primary) !important;
+    color: var(--theme-primary-foreground) !important;
+  }
+
+  .theme-select-trigger:hover * {
+    color: var(--theme-primary-foreground) !important;
+  }
+
+  .theme-select-item:focus,
+  .theme-select-item[data-highlighted] {
+    background-color: var(--theme-primary) !important;
+    color: var(--theme-primary-foreground) !important;
+  }
+}

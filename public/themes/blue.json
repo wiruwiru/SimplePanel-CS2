@@ -1,0 +1,8 @@
+{
+  "name": "Blue",
+  "colors": {
+    "--theme-primary": "#3B82F6",
+    "--theme-primary-hover": "#2563EB",
+    "--theme-primary-foreground": "#FFFFFF"
+  }
+}
