@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Server, Settings, Shield } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useI18n } from "@/contexts/I18nContext"
@@ -34,13 +34,6 @@ export function ServersTab() {
   });
 
   const canManage = hasFlag("@web/root");
-
-  useEffect(() => {
-    if (canManage) {
-      fetchServers();
-    }
-  }, [canManage, fetchServers]);
-
   const fetchServers = useCallback(async () => {
     try {
       setLoading(true);
@@ -62,6 +55,12 @@ export function ServersTab() {
       setLoading(false);
     }
   }, [t]);
+
+  useEffect(() => {
+    if (canManage) {
+      fetchServers();
+    }
+  }, [canManage, fetchServers]);
 
   const handleOpenDialog = (server) => {
     if (!canManage) return;
