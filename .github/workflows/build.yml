@@ -1,10 +1,10 @@
 name: SimplePanel Builder
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  release:
+    types:
+      - created
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: "SimplePanel"
@@ -34,32 +34,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Get package.json version
-        id: get_version
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
-
       - name: Build project
         run: pnpm run build
 
       - name: Create ZIP Archive
-        if: github.event_name == 'push'
+        if: github.event_name == 'release'
         run: |
-          zip -r ${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.zip build public package.json next.config.mjs .env.example pnpm-lock.yaml scripts \
+          zip -r ${{ env.PROJECT_NAME }}-${{ github.event.release.tag_name }}.zip build public package.json next.config.mjs .env.example pnpm-lock.yaml scripts \
           -x "node_modules/*" ".git/*" "*.md" "LICENSE" ".gitignore"
 
-      - name: Create Release
-        if: github.event_name == 'push'
-        uses: ncipollo/release-action@v1.12.0
+      - name: Upload release asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
         with:
-          artifacts: "${{ env.PROJECT_NAME }}-v${{ env.VERSION }}.zip"
-          name: "${{ env.PROJECT_NAME }} v${{ env.VERSION }}"
-          tag: "v${{ env.VERSION }}"
-          draft: false
-          prerelease: false
-          body: |
-            :speech_balloon: **Feedback & Bug Reports**  
-            Do you have a suggestion, request, or found a bug? Feel free to **[create an issue](https://github.com/wiruwiru/SimplePanel-CS2/issues)** using the following prefixes:
-            - `[REQ]` or `[SUG]` → Feature requests or suggestions.  
-            - `[BUG]` → Reporting issues or bugs. 
-
-            ⚠️ **This update includes multiple fixes and improvements, but minor issues may still exist. Please report any bugs you encounter!**
+          files: |
+            ./${{ env.PROJECT_NAME }}-${{ github.event.release.tag_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
